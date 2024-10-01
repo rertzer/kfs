@@ -1,4 +1,4 @@
-apt install -y build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo libisl-dev
+apt install -y build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo libisl-dev curl
 
 export PREFIX="$PWD/cross"
 export TARGET=i386-elf
@@ -9,29 +9,33 @@ cd src
 #download binutils gcc in $PWD/src
 
 # install gdb
-wget "http://ftp.gnu.org/gnu/gdb/gdb-7.11.tar.gz"
+curl -O "http://ftp.gnu.org/gnu/gdb/gdb-7.11.tar.gz"
 tar -xvzf gdb-7.11.tar.gz
-mkdir gdb
-cd gdb
+mkdir build-gdb
+cd build-gdb
 ../gdb-7.11/configure --target=$TARGET --prefix="$PREFIX" --disable-werror
 make all-gdb
 make install-gdb
 
 
-#install binutils
 cd ..
+#install binutils
+curl -O "https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.gz"
+tar -xvzf binutils-2.43.tar.gz
 mkdir build-binutils
 cd build-binutils
-../binutils-?.?.?/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+../binutils-2.43/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
 make
 make install
 
-#install gcc
 cd ..
+#install gcc
+curl -O "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.gz"
+tar -xvzf gcc-14.2.0.tar.gz
 mkdir build-gcc
 cd build-gcc
-../gcc-?.?.?/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c --without-headers
+../gcc-14.2.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c --without-headers
 make all-gcc
-make all-target-liggcc
+make all-target-libgcc
 make install-gcc
 make install-target-libgcc

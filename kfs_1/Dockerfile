@@ -2,6 +2,7 @@ FROM debian:latest
 
 ENV PREFIX="/cross"
 ENV TARGET=i386-elf
+ENV PATH="$PATH:$PREFIX/bin"
 
 RUN apt update
 RUN apt install -y build-essential\
@@ -11,7 +12,9 @@ RUN apt install -y build-essential\
 	libmpfr-dev\
 	texinfo\
 	libisl-dev\
-	curl make
+	curl make\
+	grub2 xorriso\
+	nasm file
 
 WORKDIR /tmp
 
@@ -36,4 +39,4 @@ RUN make all-target-libgcc
 RUN make install-gcc
 RUN make install-target-libgcc
 
-ENTRYPOINT [ "bash" ]
+WORKDIR /app

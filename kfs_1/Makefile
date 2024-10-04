@@ -1,8 +1,17 @@
 PROJECT = jros
-PROJECT_DIR = $(shell pwd)
+PROJECT_DIR = .
 RM = /bin/rm
+DOCKER_DIR = /app
 KFS_BUILD_DIR = isodir
-DOCKER_EXEC = docker run --rm -v $(PROJECT_DIR):/app debian-kfs1
+DOCKER_EXEC = docker run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) debian-kfs1
+
+SRCS_DIR = $(PROJECT_DIR)/srcs
+OBJS_DIR = $(PROJECT_DIR)/objs
+INCS_DIR = $(PROJECT_DIR)/incs
+
+SRCS = $(SRCS_DIR)/kernel.c
+OBJS = $(patsubst $(SRCS_DIR)/%,$(OBJS_DIR)/%,$(SRCS:.c=.o))
+INCS = -I $(INCS_DIR)
 
 all: $(PROJECT).iso
 
@@ -15,25 +24,29 @@ $(PROJECT).iso: $(PROJECT).bin grub.cfg
 	@echo "Done."
 
 boot.o: boot.s
+	@echo "Compiling boot.s..."
 	@$(DOCKER_EXEC) nasm -f elf32 boot.s -o boot.o
 
-kernel.o: kernel_main.c
-	@$(DOCKER_EXEC) i386-elf-gcc -c kernel_main.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
+	@echo "Compiling $(notdir $<)..."
+	@mkdir -p $(dir $@)
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -c /app/$< -o /app/$@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
-$(PROJECT).bin: boot.o kernel.o
-	@$(DOCKER_EXEC) i386-elf-gcc -T linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
+$(PROJECT).bin: boot.o $(OBJS)
+	@echo "Linking files..."
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib boot.o /app/$(OBJS) -lgcc
 
 clean:
 	@echo "Cleaning files..."
 	@$(RM) -rf $(KFS_BUILD_DIR)
-	@$(RM) -f *.o
+	@$(RM) -rf $(OBJS_DIR)
 
 fclean: clean
 	@echo "Cleaning build..."
 	@$(RM) -f $(PROJECT).iso
 	@$(RM) -f $(PROJECT).bin
 
-re: clean all
+re: fclean all
 
 start_iso: $(PROJECT).iso
 	@echo "Starting ISO..."

@@ -1,40 +1,54 @@
 PROJECT = jros
 PROJECT_DIR = .
+
 RM = /bin/rm
-DOCKER_DIR = /app
 KFS_BUILD_DIR = isodir
-DOCKER_EXEC = docker run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) debian-kfs1
+KFS_CONFIG_DIR = config
+
+DOCKER_DIR = /app
+DOCKER = /usr/bin/docker
+DOCKER_CONT_NAME = debian-kfs1
+DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 
-SRCS = $(SRCS_DIR)/kernel.c
-OBJS = $(patsubst $(SRCS_DIR)/%,$(OBJS_DIR)/%,$(SRCS:.c=.o))
+SRCS = $(SRCS_DIR)/kernel.c $(SRCS_DIR)/boot.s
+OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(OBJS_DIR)/%.o,$(SRCS)))
 INCS = -I $(INCS_DIR)
+
+ifneq ($(shell $(DOCKER) image list --format '{{.Repository}}' | grep -w $(DOCKER_CONT_NAME)),)
+container_exists: all
+else
+container_exists:
+	@echo "Image '$(DOCKER_CONT_NAME)' does not exist."
+	@echo "Use 'make build_docker' to create it."
+endif
 
 all: $(PROJECT).iso
 
-$(PROJECT).iso: $(PROJECT).bin grub.cfg
+$(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@echo "Creating ISO..."
 	@mkdir -p $(KFS_BUILD_DIR)/boot/grub
 	@cp $(PROJECT).bin $(KFS_BUILD_DIR)/boot/$(PROJECT).bin
-	@cp grub.cfg $(KFS_BUILD_DIR)/boot/grub/grub.cfg	
+	@cp $(KFS_CONFIG_DIR)/grub.cfg $(KFS_BUILD_DIR)/boot/grub/grub.cfg	
 	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso $(KFS_BUILD_DIR) -quiet
 	@echo "Done."
 
-boot.o: boot.s
-	@echo "Compiling boot.s..."
-	@$(DOCKER_EXEC) nasm -f elf32 boot.s -o boot.o
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s
+	@echo "Compiling $(notdir $<)..."
+	@mkdir -p $(dir $@)
+	@$(DOCKER_EXEC) nasm -f elf32 $< -o $@
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -c /app/$< -o /app/$@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
-$(PROJECT).bin: boot.o $(OBJS)
+$(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib boot.o /app/$(OBJS) -lgcc
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
 
 clean:
 	@echo "Cleaning files..."
@@ -47,6 +61,9 @@ fclean: clean
 	@$(RM) -f $(PROJECT).bin
 
 re: fclean all
+
+build_docker:
+	@$(DOCKER) build ./config -t DOCKER_CONT_NAME
 
 start_iso: $(PROJECT).iso
 	@echo "Starting ISO..."

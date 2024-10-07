@@ -52,4 +52,8 @@ void term_init();
 void term_set_buffer(char c);
 void term_putstr(const char *str);
 void term_putchar(char c);
+
+unsigned char inb(unsigned short port);
+void outb(unsigned char value, unsigned short port);
+unsigned char get_input();
 #endif

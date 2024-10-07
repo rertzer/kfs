@@ -35,6 +35,9 @@
 *.i*86
 *.x86_64
 *.hex
+*.bin
+*.iso
+isodir
 
 # Debug files
 *.dSYM/
@@ -53,3 +56,5 @@ dkms.conf
 
 #IDE config files
 .vscode
+
+

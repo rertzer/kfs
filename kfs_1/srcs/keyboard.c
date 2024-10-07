@@ -1,18 +1,16 @@
 #include <kernel.h>
 
-unsigned char inb(unsigned short port)
-{
+unsigned char inb(unsigned short _port) {
     unsigned char ret;
-    asm volatile("in %%dx, %%al" : "=a"(ret) : "d"(port) : "memory");
+    asm volatile("in %%dx, %%al" : "=a"(ret) : "d"(_port) : "memory");
     return ret;
 }
 
-void outb(unsigned char value, unsigned short port)
-{
-    asm volatile("out %%al, %%dx" : : "a"(value), "d"(port) : "memory");
+void outb(unsigned char _value, unsigned short _port) {
+    asm volatile("out %%al, %%dx" : : "a"(_value), "d"(_port) : "memory");
 }
 
-unsigned char get_input() {
+unsigned char get_keyboard_input() {
   while (!(inb(0x64) & 0x1))
     ;
   return inb(0x60);

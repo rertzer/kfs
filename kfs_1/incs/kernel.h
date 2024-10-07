@@ -1,9 +1,12 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#pragma once
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -48,12 +51,19 @@ void vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t vga_char_color(vga_color_t fg, vga_color_t bg);
 uint16_t vga_char(unsigned char uc, uint8_t color);
 void term_next();
+void term_next_line();
 void term_init();
 void term_set_buffer(char c);
-void term_putstr(const char *str);
-void term_putchar(char c);
+int term_putstr(const char *str);
+int term_putchar(char c);
 
 unsigned char inb(unsigned short port);
 void outb(unsigned char value, unsigned short port);
-unsigned char get_input();
+unsigned char get_keyboard_input();
+
+int		printk(const char *format, ...);
+#define LOG_INFO "INFO "
+#define LOG_WARNING "WARNING "
+#define LOG_ERROR "ERROR "
+
 #endif

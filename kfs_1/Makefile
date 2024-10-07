@@ -19,14 +19,12 @@ OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(O
 INCS = -I $(INCS_DIR)
 
 ifneq ($(shell $(DOCKER) image list --format '{{.Repository}}' | grep -w $(DOCKER_CONT_NAME)),)
-container_exists: all
+all: $(PROJECT).iso
 else
-container_exists:
+all:
 	@echo "Image '$(DOCKER_CONT_NAME)' does not exist."
 	@echo "Use 'make build_docker' to create it."
 endif
-
-all: $(PROJECT).iso
 
 $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@echo "Creating ISO..."

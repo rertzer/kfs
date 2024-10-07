@@ -5,6 +5,11 @@ terminal_t term;
 void kernel_main(void) {
   term_init();
   term_putstr("42");
+  while (true)
+  {
+    const unsigned char test = get_input();
+    term_putstr("input | ");
+  }
 }
 
 void term_init() {

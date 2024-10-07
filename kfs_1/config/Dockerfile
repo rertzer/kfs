@@ -24,7 +24,7 @@ RUN tar -xvzf binutils-2.43.tar.gz
 WORKDIR /tmp/build_binutils
 
 RUN ../binutils-2.43/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
-RUN make
+RUN make -j8
 RUN make install
 
 WORKDIR /tmp
@@ -34,8 +34,8 @@ RUN tar -xvzf gcc-14.2.0.tar.gz
 
 WORKDIR /tmp/build_gcc
 RUN ../gcc-14.2.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c --without-headers
-RUN make all-gcc
-RUN make all-target-libgcc
+RUN make -j8 all-gcc
+RUN make -j8 all-target-libgcc
 RUN make install-gcc
 RUN make install-target-libgcc
 

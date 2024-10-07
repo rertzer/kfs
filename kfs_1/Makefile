@@ -61,7 +61,7 @@ fclean: clean
 re: fclean all
 
 build_docker:
-	@$(DOCKER) build ./config -t DOCKER_CONT_NAME
+	@$(DOCKER) build ./config -t $(DOCKER_CONT_NAME)
 
 start_iso: $(PROJECT).iso
 	@echo "Starting ISO..."

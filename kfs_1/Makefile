@@ -16,7 +16,7 @@ INCS_DIR = $(PROJECT_DIR)/incs
 
 SRCS =	$(SRCS_DIR)/kernel.c \
 		$(SRCS_DIR)/printk.c \
-		$(SRCS_DIR)/mouse.c \
+		$(SRCS_DIR)/keyboard.c \
 		$(SRCS_DIR)/boot.s
 OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(OBJS_DIR)/%.o,$(SRCS)))
 INCS = -I $(INCS_DIR)

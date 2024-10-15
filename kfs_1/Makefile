@@ -17,7 +17,6 @@ INCS_DIR = $(PROJECT_DIR)/incs
 SOURCES =	kernel.c \
 		  	keyboard.c \
 		  	gdt.c \
-			setgdt.s \
 			boot.s
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))

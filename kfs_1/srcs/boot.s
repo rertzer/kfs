@@ -31,3 +31,11 @@ _start:
 .hang: hlt
 	jmp .hang
 .end:
+
+gdtr DW 0 ; For limit storage
+     DD 0 ; For base storage
+
+global set_gdt
+set_gdt:
+   LGDT  [gdtr]
+   RET

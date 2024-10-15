@@ -14,7 +14,14 @@ SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 
-SRCS = $(SRCS_DIR)/kernel.c $(SRCS_DIR)/io.s  $(SRCS_DIR)/boot.s
+SOURCES =	kernel.c \
+		  	keyboard.c \
+		  	gdt.c \
+			setgdt.s \
+			boot.s
+
+SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))
+
 OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(OBJS_DIR)/%.o,$(SRCS)))
 INCS = -I $(INCS_DIR)
 

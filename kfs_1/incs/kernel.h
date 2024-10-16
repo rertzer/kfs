@@ -1,6 +1,7 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -73,10 +74,19 @@ uint16_t vga_char(unsigned char uc, uint8_t color);
 void	 term_next();
 void	 term_init();
 void	 term_set_buffer(char c);
-void	 term_putstr(const char* str);
-void	 term_putchar(char c);
+size_t	 term_putstr(const char* str);
+size_t	 term_putchar(char c);
+
+/* ======================= keyboard =================================== */
+#define LOG_INFO "INFO "
+#define LOG_WARNING "WARNING "
+#define LOG_ERROR "ERROR "
 
 unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);
 unsigned char get_input();
+void		  term_next_line();
+unsigned char get_keyboard_input();
+int			  printk(const char* format, ...);
+
 #endif

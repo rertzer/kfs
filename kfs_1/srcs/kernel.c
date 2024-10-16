@@ -6,9 +6,10 @@ void kernel_main(void) {
 	term_init();
 	init_gdt();
 	term_putstr("42");
+
 	while (true) {
-		const unsigned char input = get_input();
-		term_putchar(input);
+		const unsigned char test = get_keyboard_input();
+		printk("input: %d\n", test);
 	}
 }
 
@@ -43,16 +44,23 @@ uint8_t vga_char_color(vga_color_t fg, vga_color_t bg) {
 	return (fg | bg << 4);
 }
 
-void term_putstr(const char* str) {
+size_t term_putstr(const char* str) {
 	size_t len = strlen(str);
 	for (size_t i = 0; i < len; ++i) {
 		term_putchar(str[i]);
 	}
+
+	return (len);
 }
 
-void term_putchar(char c) {
+size_t term_putchar(char c) {
+	if (c == '\n') {
+		term_next_line();
+		return ((size_t)1);
+	}
 	vga_write(c, term.color, term.column, term.row);
 	term_next();
+	return ((size_t)1);
 }
 
 void term_next() {
@@ -63,6 +71,14 @@ void term_next() {
 		if (term.row == VGA_HEIGHT) {
 			term.row = 0;
 		}
+	}
+}
+
+void term_next_line() {
+	term.column = 0;
+	++term.row;
+	if (term.row == VGA_HEIGHT) {
+		term.row = 0;
 	}
 }
 

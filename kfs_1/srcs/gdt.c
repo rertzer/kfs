@@ -2,9 +2,9 @@
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
 
-void init_gdt() {
-	gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
+gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 
+void init_gdt() {
 	//                                                     base  limit  access flags
 	gdt_descriptor_t null_desc = (gdt_descriptor_t){0, 0, 0, 0};
 	gdt_descriptor_t kernel_code_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x9A, 0xC};

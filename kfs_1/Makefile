@@ -16,6 +16,7 @@ INCS_DIR = $(PROJECT_DIR)/incs
 
 SOURCES =	kernel.c \
 		  	keyboard.c \
+			keycode.c \
 			printk.c \
 		  	gdt.c \
 			setgdt.s \

@@ -89,4 +89,23 @@ void		  term_next_line();
 unsigned char get_keyboard_input();
 int			  printk(const char* format, ...);
 
+/* ======================== keycode ====================================== */
+typedef struct {
+	uint8_t extended : 1;
+	uint8_t pressed : 1;
+	uint8_t control : 1;
+	uint8_t alt : 1;
+	uint8_t shift : 1;
+	uint8_t capslock : 1;
+	uint8_t numlock : 1;
+	uint8_t scrolllock : 1;
+	uint8_t pause;
+	uint8_t scancode;
+	uint8_t ascii;
+	uint8_t extra;
+} keypress_t;
+
+typedef void (*handle_fun_t)(keypress_t* k);
+keypress_t handle_scancode(uint8_t scancode);
+
 #endif

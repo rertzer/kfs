@@ -8,8 +8,10 @@ void kernel_main(void) {
 	term_putstr("42");
 
 	while (true) {
-		const unsigned char test = get_keyboard_input();
-		printk("input: %d\n", test);
+		uint8_t scancode = get_keyboard_input();
+		handle_scancode(scancode);
+		term_putchar(scancode);
+		printk("%x", scancode, scancode);
 	}
 }
 

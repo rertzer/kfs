@@ -7,8 +7,8 @@ void kernel_main(void) {
 	init_gdt();
 	term_putstr("42");
 	while (true) {
-		const unsigned char test = get_input();
-		term_putstr("input | ");
+		const unsigned char input = get_input();
+		term_putchar(input);
 	}
 }
 

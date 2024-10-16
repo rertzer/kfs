@@ -29,15 +29,15 @@ void init_gdt() {
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
 	entry->bytes[2] = (uint8_t)(desc.base & 0xFF);
 
-	// entry->bytes[3] = (uint8_t)((desc.base >> 8) & 0xFF);
-	// entry->bytes[4] = (uint8_t)((desc.base >> 16) & 0xFF);
-	// entry->bytes[7] = (uint8_t)((desc.base >> 24) & 0xFF);
-	//
-	// entry->bytes[0] = (uint8_t)(desc.limit & 0xFF);
-	// entry->bytes[1] = (uint8_t)((desc.limit >> 8) & 0xFF);
-	// entry->bytes[6] = (uint8_t)((desc.limit >> 16) & 0xFF);
-	//
-	// entry->bytes[5] = (uint8_t)(desc.access);
-	//
-	// entry->bytes[6] = (uint8_t)(desc.flags << 4);
+	entry->bytes[3] = (uint8_t)((desc.base >> 8) & 0xFF);
+	entry->bytes[4] = (uint8_t)((desc.base >> 16) & 0xFF);
+	entry->bytes[7] = (uint8_t)((desc.base >> 24) & 0xFF);
+
+	entry->bytes[0] = (uint8_t)(desc.limit & 0xFF);
+	entry->bytes[1] = (uint8_t)((desc.limit >> 8) & 0xFF);
+	entry->bytes[6] = (uint8_t)((desc.limit >> 16) & 0xFF);
+
+	entry->bytes[5] = (uint8_t)(desc.access);
+
+	entry->bytes[6] = (uint8_t)(desc.flags << 4);
 }

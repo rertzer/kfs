@@ -14,7 +14,7 @@ set_gdt:
 	; Reload CS register containing code selector:
    JMP   0x08:.reload_CS ; kernel code segment
 .reload_CS:
-   ; Reload data and stack segment registers:
+   ; Reload data and stack segment registers
 	MOV		AX, 0x10 ; kernel data segment
 	MOV		DS, AX
 	MOV		ES, AX
@@ -22,6 +22,6 @@ set_gdt:
 	MOV		GS, AX
 	MOV		AX, 0x18 ; kernel stack segment 
 	MOV		SS, AX
-	STI
+	;STI
 	RET
 

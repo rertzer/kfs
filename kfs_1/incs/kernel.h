@@ -46,22 +46,21 @@ typedef enum vga_blink_e {
 
 /* ============= global descriptor table ============================ */
 
-
-#define GDT_SIZE 6
+#define GDT_SIZE 7
 #define GDT_TABLE \
 	{0,		0,			0,		0},\
 	{0,		0xFFFFF,	0x9A,	0xC},\
 	{0,		0xFFFFF,	0x92,	0xC},\
+	{0,		0xFFFFF,	0x96,	0xC},\
 	{0,		0xFFFFF,	0xFA,	0xC},\
 	{0,		0xFFFFF,	0xF2,	0xC},\
-	{0,		0xFFFFF,	0x89,	0x0},\
+	{0,		0xFFFFF,	0xF6,	0xC},\
 //   base 	limit		access	flags
-
 
 typedef struct {
 	uint16_t limit;
 	uint32_t base;
-} gdt_ptr_t;
+}  __attribute__((packed)) gdt_ptr_t;
 
 typedef struct {
 	uint32_t base;
@@ -70,17 +69,20 @@ typedef struct {
 	uint8_t	 flags;
 } gdt_descriptor_t;
 
-// typedef union toto {
-// 	uint64_t desc;
-// 	uint8_t	 bytes[8];
-// } gdt_entry_t;
-
-typedef uint8_t gdt_entry_t;
+typedef struct {
+	uint16_t limit_low;
+	uint16_t base_low;
+	uint8_t	 base_middle;
+	uint8_t	 access_byte;
+	uint8_t	 limit_high_flags;
+	uint8_t	 base_high;
+} gdt_entry_t;
 
 void init_gdt();
 
 // assembly functions
-void set_gdt(uint32_t base, uint16_t limit);
+void gdt_flush(uint32_t gdt_ptr);
+
 /* ======================== utils ==================================== */
 size_t strlen(const char* str);
 

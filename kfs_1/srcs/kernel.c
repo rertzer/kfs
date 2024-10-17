@@ -8,10 +8,11 @@ void kernel_main(void) {
 	term_putstr("42");
 
 	while (true) {
-		uint8_t scancode = get_keyboard_input();
-		handle_scancode(scancode);
-		term_putchar(scancode);
-		printk("%x", scancode, scancode);
+		uint8_t	   scancode = get_keyboard_input();
+		keypress_t keypress = handle_scancode(scancode);
+		if (keypress.pressed == TRUE && keypress.ascii != 0) {
+			term_putchar(keypress.ascii);
+		}
 	}
 }
 
@@ -19,8 +20,10 @@ void term_init() {
 	term.row = 0;
 	term.column = 0;
 	term.color = vga_char_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	term.buffer = (uint32_t*)VGA_TEXT_MODE_BUFFER;
+	term.buffer = (uint16_t*)VGA_TEXT_MODE_BUFFER;
 	term_set_buffer(' ');
+	// enable_cursor(0, 25);
+	update_cursor(term.column, term.row);
 }
 
 void term_set_buffer(char c) {
@@ -74,6 +77,7 @@ void term_next() {
 			term.row = 0;
 		}
 	}
+	update_cursor(term.column, term.row);
 }
 
 void term_next_line() {
@@ -82,6 +86,7 @@ void term_next_line() {
 	if (term.row == VGA_HEIGHT) {
 		term.row = 0;
 	}
+	update_cursor(term.column, term.row);
 }
 
 size_t strlen(const char* str) {

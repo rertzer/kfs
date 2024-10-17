@@ -4,6 +4,7 @@ static void		   handle_pause(keypress_t* current, uint8_t scancode);
 static void		   handle_extended(keypress_t* current, uint8_t scancode);
 static void		   handle_pressed(keypress_t* current, uint8_t scancode);
 static void		   handle_code(keypress_t* current);
+static void		   handle_extended_code(keypress_t* current);
 static inline bool is_alpha_code(uint8_t scancode);
 static void		   handle_ascii(keypress_t* current);
 static bool		   get_upper(keypress_t* current);
@@ -19,9 +20,10 @@ static void		   handle_fn(keypress_t* current);
 keypress_t handle_scancode(uint8_t scancode) {
 	static keypress_t current;
 
-	if (current.pause != 0) {
+	current.ascii = 0;
+	if (current.extra > 0xF9) {
 		handle_pause(&current, scancode);
-	} else if (current.extended != 0) {
+	} else if (current.extended != FALSE) {
 		handle_extended(&current, scancode);
 	} else {
 		handle_pressed(&current, scancode);
@@ -30,23 +32,29 @@ keypress_t handle_scancode(uint8_t scancode) {
 	return (current);
 }
 
-static void handle_pause(keypress_t* current, uint8_t scancode) {}
+static void handle_pause(keypress_t* current, uint8_t scancode) {
+	/* !!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!! */
+	current->scancode = scancode;
+}
 
-static void handle_extended(keypress_t* current, uint8_t scancode) {}
+static void handle_extended(keypress_t* current, uint8_t scancode) {
+	handle_pressed(current, scancode);
+	handle_extended_code(current);
+}
 
 static void handle_pressed(keypress_t* current, uint8_t scancode) {
+	current->pressed = FALSE;
 	if (scancode < 0x80) {
 		current->pressed = TRUE;
 		current->scancode = scancode;
 	} else if (scancode < 0xE0) {
-		current->pressed = FALSE;
 		current->scancode = scancode - 0x80;
 	} else if (scancode == 0xE0) {
 		current->extended = TRUE;
+		current->scancode = 0;
 	} else if (scancode == 0xE1) {
-		current->pause = 0x01;
-	} else {
-		current->pressed = FALSE;
+		current->extra = 0xFA;
+		current->scancode = 0;
 	}
 }
 
@@ -68,6 +76,70 @@ static void handle_code(keypress_t* current) {
 	handle_fun[0x46] = handle_scrolllock;
 	handle_fun[0x57] = handle_fn;
 	handle_fun[0x58] = handle_fn;
+
+	handle_fun[current->scancode](current);
+}
+
+static void handle_extended_code(keypress_t* current) {
+	static const keycode_t codes[110] = {
+		[0x10] = PREVIOUS_TRACK,
+		[0x19] = NEXT_TRACK,
+		[0x1C] = KEYPAD_ENTER,
+		[0x1D] = R_CONTROL,
+		[0x20] = MUTE,
+		[0x21] = CALCULATOR,
+		[0x22] = PLAY,
+		[0x24] = STOP,
+		[0x2E] = VOL_DOWN,
+		[0x30] = VOL_UP,
+		[0x32] = WWW_HOME,
+		[0x35] = KEYPAD_SLASH,
+		[0x38] = R_ALT,
+		[0x47] = HOME,
+		[0x48] = UP,
+		[0x49] = PAGE_UP,
+		[0x4B] = LEFT,
+		[0x4D] = RIGHT,
+		[0x4F] = END,
+		[0x50] = DOWN,
+		[0x51] = PAGE_DOWN,
+		[0x52] = INSERT,
+		[0x53] = DELETE,
+		[0x5B] = L_GUI,
+		[0x5C] = R_GUI,
+		[0x5D] = APPS,
+		[0x5E] = POWER,
+		[0x5F] = SLEEP,
+		[0x63] = WAKE,
+		////////////////////////////////////////////////////////////////
+		[0x65] = WWW_SEARCH,
+		[0x66] = WWW_FAVORITE,
+		[0x67] = WWW_REFRESH,
+		[0x68] = WWW_STOP,
+		[0x69] = WWW_FORWARD,
+		[0x6A] = WWW_BACK,
+		[0x6B] = MY_COMPUTER,
+		[0x6C] = EMAIL,
+		[0x6D] = MEDIA_SELECT};
+	current->extra = (uint8_t)codes[current->scancode];
+	current->ascii = 0;
+	switch (current->extra) {
+		case R_CONTROL:
+			handle_control(current);
+			break;
+		case R_ALT:
+			handle_alt(current);
+			break;
+		case KEYPAD_ENTER:
+			current->ascii = '\n';
+			break;
+		case KEYPAD_SLASH:
+			current->ascii = '/';
+			break;
+		default:
+			break;
+	}
+	current->extended = FALSE;
 }
 
 static void handle_ascii(keypress_t* current) {

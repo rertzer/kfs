@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "keycode.h"
+
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
@@ -15,7 +17,7 @@
 #define FALSE 0
 
 typedef struct terminal_s {
-	uint32_t* buffer;
+	uint16_t* buffer;
 	size_t	  row;
 	size_t	  column;
 	uint8_t	  color;
@@ -87,6 +89,8 @@ void		  outb(unsigned char value, unsigned short port);
 unsigned char get_input();
 void		  term_next_line();
 unsigned char get_keyboard_input();
+void		  enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
+void		  update_cursor(size_t x, size_t y);
 int			  printk(const char* format, ...);
 
 /* ======================== keycode ====================================== */
@@ -99,7 +103,6 @@ typedef struct {
 	uint8_t capslock : 1;
 	uint8_t numlock : 1;
 	uint8_t scrolllock : 1;
-	uint8_t pause;
 	uint8_t scancode;
 	uint8_t ascii;
 	uint8_t extra;

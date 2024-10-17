@@ -59,13 +59,42 @@ size_t term_putstr(const char* str) {
 }
 
 size_t term_putchar(char c) {
-	if (c == '\n') {
-		term_next_line();
-		return ((size_t)1);
+	switch (c) {
+		case '\t':
+			write_tab();
+			break;
+		case '\n':
+			term_next_line();
+			break;
+		case BACKSPACE:
+			term_previous();
+			vga_write(' ', term.color, term.column, term.row);
+			break;
+		default:
+			vga_write(c, term.color, term.column, term.row);
+			term_next();
+			break;
 	}
-	vga_write(c, term.color, term.column, term.row);
-	term_next();
+
 	return ((size_t)1);
+}
+
+void write_tab() {
+	for (size_t i = 0; i < TAB_SIZE; ++i) {
+		vga_write(' ', term.color, term.column, term.row);
+		term_next();
+	}
+}
+void term_previous() {
+	if (term.column == 0) {
+		if (term.row != 0) {
+			term.column = 79;
+			--term.row;
+		}
+	} else {
+		--term.column;
+	}
+	update_cursor(term.column, term.row);
 }
 
 void term_next() {

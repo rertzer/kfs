@@ -15,6 +15,7 @@
 #define GDT_BUFFER 0x00000800
 #define TRUE 1
 #define FALSE 0
+#define TAB_SIZE 4
 
 typedef struct terminal_s {
 	uint16_t* buffer;
@@ -73,11 +74,13 @@ size_t strlen(const char* str);
 void	 vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t	 vga_char_color(vga_color_t fg, vga_color_t bg);
 uint16_t vga_char(unsigned char uc, uint8_t color);
+void	 term_previous();
 void	 term_next();
 void	 term_init();
 void	 term_set_buffer(char c);
 size_t	 term_putstr(const char* str);
 size_t	 term_putchar(char c);
+void	 write_tab();
 
 /* ======================= keyboard =================================== */
 #define LOG_INFO "INFO "

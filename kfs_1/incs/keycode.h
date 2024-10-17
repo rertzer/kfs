@@ -1,6 +1,8 @@
 #ifndef KEYCODE_H
 #define KEYCODE_H
 
+#define BACKSPACE 8
+
 typedef enum {
 	PREVIOUS_TRACK = 13,
 	NEXT_TRACK,

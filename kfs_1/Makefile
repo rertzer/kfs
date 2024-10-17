@@ -42,6 +42,11 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso $(KFS_BUILD_DIR) -quiet
 	@echo "Done."
 
+$(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
+	@echo "Linking files..."
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
+
+
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s 
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
@@ -58,10 +63,6 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
 						-o /app/$@
 
 -include $(DEPS)
-
-$(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
-	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
 
 clean:
 	@echo "Cleaning files..."
@@ -86,3 +87,5 @@ start_iso: $(PROJECT).iso
 start_bin: $(PROJECT).bin
 	@echo "Starting BIN..."
 	@qemu-system-i386 -kernel $(PROJECT).bin
+
+.PHONY: all clean fclean re build_docker start_iso start_bin

@@ -13,6 +13,9 @@
 
 #define VGA_TEXT_MODE_BUFFER 0x000B8000
 #define GDT_BUFFER 0x00000800
+
+#define MAX_TERM_NB 8
+
 #define TRUE 1
 #define FALSE 0
 #define TAB_SIZE 4
@@ -43,6 +46,16 @@ typedef enum vga_color_e {
 	VGA_COLOR_WHITE = 15,
 } vga_color_t;
 
+typedef struct {
+	uint8_t fg : 4;
+	uint8_t bg : 4;
+} char_color_t;
+
+typedef union {
+	uint8_t		 color;
+	char_color_t char_color;
+} char_color_u;
+
 typedef enum vga_blink_e {
 	NO_BLINK = 0,
 	BLINK = 1,
@@ -71,22 +84,32 @@ void set_gdt(uint32_t limit, uint32_t base);
 size_t strlen(const char* str);
 
 /* ========================= terminal ================================ */
-void	 vga_write(char c, uint8_t color, size_t x, size_t y);
-uint8_t	 vga_char_color(vga_color_t fg, vga_color_t bg);
-uint16_t vga_char(unsigned char uc, uint8_t color);
-void	 term_up();
-void	 term_down();
-void	 term_first_column();
-void	 term_last_column();
-void	 term_previous_row();
-void	 term_next_row();
-void	 term_previous();
-void	 term_next();
-void	 term_init();
-void	 term_set_buffer(char c);
-size_t	 term_putstr(const char* str);
-size_t	 term_putchar(char c);
-void	 write_tab();
+void		vga_write(char c, uint8_t color, size_t x, size_t y);
+uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);
+uint16_t	vga_char(unsigned char uc, uint8_t color);
+vga_color_t vga_fg_color(uint8_t color);
+vga_color_t vga_bg_color(uint8_t color);
+void		all_terms_init();
+void		term_init(size_t term_index);
+void		load_term(terminal_t* dest, terminal_t* src);
+void		load_term_buffer(uint16_t* dest, uint16_t* src);
+void		switch_term(size_t next);
+void		switch_next_term();
+void		switch_previous_term();
+void		term_up();
+void		term_down();
+void		term_first_column();
+void		term_last_column();
+void		term_previous_row();
+void		term_next_row();
+void		term_previous();
+void		term_next();
+void		term_front_color_next();
+void		term_back_color_next();
+void		term_set_buffer(size_t i, char c);
+size_t		term_putstr(const char* str);
+size_t		term_putchar(char c);
+void		write_tab();
 
 /* ======================= keyboard =================================== */
 #define LOG_INFO "INFO "
@@ -132,10 +155,11 @@ void handle_keypress(keypress_t* keypress);
 void handle_home();
 // void handle_up(keypress_t* keypress);
 // void handle_page_up(keypress_t* keypress);
-// void handle_left(keypress_t* keypress);
-// void handle_right(keypress_t* keypress);
+void handle_left(keypress_t* keypress);
+void handle_right(keypress_t* keypress);
 void handle_end();
 // void handle_down(keypress_t* keypress);
 // void handle_page_down(keypress_t* keypress);
 void handle_delete();
+void handle_control_ascii(uint8_t c);
 #endif

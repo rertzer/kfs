@@ -10,8 +10,8 @@ void kernel_main(void) {
 	while (true) {
 		uint8_t	   scancode = get_keyboard_input();
 		keypress_t keypress = handle_scancode(scancode);
-		if (keypress.pressed == TRUE && keypress.ascii != 0) {
-			term_putchar(keypress.ascii);
+		if (keypress.pressed == TRUE) {
+			handle_keypress(&keypress);
 		}
 	}
 }
@@ -85,6 +85,44 @@ void write_tab() {
 		term_next();
 	}
 }
+
+void term_up() {
+	if (term.column != 0) {
+		--term.column;
+	}
+	update_cursor(term.column, term.row);
+}
+
+void term_down() {
+	if (term.column != VGA_HEIGHT) {
+		++term.column;
+	}
+	update_cursor(term.column, term.row);
+}
+
+void term_fisrt_column() {
+	term.column = 0;
+	update_cursor(term.column, term.row);
+}
+
+void term_last_column() {
+	term.column = VGA_WIDTH;
+	update_cursor(term.column, term.row);
+}
+void term_previous_row() {
+	if (term.row != 0) {
+		--term.row;
+	}
+	update_cursor(term.column, term.row);
+}
+
+void term_next_row() {
+	if (term.row != VGA_WIDTH) {
+		++term.row;
+	}
+	update_cursor(term.column, term.row);
+}
+
 void term_previous() {
 	if (term.column == 0) {
 		if (term.row != 0) {

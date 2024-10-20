@@ -74,6 +74,12 @@ size_t strlen(const char* str);
 void	 vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t	 vga_char_color(vga_color_t fg, vga_color_t bg);
 uint16_t vga_char(unsigned char uc, uint8_t color);
+void	 term_up();
+void	 term_down();
+void	 term_first_column();
+void	 term_last_column();
+void	 term_previous_row();
+void	 term_next_row();
 void	 term_previous();
 void	 term_next();
 void	 term_init();
@@ -96,7 +102,7 @@ void		  enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 void		  update_cursor(size_t x, size_t y);
 int			  printk(const char* format, ...);
 
-/* ======================== keycode ====================================== */
+/* ======================== scancode ====================================== */
 typedef struct {
 	uint8_t extended : 1;
 	uint8_t pressed : 1;
@@ -108,10 +114,28 @@ typedef struct {
 	uint8_t scrolllock : 1;
 	uint8_t scancode;
 	uint8_t ascii;
-	uint8_t extra;
+	uint8_t keycode;
 } keypress_t;
 
 typedef void (*handle_fun_t)(keypress_t* k);
-keypress_t handle_scancode(uint8_t scancode);
 
+keypress_t handle_scancode(uint8_t scancode);
+void	   handle_control(keypress_t* current);
+void	   handle_shift(keypress_t* current);
+void	   handle_alt(keypress_t* current);
+void	   handle_capslock(keypress_t* current);
+void	   handle_numlock(keypress_t* current);
+void	   handle_scrolllock(keypress_t* current);
+
+/* ===================== keycode ======================================= */
+void handle_keypress(keypress_t* keypress);
+void handle_home();
+// void handle_up(keypress_t* keypress);
+// void handle_page_up(keypress_t* keypress);
+// void handle_left(keypress_t* keypress);
+// void handle_right(keypress_t* keypress);
+void handle_end();
+// void handle_down(keypress_t* keypress);
+// void handle_page_down(keypress_t* keypress);
+void handle_delete();
 #endif

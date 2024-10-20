@@ -49,7 +49,7 @@ void handle_left(keypress_t* keypress) {
 	if (keypress->control == TRUE) {
 		switch_previous_term();
 	} else {
-		term_previous();
+		term_left();
 	}
 }
 
@@ -57,7 +57,7 @@ void handle_right(keypress_t* keypress) {
 	if (keypress->control == TRUE) {
 		switch_next_term();
 	} else {
-		term_next();
+		term_right();
 	}
 }
 void handle_home() {}

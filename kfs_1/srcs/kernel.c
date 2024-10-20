@@ -158,6 +158,20 @@ void term_down() {
 	update_cursor(term.column, term.row);
 }
 
+void term_left() {
+	if (term.column != 0) {
+		--term.column;
+		update_cursor(term.column, term.row);
+	}
+}
+
+void term_right() {
+	if (term.column != VGA_WIDTH - 1) {
+		++term.column;
+		update_cursor(term.column, term.row);
+	}
+}
+
 void term_fisrt_column() {
 	term.column = 0;
 	update_cursor(term.column, term.row);
@@ -175,7 +189,7 @@ void term_previous_row() {
 }
 
 void term_next_row() {
-	if (term.row != VGA_WIDTH) {
+	if (term.row != VGA_HEIGHT - 1) {
 		++term.row;
 	}
 	update_cursor(term.column, term.row);
@@ -197,12 +211,23 @@ void term_next() {
 	++term.column;
 	if (term.column == VGA_WIDTH) {
 		term.column = 0;
-		++term.row;
-		if (term.row == VGA_HEIGHT) {
-			term.row = 0;
+		if (term.row == VGA_HEIGHT - 1) {
+			term_scroll();
+		} else {
+			++term.row;
 		}
 	}
 	update_cursor(term.column, term.row);
+}
+
+void term_scroll() {
+	size_t index;
+	for (index = 0; index < VGA_WIDTH * (VGA_HEIGHT - 1); ++index) {
+		term.buffer[index] = term.buffer[index + VGA_WIDTH];
+	}
+	for (; index < VGA_WIDTH * VGA_HEIGHT; ++index) {
+		term.buffer[index] = ' ';
+	}
 }
 
 void term_front_color_next() {
@@ -231,9 +256,10 @@ void term_back_color_next() {
 
 void term_next_line() {
 	term.column = 0;
-	++term.row;
-	if (term.row == VGA_HEIGHT) {
-		term.row = 0;
+	if (term.row == VGA_HEIGHT - 1) {
+		term_scroll();
+	} else {
+		++term.row;
 	}
 	update_cursor(term.column, term.row);
 }

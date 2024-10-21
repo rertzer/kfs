@@ -221,12 +221,13 @@ void term_next() {
 }
 
 void term_scroll() {
-	size_t index;
+	size_t	 index;
+	uint16_t vc = vga_char(' ', term.color);
 	for (index = 0; index < VGA_WIDTH * (VGA_HEIGHT - 1); ++index) {
 		term.buffer[index] = term.buffer[index + VGA_WIDTH];
 	}
 	for (; index < VGA_WIDTH * VGA_HEIGHT; ++index) {
-		term.buffer[index] = ' ';
+		term.buffer[index] = vc;
 	}
 }
 

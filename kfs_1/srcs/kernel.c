@@ -7,14 +7,23 @@ size_t	   current_term;
 
 void kernel_main(void) {
 	all_terms_init();
-	init_gdt();
-	term_putstr("42");
+	// init_gdt();
+	init_idt();
+	term_putstr("42\n");
 
 	while (true) {
 		uint8_t	   scancode = get_keyboard_input();
 		keypress_t keypress = handle_scancode(scancode);
 		if (keypress.pressed == TRUE) {
 			handle_keypress(&keypress);
+			uint8_t a = 12;
+			uint8_t b = 42;
+			printk("a %d b %d\n", a, b);
+			// if (keypress.ascii != 0) {
+			// 	printk("div by zero\n");
+			// 	int a = 42 / (keypress.ascii - '0');
+			// 	printk("a is %d\n", a);
+			// }
 		}
 	}
 }

@@ -20,7 +20,7 @@ set_gdt:
 	MOV		ES, AX
 	MOV		FS, AX
 	MOV		GS, AX
-	MOV		AX, 0x18 ; kernel stack segment 
+	;MOV		AX, 0x18 ; kernel stack segment 
 	MOV		SS, AX
 	;STI
 	RET

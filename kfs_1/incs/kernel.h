@@ -129,7 +129,7 @@ typedef struct {
 
 
 void init_idt();
-__attribute__((noreturn)) void exception_handler(void);
+void exception_handler(void);
 
 // assembly functions
 void idt_flush(uint32_t idt_ptr);

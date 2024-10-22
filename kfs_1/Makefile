@@ -20,7 +20,9 @@ SOURCES =	kernel.c \
 			scancode.c \
 			printk.c \
 		  	gdt.c \
+			interrupts.c \
 			setgdt.s \
+			isrstubs.s \
 			boot.s
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))

@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "interrupts.h"
 #include "keycode.h"
 
 #define VGA_WIDTH 80

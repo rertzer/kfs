@@ -14,7 +14,6 @@ void init_gdt() {
 	gdt_descriptor_t user_data_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF2, 0xC};
 	gdt_descriptor_t user_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF6, 0xC};
 
-	gdt[0].bytes[2] = (uint8_t)42;
 	add_gdt_descriptor(&gdt[0], null_desc);
 	add_gdt_descriptor(&gdt[1], kernel_code_desc);
 	add_gdt_descriptor(&gdt[2], kernel_data_desc);
@@ -23,7 +22,7 @@ void init_gdt() {
 	add_gdt_descriptor(&gdt[5], user_data_desc);
 	add_gdt_descriptor(&gdt[6], user_stack_desc);
 
-	set_gdt(sizeof(uint64_t) * 7, GDT_BUFFER);
+	set_gdt(sizeof(uint64_t) * 7 - 1, GDT_BUFFER);
 }
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {

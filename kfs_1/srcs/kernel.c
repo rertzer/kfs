@@ -16,11 +16,6 @@ void kernel_main(void) {
 		keypress_t keypress = handle_scancode(scancode);
 		if (keypress.pressed == TRUE) {
 			handle_keypress(&keypress);
-			if (keypress.ascii != 0) {
-				printk("div by zero\n");
-				int a = 42 / (keypress.ascii - '0');
-				printk("a is %d\n", a);
-			}
 		}
 	}
 }

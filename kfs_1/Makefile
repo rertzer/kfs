@@ -17,7 +17,11 @@ DEPS_DIR = $(PROJECT_DIR)/deps
 
 SOURCES =	kernel.c \
 		  	keyboard.c \
+			keycode.c \
+			scancode.c \
+			kprint.c \
 		  	gdt.c \
+			idt.c \
 			boot.s
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))

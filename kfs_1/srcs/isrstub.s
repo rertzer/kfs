@@ -1,13 +1,27 @@
 ; ===================== DATA ===============================
-
-; ==================== TEXT ===============================
 extern exception_handler
 
+section .data
+align 32
+global hereafter
+hereafter:
+	dd 999 
+
+global isr_stub_table
+isr_stub_table:
+	%assign i 0 
+	%rep    32 
+	dd isr_stub_%+i
+	%assign i i+1 
+	%endrep
+
+; ==================== TEXT ===============================
 section .text
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
 	mov eax, %+%1
+	mov [hereafter], eax ;%+%1
     call exception_handler
     iret 
 %endmacro
@@ -15,13 +29,12 @@ isr_stub_%+%1:
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
 	mov eax, %+%1
+	mov [hereafter], eax;%+%1
     call exception_handler
     iret
 %endmacro
 
-isr_stub_4:
-	mov eax 7
-	call exception_handler
+isr_stub_8:
 	iret
 
 isr_no_err_stub 0
@@ -32,7 +45,7 @@ isr_no_err_stub 4
 isr_no_err_stub 5
 isr_no_err_stub 6
 isr_no_err_stub 7
-isr_err_stub    8
+;isr_err_stub    8
 isr_no_err_stub 9
 isr_err_stub    10
 isr_err_stub    11

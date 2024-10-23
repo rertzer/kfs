@@ -1,24 +1,27 @@
-apt install -y build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo libisl-dev curl
+#!/bin/env bash
 
-export PREFIX="$PWD/cross"
+apt update
+
+apt install -y build-essential grub2 bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo libisl-dev curl make file
+
+export PREFIX="/cross"
 export TARGET=i386-elf
 export PATH="$PREFIX/bin:$PATH"
 
-mkdir src
-cd src
-#download binutils gcc in $PWD/src
+mkdir /tmp
+cd /tmp  
 
 # install gdb
-curl -O "http://ftp.gnu.org/gnu/gdb/gdb-7.11.tar.gz"
-tar -xvzf gdb-7.11.tar.gz
-mkdir build-gdb
-cd build-gdb
-../gdb-7.11/configure --target=$TARGET --prefix="$PREFIX" --disable-werror
-make all-gdb
-make install-gdb
+# curl -O "http://ftp.gnu.org/gnu/gdb/gdb-7.11.tar.gz"
+# tar -xvzf gdb-7.11.tar.gz
+# mkdir build-gdb
+# cd build-gdb
+# ../gdb-7.11/configure --target=$TARGET --prefix="$PREFIX" --disable-werror
+# make all-gdb
+# make install-gdb
 
 
-cd ..
+# cd ..
 #install binutils
 curl -O "https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.gz"
 tar -xvzf binutils-2.43.tar.gz

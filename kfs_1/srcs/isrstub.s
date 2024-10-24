@@ -10,7 +10,7 @@ hereafter:
 global isr_stub_table
 isr_stub_table:
 	%assign i 0 
-	%rep    32 
+	%rep    47 
 	dd isr_stub_%+i
 	%assign i i+1 
 	%endrep
@@ -20,21 +20,32 @@ section .text
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
+	cli
 	mov eax, %+%1
 	mov [hereafter], eax ;%+%1
     call exception_handler
+	sti
+	mov	al, 0x20	; set bit 4 of OCW 2
+	out	0x20, al	; write to primary PIC command register
     iret 
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
+	cli
 	mov eax, %+%1
 	mov [hereafter], eax;%+%1
     call exception_handler
+	; send EOI to primary PIC
+ 
+	mov	al, 0x20	; set bit 4 of OCW 2
+	out	0x20, al	; write to primary PIC command register
+	sti
     iret
 %endmacro
 
-isr_stub_8:
+; timer interrupt
+isr_stub_32:
 	iret
 
 isr_no_err_stub 0
@@ -45,7 +56,7 @@ isr_no_err_stub 4
 isr_no_err_stub 5
 isr_no_err_stub 6
 isr_no_err_stub 7
-;isr_err_stub    8
+isr_err_stub    8
 isr_no_err_stub 9
 isr_err_stub    10
 isr_err_stub    11
@@ -69,3 +80,18 @@ isr_no_err_stub 28
 isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
+;isr_no_err_stub 32 timer
+isr_no_err_stub 33
+isr_no_err_stub 34
+isr_no_err_stub 35
+isr_no_err_stub 36
+isr_no_err_stub 37
+isr_no_err_stub 38
+isr_no_err_stub 39
+isr_no_err_stub 40
+isr_no_err_stub 41
+isr_no_err_stub 42
+isr_no_err_stub 43
+isr_no_err_stub 44
+isr_no_err_stub 45
+isr_no_err_stub 46

@@ -3,6 +3,7 @@
 void kernel_main(void) {
 	all_terms_init();
 	init_gdt();
+	PIC_remap(0x20, 0x28);
 	init_idt();
 	term_putstr("42\n");
 

@@ -8,6 +8,7 @@
 
 #include "interrupts.h"
 #include "keycode.h"
+#include "pic.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -122,6 +123,7 @@ void		write_tab();
 
 unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);
+void		  io_wait(void);
 unsigned char get_input();
 void		  term_next_line();
 unsigned char get_keyboard_input();

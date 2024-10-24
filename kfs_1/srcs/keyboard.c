@@ -10,6 +10,10 @@ void outb(unsigned char value, unsigned short port) {
 	asm volatile("out %%al, %%dx" : : "a"(value), "d"(port) : "memory");
 }
 
+void io_wait(void) {
+	outb(0, 0x80);
+}
+
 unsigned char get_keyboard_input() {
 	while (!(inb(0x64) & 0x1))
 		;

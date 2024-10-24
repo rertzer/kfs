@@ -22,6 +22,7 @@ SOURCES =	kernel.c \
 			scancode.c \
 			printk.c \
 		  	gdt.c \
+			pic.c \
 			interrupts.c \
 			utils.c \
 			setgdt.s \

@@ -1,14 +1,14 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
 
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#define IDT_MAX_DESCRIPTORS 32
+#define IDT_MAX_DESCRIPTORS 48
 #define IDT_FLAG_PRESENT 0x80
 #define IDT_FLAG_32BIT_INTERRUPT 0x0E
+
 typedef struct {
 	uint16_t isr_low;	  // Lower 16 bits of the ISR's address
 	uint16_t kernel_cs;	  // GDT segment selector loaded into CS
@@ -22,7 +22,7 @@ typedef struct {
 	uint32_t base;
 } __attribute__((packed)) idtr_t;
 
-__attribute__((noreturn)) void exception_handler();
+void exception_handler();
 
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 void init_idt(void);

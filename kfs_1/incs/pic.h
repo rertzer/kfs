@@ -22,5 +22,14 @@
 #define ICW4_BUF_MASTER 0x0C /* Buffered mode/master */
 #define ICW4_SFNM 0x10		 /* Special fully nested (not) */
 
+#define IRQ_TIMER 0
+#define IRQ_KEYBOARD 1
+#define MASKED 1
+#define UNMASKED 0
+
+void init_PIC();
 void PIC_remap(uint8_t pic1_offset, uint8_t pic2_offset);
+void IRQ_set_mask(uint8_t IRQline, bool masked);
+void IRQ_unmask_all();
+void IRQ_mask_all();
 #endif

@@ -23,6 +23,7 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 void exception_handler();
+void keyboard_handler(uint8_t scan);
 
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 void init_idt(void);

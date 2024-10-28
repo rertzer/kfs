@@ -1,17 +1,22 @@
 #include "kernel.h"
 
-unsigned char inb(unsigned short port) {
-	unsigned char ret;
-	asm volatile("in %%dx, %%al" : "=a"(ret) : "d"(port) : "memory");
-	return ret;
-}
+uint8_t current_scancode = 0;
 
-void outb(unsigned char value, unsigned short port) {
-	asm volatile("out %%al, %%dx" : : "a"(value), "d"(port) : "memory");
-}
+void keyboard_handler(uint8_t scan) {
+	static uint8_t scan_status = SCAN_DEFAULT;
 
-void io_wait(void) {
-	outb(0, 0x80);
+	current_scancode = scan;
+	switch (scan_status) {
+		case SCAN_DEFAULT:
+			scan_status = handle_scancode_default();
+			break;
+		case SCAN_EXTENDED:
+			scan_status = handle_scancode_extended();
+			break;
+		case SCAN_PAUSE:
+			scan_status = handle_scancode_pause();
+			break;
+	}
 }
 
 unsigned char get_keyboard_input() {

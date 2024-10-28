@@ -1,5 +1,6 @@
 ; ===================== DATA ===============================
 extern exception_handler
+extern keyboard_handler
 
 section .data
 align 32
@@ -21,11 +22,13 @@ section .text
 %macro isr_err_stub 1
 isr_stub_%+%1:
 	cli
+	pusha
 	mov eax, %+%1
 	mov [hereafter], eax ;%+%1
     call exception_handler
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register
+	popa
 	sti
     iret 
 %endmacro
@@ -33,12 +36,14 @@ isr_stub_%+%1:
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
 	cli
+	pusha
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register
 	mov eax, %+%1
 	mov [hereafter], eax;%+%1
     call exception_handler
 	; send EOI to primary PIC
+	popa
 	sti
     iret
 %endmacro
@@ -47,10 +52,25 @@ isr_stub_%+%1:
 ;isr_stub_32:
 ;	iret
 
-;isr_stub_33:
-;	cli
-;	hlt
-;	iret
+; keyboard interrupt
+isr_stub_33:
+	cli
+	pusha
+	xor eax, eax
+	mov	al, 0x20	; set bit 4 of OCW 2
+	out	0x20, al	; write to primary PIC command register
+	in al, 0x64		; read keyboard status
+	and al, 0x01   ; if bit 1 is set there is an input to read
+	cmp al, 0x01
+	jnz key_int_end
+	in al, 0x60		; read keyboard value
+	push eax	
+	call keyboard_handler	
+	key_int_end:
+	pop eax 
+	popa
+	sti
+	iret
 	
 isr_no_err_stub 0
 isr_no_err_stub 1
@@ -85,7 +105,7 @@ isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
 isr_no_err_stub 32 ;timer
-isr_no_err_stub 33 ;keyboard
+;isr_no_err_stub 33 ;keyboard
 isr_no_err_stub 34
 isr_no_err_stub 35
 isr_no_err_stub 36

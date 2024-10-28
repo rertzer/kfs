@@ -24,6 +24,7 @@ SOURCES =	kernel.c \
 		  	gdt.c \
 			pic.c \
 			interrupts.c \
+			kernel_utils.c \
 			utils.c \
 			setgdt.s \
 			isrstub.s \

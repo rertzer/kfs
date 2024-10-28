@@ -116,14 +116,17 @@ size_t		term_putstr(const char* str);
 size_t		term_putchar(char c);
 void		write_tab();
 
+/* ======================== utils ===================================== */
+/* ======================== kernel utils ============================== */
+unsigned char inb(unsigned short port);
+void		  outb(unsigned char value, unsigned short port);
+void		  io_wait(void);
+void		  sleep();
 /* ======================= keyboard =================================== */
 #define LOG_INFO "INFO "
 #define LOG_WARNING "WARNING "
 #define LOG_ERROR "ERROR "
 
-unsigned char inb(unsigned short port);
-void		  outb(unsigned char value, unsigned short port);
-void		  io_wait(void);
 unsigned char get_input();
 void		  term_next_line();
 unsigned char get_keyboard_input();

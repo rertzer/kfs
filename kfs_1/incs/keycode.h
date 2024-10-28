@@ -1,7 +1,13 @@
 #ifndef KEYCODE_H
 #define KEYCODE_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
 #define BACKSPACE 8
+
+typedef enum { SCAN_DEFAULT, SCAN_EXTENDED, SCAN_PAUSE } scanstatus_t;
 
 typedef enum {
 	ESCAPE,
@@ -189,5 +195,10 @@ typedef enum {
 	[PAD_8] = {'8', '8'}, [PAD_9] = {'9', '9'}, [PAD_MINUS] = {'-', '-'}, [PAD_4] = {'4', '4'},    \
 	[PAD_5] = {'5', '5'}, [PAD_6] = {'6', '6'}, [PAD_PLUS] = {'+', '+'}, [PAD_1] = {'1', '1'},     \
 	[PAD_2] = {'2', '2'}, [PAD_3] = {'3', '3'}, [PAD_0] = {'0', '0'}, [PAD_DOT] = {'.', '.'}
+
+/* ==================================== scancode ================================================ */
+uint8_t handle_scancode_default();
+uint8_t handle_scancode_extended();
+uint8_t handle_scancode_pause();
 
 #endif

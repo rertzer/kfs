@@ -136,11 +136,11 @@ int			  printk(const char* format, ...);
 
 /* ======================== scancode ====================================== */
 typedef struct {
-	uint8_t extended : 1;
 	uint8_t pressed : 1;
 	uint8_t control : 1;
 	uint8_t alt : 1;
 	uint8_t shift : 1;
+	uint8_t gui : 1;
 	uint8_t capslock : 1;
 	uint8_t numlock : 1;
 	uint8_t scrolllock : 1;
@@ -150,18 +150,12 @@ typedef struct {
 } keypress_t;
 
 typedef void (*handle_fun_t)(keypress_t* k);
-
-keypress_t handle_scancode(uint8_t scancode);
-void	   handle_control(keypress_t* current);
-void	   handle_shift(keypress_t* current);
-void	   handle_alt(keypress_t* current);
-void	   handle_capslock(keypress_t* current);
-void	   handle_numlock(keypress_t* current);
-void	   handle_scrolllock(keypress_t* current);
-
 /* ===================== keycode ======================================= */
-void handle_keypress(keypress_t* keypress);
-void handle_home();
+
+keypress_t init_keypress();
+keypress_t update_keypress(keypress_t keypress);
+void	   handle_keypress(keypress_t* keypress);
+void	   handle_home();
 // void handle_up(keypress_t* keypress);
 // void handle_page_up(keypress_t* keypress);
 void handle_left(keypress_t* keypress);

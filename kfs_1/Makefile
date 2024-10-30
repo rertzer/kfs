@@ -15,7 +15,6 @@ OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 
 SOURCES =	kernel.c \
-			keyboard.c \
 			keycode.c \
 			terminal.c \
 			vga.c \

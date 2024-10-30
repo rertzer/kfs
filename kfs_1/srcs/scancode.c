@@ -5,11 +5,29 @@ static bool	   handle_pressed();
 static uint8_t handle_status();
 static void	   handle_code(bool pressed);
 static void	   handle_extended_code(bool pressed);
-extern uint8_t current_scancode;
 
+uint8_t	  current_scancode = 0;
+keycode_t current_code = NONE;
+
+void keyboard_handler(uint8_t scan) {
+	static uint8_t scan_status = SCAN_DEFAULT;
+
+	current_scancode = scan;
+	switch (scan_status) {
+		case SCAN_DEFAULT:
+			scan_status = handle_scancode_default();
+			break;
+		case SCAN_EXTENDED:
+			scan_status = handle_scancode_extended();
+			break;
+		case SCAN_PAUSE:
+			scan_status = handle_scancode_pause();
+			break;
+	}
+}
 uint8_t handle_scancode_pause() {
 	/* !!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!! */
-	current_scancode = PAUSE;
+	current_code = PAUSE;
 	return (SCAN_DEFAULT);
 }
 
@@ -27,9 +45,9 @@ uint8_t handle_scancode_extended() {
 }
 
 static bool handle_pressed() {
-	bool pressed = false;
+	bool pressed = RELEASED;
 	if (current_scancode < 0x80) {
-		pressed = true;
+		pressed = PRESSED;
 	} else if (current_scancode < 0xE0) {
 		current_scancode -= 0x80;
 	}
@@ -50,11 +68,11 @@ static uint8_t handle_status() {
 static void handle_code(bool pressed) {
 	static const keycode_t codes[128] = {SCANCODES};
 	keycode_t			   kc = codes[current_scancode];
-	current_scancode = (pressed << 7) | (uint8_t)kc;
+	current_code = (pressed << 7) | (uint8_t)kc;
 }
 
 static void handle_extended_code(bool pressed) {
 	static const keycode_t codes[128] = {EXTENDED_SCANCODES};
 	keycode_t			   kc = codes[current_scancode];
-	current_scancode = (pressed << 7) | (uint8_t)kc;
+	current_code = (pressed << 7) | (uint8_t)kc;
 }

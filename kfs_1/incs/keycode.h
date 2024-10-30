@@ -6,10 +6,13 @@
 #include <stdint.h>
 
 #define BACKSPACE 8
+#define PRESSED 0
+#define RELEASED 1
 
 typedef enum { SCAN_DEFAULT, SCAN_EXTENDED, SCAN_PAUSE } scanstatus_t;
 
 typedef enum {
+	NONE,
 	ESCAPE,
 	KEY_1,
 	KEY_2,

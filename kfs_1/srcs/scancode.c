@@ -13,6 +13,7 @@ void keyboard_handler(uint8_t scan) {
 	static uint8_t scan_status = SCAN_DEFAULT;
 
 	current_scancode = scan;
+
 	switch (scan_status) {
 		case SCAN_DEFAULT:
 			scan_status = handle_scancode_default();
@@ -25,6 +26,7 @@ void keyboard_handler(uint8_t scan) {
 			break;
 	}
 }
+
 uint8_t handle_scancode_pause() {
 	/* !!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!! */
 	current_code = PAUSE;

@@ -57,8 +57,6 @@ isr_stub_33:
 	cli
 	pusha
 	xor eax, eax
-	mov	al, 0x20	; set bit 4 of OCW 2
-	out	0x20, al	; write to primary PIC command register
 	in al, 0x64		; read keyboard status
 	and al, 0x01   ; if bit 1 is set there is an input to read
 	cmp al, 0x01
@@ -67,7 +65,9 @@ isr_stub_33:
 	push eax	
 	call keyboard_handler	
 	key_int_end:
-	pop eax 
+	pop eax
+	mov	al, 0x20	; set bit 4 of OCW 2
+	out	0x20, al	; write to primary PIC command register 
 	popa
 	sti
 	iret

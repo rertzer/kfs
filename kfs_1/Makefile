@@ -16,6 +16,7 @@ INCS_DIR = $(PROJECT_DIR)/incs
 
 SOURCES =	kernel.c \
 			keycode.c \
+			keypress.c \
 			terminal.c \
 			vga.c \
 			scancode.c \

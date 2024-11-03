@@ -16,7 +16,7 @@ static void		   handle_fn(keypress_t* current);
 
 keypress_t init_keypress() {
 	keypress_t keypress;
-	keypress.pressed = false;
+	keypress.pressed = RELEASED;
 	keypress.control = false;
 	keypress.alt = false;
 	keypress.shift = false;
@@ -36,6 +36,7 @@ keypress_t update_keypress(keypress_t keypress) {
 	keypress.keycode = keypress.scancode & 0x7F;
 	keypress.ascii = handle_ascii(keypress);
 	keypress = handle_switches(keypress);
+	return (keypress);
 }
 
 static keypress_t handle_switches(keypress_t keypress) {
@@ -71,41 +72,7 @@ static keypress_t handle_switches(keypress_t keypress) {
 	}
 	return (keypress);
 }
-
-void handle_left(keypress_t* keypress) {
-	if (keypress->control == TRUE) {
-		switch_previous_term();
-	} else {
-		term_left();
-	}
-}
-
-void handle_right(keypress_t* keypress) {
-	if (keypress->control == TRUE) {
-		switch_next_term();
-	} else {
-		term_right();
-	}
-}
-void handle_home() {}
-
-void handle_end() {}
-
-void handle_delete() {
-	term_putchar(' ');
-}
-void handle_control_ascii(uint8_t c) {
-	switch (c) {
-		case '[':
-			term_front_color_next();
-			break;
-		case ']':
-			term_back_color_next();
-		default:
-			break;
-	}
-}
-
+////////////////////////////////////////////////////////
 static uint8_t handle_ascii(keypress_t current) {
 	bool upper = get_upper(current);
 	return (get_ascii(current, upper));
@@ -137,7 +104,7 @@ static uint8_t get_ascii(keypress_t current, bool upper) {
 }
 
 static keypress_t handle_control(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.control = TRUE;
 	} else {
 		current.control = FALSE;
@@ -146,7 +113,7 @@ static keypress_t handle_control(keypress_t current) {
 }
 
 static keypress_t handle_shift(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.shift = TRUE;
 	} else {
 		current.shift = FALSE;
@@ -155,7 +122,7 @@ static keypress_t handle_shift(keypress_t current) {
 }
 
 static keypress_t handle_alt(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.alt = TRUE;
 	} else {
 		current.alt = FALSE;
@@ -163,7 +130,7 @@ static keypress_t handle_alt(keypress_t current) {
 	return (current);
 }
 static keypress_t handle_gui(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.gui = TRUE;
 	} else {
 		current.gui = FALSE;
@@ -171,21 +138,21 @@ static keypress_t handle_gui(keypress_t current) {
 	return (current);
 }
 static keypress_t handle_capslock(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.capslock = !current.capslock;
 	}
 	return (current);
 }
 
 static keypress_t handle_numlock(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.numlock = !current.numlock;
 	}
 	return (current);
 }
 
 static keypress_t handle_scrolllock(keypress_t current) {
-	if (current.pressed) {
+	if (current.pressed == PRESSED) {
 		current.scrolllock = !current.scrolllock;
 	}
 	return (current);

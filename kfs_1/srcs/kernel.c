@@ -12,14 +12,13 @@ void kernel_main(void) {
 	keypress_t keypress = init_keypress();
 
 	while (true) {
-		printk("looping\n");
+		// printk("looping\n");
 		sleep();
 		keypress.scancode = current_code;
-		printk("scancode %d\n", keypress.scancode);
 		if (keypress.scancode != 0) {
-			keypress_t keypress = update_keypress(keypress);
-			if (keypress.pressed == TRUE) {
-				handle_keypress(&keypress);
+			keypress = update_keypress(keypress);
+			if (keypress.pressed == PRESSED) {
+				handle_keypress(keypress);
 			}
 		}
 	}

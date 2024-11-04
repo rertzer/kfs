@@ -15,13 +15,21 @@ OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
 
+PRINTK_SOURCE = printk/printk.c \
+				printk/hexa.c \
+				printk/integer.c \
+				printk/string.c \
+				printk/pointer.c \
+				printk/unsigned.c \
+				printk/utils.c \
+				printk/options.c
+
 SOURCES =	kernel.c \
 			keycode.c \
 			keypress.c \
 			terminal.c \
 			vga.c \
 			scancode.c \
-			printk.c \
 		  	gdt.c \
 			pic.c \
 			interrupts.c \
@@ -30,7 +38,9 @@ SOURCES =	kernel.c \
 			setgdt.s \
 			isrstub.s \
 			boot.s \
-			hexdump.c
+			hexdump.c 
+
+SOURCES += $(PRINTK_SOURCE)
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))
 

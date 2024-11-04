@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "keycode.h"
 #include "pic.h"
+#include "printk.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25

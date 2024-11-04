@@ -73,7 +73,8 @@ void handle_default_keycode(keycode_t keycode) {
 			term_putchar(' ');
 			break;
 		case PAGE_UP:
-			printk("%d", printk("%+&025d\n", 42));
+			printk("%d\n", printk("%#010x\n", 42));
+			printk("%d\n", printk("%#10x\n", 42));
 			break;
 		default:
 			break;

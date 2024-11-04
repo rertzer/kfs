@@ -67,22 +67,6 @@ typedef enum vga_blink_e {
 
 #define GDT_BUFFER 0x00000800
 
-#define GDT_SIZE 7
-#define GDT_TABLE \
-	{0,		0,			0,		0},\
-	{0,		0xFFFFF,	0x9A,	0xC},\
-	{0,		0xFFFFF,	0x92,	0xC},\
-	{0,		0xFFFFF,	0x96,	0xC},\
-	{0,		0xFFFFF,	0xFA,	0xC},\
-	{0,		0xFFFFF,	0xF2,	0xC},\
-	{0,		0xFFFFF,	0xF6,	0xC},\
-//   base 	limit		access	flags
-
-typedef struct {
-	uint16_t limit;
-	uint32_t base;
-}  __attribute__((packed)) gdt_ptr_t;
-
 typedef struct {
 	uint32_t base;
 	uint32_t limit;
@@ -90,51 +74,13 @@ typedef struct {
 	uint8_t	 flags;
 } gdt_descriptor_t;
 
-typedef struct {
-	uint16_t limit_low;
-	uint16_t base_low;
-	uint8_t	 base_middle;
-	uint8_t	 access_byte;
-	uint8_t	 limit_high_flags;
-	uint8_t	 base_high;
-} __attribute__((packed)) gdt_entry_t;
+typedef union toto {
+	uint64_t desc;
+	uint8_t	 bytes[8];
+} gdt_entry_t;
 
 void init_gdt();
-
-// assembly functions
-void gdt_flush(uint32_t gdt_ptr);
-
-
-/* ============= IDT ============= */
-
-#define IDT_MAX_DESCRIPTORS 32
-#define IDT_FLAG_PRESENT 0x80
-#define IDT_FLAG_32BIT_INTERRUPT 0x0E
-
-typedef struct {
-	uint16_t limit;
-	uint32_t base;
-}  __attribute__((packed)) idt_ptr_t;
-
-typedef struct {
-	uint32_t isr;
-	uint8_t	 flags;
-} idt_descriptor_t;
-
-typedef struct {
-	uint16_t isr_low;	  // Lower 16 bits of the ISR's address
-	uint16_t kernel_cs;	  // GDT segment selector loaded into CS
-	uint8_t	 reserved;	  // Set to zero
-	uint8_t	 attributes;  // Flags
-	uint16_t isr_high;	  // Higher 16 bits of the ISR's address
-} __attribute__((packed)) idt_entry_t;
-
-
-void init_idt();
-void exception_handler(void);
-
-// assembly functions
-void idt_flush(uint32_t idt_ptr);
+void set_gdt();
 
 /* ======================== utils ==================================== */
 size_t strlen(const char* str);
@@ -172,6 +118,8 @@ size_t		term_putchar(char c);
 void		write_tab();
 
 /* ======================== utils ===================================== */
+void hexdump(uint8_t *data, uint32_t length);
+
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);

@@ -16,7 +16,7 @@ typedef struct {
 	uint8_t	 attributes;  // Flags
 	uint16_t isr_high;	  // Higher 16 bits of the ISR's address
 } __attribute__((packed)) idt_entry_t;
-
+	
 typedef struct {
 	uint16_t limit;
 	uint32_t base;

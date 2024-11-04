@@ -16,13 +16,19 @@ INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
 
 SOURCES =	kernel.c \
-		  	keyboard.c \
 			keycode.c \
+			keypress.c \
+			terminal.c \
+			vga.c \
 			scancode.c \
-			kprint.c \
+			printk.c \
 		  	gdt.c \
-			idt.c \
-			hexdump.c \
+			pic.c \
+			interrupts.c \
+			kernel_utils.c \
+			utils.c \
+			setgdt.s \
+			isrstub.s \
 			boot.s
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))

@@ -8,23 +8,41 @@ gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
 
+gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
+
 void init_gdt() {
-	gdt_ptr.limit = (uint16_t)sizeof(gdt_entry_t) * GDT_SIZE - 1;
-	gdt_ptr.base = (uint32_t)GDT_BUFFER;
+	//                                                     base  limit  access flags
+	gdt_descriptor_t null_desc = (gdt_descriptor_t){0, 0, 0, 0};
+	gdt_descriptor_t kernel_code_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x9A, 0xC};
+	gdt_descriptor_t kernel_data_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x92, 0xC};
+	gdt_descriptor_t kernel_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x96, 0xC};
+	gdt_descriptor_t user_code_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xFA, 0xC};
+	gdt_descriptor_t user_data_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF2, 0xC};
+	gdt_descriptor_t user_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF6, 0xC};
 
-	gdt_descriptor_t gdt_descriptor_table[GDT_SIZE] = {GDT_TABLE};
-	for (size_t i = 0; i < GDT_SIZE; ++i) {
-		add_gdt_descriptor(&gdt[i], gdt_descriptor_table[i]);
-	}
+	add_gdt_descriptor(&gdt[0], null_desc);
+	add_gdt_descriptor(&gdt[1], kernel_code_desc);
+	add_gdt_descriptor(&gdt[2], kernel_data_desc);
+	add_gdt_descriptor(&gdt[3], kernel_stack_desc);
+	add_gdt_descriptor(&gdt[4], user_code_desc);
+	add_gdt_descriptor(&gdt[5], user_data_desc);
+	add_gdt_descriptor(&gdt[6], user_stack_desc);
 
-	gdt_flush((uint32_t)&gdt_ptr);
+	set_gdt(sizeof(uint64_t) * 7 - 1, GDT_BUFFER);
 }
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
-    entry->limit_low = (desc.limit & 0xFF);
-    entry->base_low = (desc.base & 0xFF);
-    entry->base_middle = (desc.base >> 16) & 0xFF;
-    entry->access_byte = desc.access;
-    entry->limit_high_flags = ((desc.limit >> 16) & 0x0F) | (desc.flags << 4 | 0x0F);
-    entry->base_high = (desc.base >> 24) & 0xFF;
+	entry->bytes[2] = (uint8_t)(desc.base & 0xFF);
+
+	entry->bytes[3] = (uint8_t)((desc.base >> 8) & 0xFF);
+	entry->bytes[4] = (uint8_t)((desc.base >> 16) & 0xFF);
+	entry->bytes[7] = (uint8_t)((desc.base >> 24) & 0xFF);
+
+	entry->bytes[0] = (uint8_t)(desc.limit & 0xFF);
+	entry->bytes[1] = (uint8_t)((desc.limit >> 8) & 0xFF);
+	entry->bytes[6] = (uint8_t)((desc.limit >> 16) & 0xFF);
+
+	entry->bytes[5] = (uint8_t)(desc.access);
+
+	entry->bytes[6] = (uint8_t)(desc.flags << 4);
 }

@@ -72,6 +72,9 @@ void handle_default_keycode(keycode_t keycode) {
 		case DELETE:
 			term_putchar(' ');
 			break;
+		case PAGE_UP:
+			printk("%d", printk("%+&025d\n", 42));
+			break;
 		default:
 			break;
 	}

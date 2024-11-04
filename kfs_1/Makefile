@@ -29,7 +29,8 @@ SOURCES =	kernel.c \
 			utils.c \
 			setgdt.s \
 			isrstub.s \
-			boot.s
+			boot.s \
+			hexdump.c
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))
 

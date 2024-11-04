@@ -136,6 +136,7 @@ void idt_flush(uint32_t idt_ptr);
 
 /* ======================== utils ==================================== */
 size_t strlen(const char* str);
+void hexdump(uint8_t *data, uint32_t length);
 
 /* ========================= terminal ================================ */
 #define LOG_INFO "INFO "

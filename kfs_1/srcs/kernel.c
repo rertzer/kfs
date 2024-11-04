@@ -16,6 +16,7 @@ void kernel_main(void) {
 		keypress_t keypress = handle_scancode(scancode);
 		if (keypress.pressed == TRUE) {
 			handle_keypress(&keypress);
+			hexdump((uint8_t*)&keypress, sizeof(keypress_t));
 		}
 	}
 }

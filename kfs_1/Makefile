@@ -22,6 +22,7 @@ SOURCES =	kernel.c \
 			kprint.c \
 		  	gdt.c \
 			idt.c \
+			hexdump.c \
 			boot.s
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))

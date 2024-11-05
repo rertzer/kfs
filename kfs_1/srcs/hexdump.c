@@ -1,14 +1,14 @@
 #include "kernel.h"
 
-extern uint8_t stack_bottom;
+void hexdump(void) {
+	uint32_t	*ebp;
+	int			frame;
+	
+	__asm__ volatile ("movl %%ebp, %0" : "=r" (ebp) ::);
 
-void hexdump(uint8_t *data, uint32_t length) {
-	uint32_t i;
-	for (i = 0; i < length; i++) {
-		if (i % 16 == 0) {
-			printk("\n");
-		}
-		printk("%02x ", data[i]);
-	}
-	printk("\n");
+	for (frame = 0; ebp[0] && frame < 10; frame++) {
+        printk("  #%d  %08x\n", frame, ebp[1]);
+        ebp = (uint32_t *)(ebp[0]);
+    }
+	printk("  #%d  %08x\n", frame, ebp[1]);
 }

@@ -13,8 +13,17 @@ int printk(const char* format, ...) {
 	for (int i = 0; format[i]; i++) {
 		if (format[i] == '%')
 		{
-			printk_opts_t opts = get_opts(format, &i);
+			printk_opts_t opts = get_opts(format, i);
 
+			if (opts.error) {
+				term_putstr("Error: invalid flag\n");
+				while(!is_alpha(format[i]))
+					len += print_char(format[i++], (printk_opts_t){0});
+				len += print_char(format[i], (printk_opts_t){0});				
+				continue;
+			}
+
+			i += opts.counter;
 			switch (format[++i]) {
 				case '%':
 					len += print_char('%', opts);

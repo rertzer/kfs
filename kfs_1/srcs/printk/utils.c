@@ -35,9 +35,29 @@ size_t nbr_len(int nbr) {
 	return (len);
 }
 
+size_t ft_strrchr(const char *str, char c) {
+	size_t i = 0;
+	size_t res = 0;
+
+	while (str[i]) {
+		if (str[i] == c)
+			res = i;
+		++i;
+	}
+	return (res);
+}
+
 int get_hexa_len(unsigned int nbr) {
 	int len = 0;
 	if (nbr >= 16)
 		len += get_hexa_len(nbr / 16);
 	return (len + 1);
+}
+
+bool is_alpha(char c) {
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+}
+
+bool is_digit(char c) {
+	return (c >= '0' && c <= '9');
 }

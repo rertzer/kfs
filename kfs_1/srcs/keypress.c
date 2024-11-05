@@ -73,7 +73,8 @@ void handle_default_keycode(keycode_t keycode) {
 			term_putchar(' ');
 			break;
 		case PAGE_UP:
-			hexdump();
+			// hexdump();
+			printk("%d\n", printk("%#010d\n", 42));
 			break;
 		default:
 			break;

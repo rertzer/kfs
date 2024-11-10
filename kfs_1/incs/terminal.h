@@ -1,6 +1,9 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
+#define PROMPT_SIZE 1
+#define PROMPT '>'
+
 #define JROS_HEADER_HIGH 5
 #define JROS_HEADER_WIDTH 30
 #define JROS_HEADER_OFFSET 25

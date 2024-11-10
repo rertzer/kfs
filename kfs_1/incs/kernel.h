@@ -26,6 +26,8 @@ typedef struct terminal_s {
 	uint16_t* buffer;
 	size_t	  row;
 	size_t	  column;
+	size_t	  prompt_row;
+	size_t	  prompt_column;
 	uint8_t	  color;
 } terminal_t;
 
@@ -111,6 +113,7 @@ void		term_back_color_next();
 void		term_set_buffer(size_t i, char c);
 size_t		term_putstr(const char* str);
 size_t		term_putchar(char c);
+void		term_prompt();
 void		write_tab();
 
 /* ======================== utils ===================================== */
@@ -153,13 +156,13 @@ typedef void (*handle_fun_t)(keypress_t* k);
 
 keypress_t init_keypress();
 keypress_t update_keypress(keypress_t keypress);
-void	   handle_keypress(keypress_t keypress);
+bool	   handle_keypress(keypress_t keypress);
 void	   handle_control_keypress(keypress_t keypress);
 void	   handle_control_keycode(keycode_t keycode);
 void	   handle_control_ascii(uint8_t ascii);
-void	   handle_default_keypress(keypress_t keypress);
+bool	   handle_default_keypress(keypress_t keypress);
 void	   handle_default_keycode(keycode_t keycode);
-void	   handle_default_ascii(uint8_t ascii);
+bool	   handle_default_ascii(uint8_t ascii);
 void	   handle_home();
 // void handle_up(keypress_t* keypress);
 // void handle_page_up(keypress_t* keypress);
@@ -170,4 +173,7 @@ void handle_end();
 // void handle_page_down(keypress_t* keypress);
 void handle_delete();
 void handle_control_keypress(keypress_t keypress);
+
+/* ====================== readline ========================================= */
+bool readline();
 #endif

@@ -23,6 +23,8 @@ void all_terms_init() {
 void term_init(size_t i) {
 	all_terms[i].row = PRINT_ROW_START;
 	all_terms[i].column = 0;
+	all_terms[i].prompt_row = PRINT_ROW_START;
+	all_terms[i].prompt_column = PROMPT_SIZE;
 	all_terms[i].color = vga_char_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	all_terms[i].buffer = all_terms_buffers[i];
 	term_init_buffer(i);
@@ -68,6 +70,8 @@ static void term_set_header(size_t i) {
 void load_term(terminal_t* dest, terminal_t* src) {
 	dest->row = src->row;
 	dest->column = src->column;
+	dest->prompt_row = src->prompt_row;
+	dest->prompt_column = src->prompt_column;
 	dest->color = src->color;
 	load_term_buffer(dest->buffer, src->buffer);
 }
@@ -101,6 +105,13 @@ void switch_previous_term() {
 		--next;
 	}
 	switch_term(next);
+}
+
+void term_prompt() {
+	term.prompt_row = term.row;
+	vga_write(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK), term.column, term.row);
+	term_next();
+	term_next();
 }
 
 size_t term_putstr(const char* str) {

@@ -1,11 +1,13 @@
 #include "kernel.h"
 
-void handle_keypress(keypress_t keypress) {
+bool handle_keypress(keypress_t keypress) {
+	bool getline = false;
 	if (keypress.control == true) {
 		handle_control_keypress(keypress);
 	} else {
-		handle_default_keypress(keypress);
+		getline = handle_default_keypress(keypress);
 	}
+	return (getline);
 }
 
 void handle_control_keypress(keypress_t keypress) {
@@ -41,12 +43,14 @@ void handle_control_ascii(uint8_t ascii) {
 	}
 }
 
-void handle_default_keypress(keypress_t keypress) {
+bool handle_default_keypress(keypress_t keypress) {
+	bool getline = false;
 	if (keypress.ascii == 0) {
 		handle_default_keycode(keypress.keycode);
 	} else {
-		handle_default_ascii(keypress.ascii);
+		getline = handle_default_ascii(keypress.ascii);
 	}
+	return (getline);
 }
 
 void handle_default_keycode(keycode_t keycode) {
@@ -77,9 +81,16 @@ void handle_default_keycode(keycode_t keycode) {
 	}
 }
 
-void handle_default_ascii(uint8_t ascii) {
+bool handle_default_ascii(uint8_t ascii) {
+	bool getline = false;
 	term_putchar(ascii);
+	if (ascii == '\n') {
+		getline = true;
+	}
+	return (getline);
 }
+
+void term_readline() {}
 
 void handle_home() {}
 

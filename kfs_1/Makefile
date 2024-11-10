@@ -18,6 +18,7 @@ SOURCES =	kernel.c \
 			keycode.c \
 			keypress.c \
 			terminal.c \
+			readline.c \
 			vga.c \
 			scancode.c \
 			printk.c \

@@ -25,6 +25,7 @@ void keyboard_handler(uint8_t scan) {
 			scan_status = handle_scancode_pause();
 			break;
 	}
+	current_scancode = 0;
 }
 
 uint8_t handle_scancode_pause() {
@@ -36,7 +37,11 @@ uint8_t handle_scancode_pause() {
 uint8_t handle_scancode_default() {
 	bool	pressed = handle_pressed();
 	uint8_t status = handle_status();
-	handle_code(pressed);
+	if (status == SCAN_DEFAULT) {
+		handle_code(pressed);
+	} else {
+		current_code = NONE;
+	}
 	return (status);
 }
 
@@ -48,6 +53,7 @@ uint8_t handle_scancode_extended() {
 
 static bool handle_pressed() {
 	bool pressed = RELEASED;
+
 	if (current_scancode < 0x80) {
 		pressed = PRESSED;
 	} else if (current_scancode < 0xE0) {

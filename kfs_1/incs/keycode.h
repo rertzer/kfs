@@ -140,6 +140,10 @@ typedef enum {
 	PAD_ENTER,
 } keycode_t;
 
+#define NONNUMPAD                                                                          \
+	END, DOWN, PAGE_DOWN, LEFT, NONE, RIGHT, HOME, UP, PAGE_UP, INSERT, PAD_SLASH, DELETE, \
+		PAD_ASTR, PAD_MINUS, PAD_PLUS, PAD_ENTER
+
 #define SCANCODES                                                                                  \
 	[0x01] = ESCAPE, [0x02] = KEY_1, [0x03] = KEY_2, [0x04] = KEY_3, [0x05] = KEY_4,               \
 	[0x06] = KEY_5, [0x07] = KEY_6, [0x08] = KEY_7, [0x09] = KEY_8, [0x0A] = KEY_9,                \
@@ -197,7 +201,8 @@ typedef enum {
 	[FN_10] = {0, 0}, [FN_11] = {0, 0}, [FN_12] = {0, 0}, [PAD_7] = {'7', '7'},                    \
 	[PAD_8] = {'8', '8'}, [PAD_9] = {'9', '9'}, [PAD_MINUS] = {'-', '-'}, [PAD_4] = {'4', '4'},    \
 	[PAD_5] = {'5', '5'}, [PAD_6] = {'6', '6'}, [PAD_PLUS] = {'+', '+'}, [PAD_1] = {'1', '1'},     \
-	[PAD_2] = {'2', '2'}, [PAD_3] = {'3', '3'}, [PAD_0] = {'0', '0'}, [PAD_DOT] = {'.', '.'}
+	[PAD_2] = {'2', '2'}, [PAD_3] = {'3', '3'}, [PAD_0] = {'0', '0'}, [PAD_DOT] = {'.', '.'},      \
+	[PAD_ENTER] = {'\n', '\n'}
 
 /* ==================================== scancode ================================================ */
 uint8_t handle_scancode_default();

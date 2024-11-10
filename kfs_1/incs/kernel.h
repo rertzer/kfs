@@ -82,9 +82,6 @@ void init_gdt();
 // assembly functions
 void set_gdt(uint32_t limit, uint32_t base);
 
-/* ======================== utils ==================================== */
-size_t strlen(const char* str);
-
 /* ========================= terminal ================================ */
 void		vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);
@@ -117,6 +114,8 @@ size_t		term_putchar(char c);
 void		write_tab();
 
 /* ======================== utils ===================================== */
+size_t strlen(const char* str);
+
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);

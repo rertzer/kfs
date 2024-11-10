@@ -14,8 +14,8 @@ void kernel_main(void) {
 	while (true) {
 		// printk("looping\n");
 		sleep();
-		keypress.scancode = current_code;
-		if (keypress.scancode != 0) {
+		keypress.keycode = current_code;
+		if (keypress.keycode != 0) {
 			keypress = update_keypress(keypress);
 			if (keypress.pressed == PRESSED) {
 				handle_keypress(keypress);

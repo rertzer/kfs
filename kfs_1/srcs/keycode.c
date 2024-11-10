@@ -1,5 +1,6 @@
 #include "kernel.h"
 
+static uint8_t	   numlock_converter(keypress_t keypress);
 static inline bool is_alpha_code(uint8_t scancode);
 static uint8_t	   handle_ascii(keypress_t current);
 static bool		   get_upper(keypress_t current);
@@ -22,7 +23,7 @@ keypress_t init_keypress() {
 	keypress.shift = false;
 	keypress.gui = false;
 	keypress.capslock = false;
-	keypress.numlock = false;
+	keypress.numlock = true;
 	keypress.scrolllock = false;
 	keypress.scancode = 0;
 	keypress.ascii = 0;
@@ -32,11 +33,23 @@ keypress_t init_keypress() {
 }
 
 keypress_t update_keypress(keypress_t keypress) {
-	keypress.pressed = keypress.scancode >> 7;
-	keypress.keycode = keypress.scancode & 0x7F;
+	keypress.pressed = keypress.keycode >> 7;
+	keypress.keycode = keypress.keycode & 0x7F;
+	keypress.keycode = numlock_converter(keypress);
 	keypress.ascii = handle_ascii(keypress);
 	keypress = handle_switches(keypress);
 	return (keypress);
+}
+
+static uint8_t numlock_converter(keypress_t keypress) {
+	uint8_t keycode;
+	uint8_t non_num_pad[16] = {NONNUMPAD};
+	if (keypress.numlock == false && keypress.keycode >= PAD_1) {
+		keycode = non_num_pad[keypress.keycode - PAD_1];
+	} else {
+		keycode = keypress.keycode;
+	}
+	return (keycode);
 }
 
 static keypress_t handle_switches(keypress_t keypress) {
@@ -82,24 +95,24 @@ static bool get_upper(keypress_t current) {
 	bool upper = FALSE;
 	if (current.shift && !current.capslock) {
 		upper = TRUE;
-	} else if (current.capslock && !current.shift && is_alpha_code(current.scancode)) {
+	} else if (current.capslock && !current.shift && is_alpha_code(current.keycode)) {
 		upper = TRUE;
 	}
 	return (upper);
 }
 
-static inline bool is_alpha_code(uint8_t scancode) {
+static inline bool is_alpha_code(uint8_t keycode) {
 	bool is = FALSE;
 
-	if ((scancode >= 0x10 && scancode <= 0x19) || (scancode >= 0x1F && scancode <= 0x27) ||
-		(scancode >= 0x2C && scancode <= 0x33)) {
+	if ((keycode >= 0x10 && keycode <= 0x19) || (keycode >= 0x1F && keycode <= 0x27) ||
+		(keycode >= 0x2C && keycode <= 0x33)) {
 		is = TRUE;
 	}
 	return (is);
 }
 
 static uint8_t get_ascii(keypress_t current, bool upper) {
-	static unsigned char const codes[125][2] = {KEYCODES_TO_QWERTY};
+	static unsigned char const codes[126][2] = {KEYCODES_TO_QWERTY};
 	return (codes[current.keycode][upper]);
 }
 
@@ -141,6 +154,7 @@ static keypress_t handle_capslock(keypress_t current) {
 	if (current.pressed == PRESSED) {
 		current.capslock = !current.capslock;
 	}
+
 	return (current);
 }
 
@@ -159,9 +173,9 @@ static keypress_t handle_scrolllock(keypress_t current) {
 }
 
 static void handle_fn(keypress_t* current) {
-	if (current->scancode < 0x45) {
-		current->keycode = current->scancode - 0x3A;
+	if (current->keycode < 0x45) {
+		current->keycode = current->keycode - 0x3A;
 	} else {
-		current->keycode = current->scancode - 0x4C;
+		current->keycode = current->keycode - 0x4C;
 	}
 }

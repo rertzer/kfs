@@ -26,6 +26,7 @@ void term_init(size_t i) {
 	all_terms[i].column = PROMPT_SIZE + 1;
 	all_terms[i].prompt_row = PRINT_ROW_START;
 	all_terms[i].prompt_column = PROMPT_SIZE + 1;
+	all_terms[i].line_len = 0;
 	all_terms[i].color = vga_char_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	all_terms[i].buffer = all_terms_buffers[i];
 	term_init_buffer(i);
@@ -80,6 +81,7 @@ void load_term(terminal_t* dest, terminal_t* src) {
 	dest->column = src->column;
 	dest->prompt_row = src->prompt_row;
 	dest->prompt_column = src->prompt_column;
+	dest->line_len = src->line_len;
 	dest->color = src->color;
 	load_term_buffer(dest->buffer, src->buffer);
 }
@@ -116,6 +118,7 @@ void switch_previous_term() {
 }
 
 void term_prompt() {
+	term.line_len = 0;
 	term.prompt_row = term.row;
 	vga_write(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK), term.column, term.row);
 	term_next();
@@ -174,15 +177,25 @@ void term_down() {
 }
 
 void term_left() {
-	if (term.column != 0) {
+	if ((term.row == term.prompt_row && term.column > term.prompt_column) ||
+		(term.row > term.prompt_row && term.column != 0)) {
 		--term.column;
 		update_cursor(term.column, term.row);
+	} else if (term.row > term.prompt_row && term.column == 0) {
+		--term.row;
+		term.column = VGA_WIDTH - 1;
 	}
 }
 
 void term_right() {
-	if (term.column != VGA_WIDTH - 1) {
-		++term.column;
+	size_t current_index = (term.row - term.prompt_row) * VGA_WIDTH + term.column;
+	if (current_index < term.line_len) {
+		if (term.column != VGA_WIDTH - 1) {
+			++term.column;
+		} else {
+			++term.row;
+			term.column = 0;
+		}
 		update_cursor(term.column, term.row);
 	}
 }
@@ -211,6 +224,7 @@ void term_next_row() {
 }
 
 void term_previous() {
+	--term.line_len;
 	if (term.column == 0) {
 		if (term.row != 0) {
 			term.column = 79;
@@ -223,6 +237,7 @@ void term_previous() {
 }
 
 void term_next() {
+	++term.line_len;
 	++term.column;
 	if (term.column == VGA_WIDTH) {
 		term.column = 0;

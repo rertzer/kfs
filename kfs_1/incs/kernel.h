@@ -28,6 +28,7 @@ typedef struct terminal_s {
 	size_t	  column;
 	size_t	  prompt_row;
 	size_t	  prompt_column;
+	size_t	  line_len;
 	uint8_t	  color;
 } terminal_t;
 

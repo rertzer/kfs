@@ -13,9 +13,7 @@ void kernel_main(void) {
 	term_putstr("echo 42\n");
 	readline();
 	term_prompt();
-	// term_prompt();
 	while (true) {
-		// printk("looping\n");
 		sleep();
 		bool getline = false;
 		keypress.keycode = current_code;

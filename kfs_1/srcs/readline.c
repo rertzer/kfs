@@ -41,6 +41,9 @@ static void cmdline_set(cmdline_t* cmdline) {
 	size_t start = cmdline_word(term.prompt_row * VGA_WIDTH + term.prompt_column, false);
 	size_t end = cmdline_word(start, true);
 	cmdline->cmd_len = end - start;
+	if (cmdline->cmd_len > 255) {
+		cmdline->cmd_len = 255;
+	}
 	for (size_t i = 0; i < cmdline->cmd_len; ++i) {
 		cmdline->cmd[i] = term.buffer[start + i];
 	}
@@ -49,6 +52,9 @@ static void cmdline_set(cmdline_t* cmdline) {
 	start = cmdline_word(end, false);
 	end = cmdline_word(start, true);
 	cmdline->arg_len = end - start;
+	if (cmdline->arg_len > 255) {
+		cmdline->arg_len = 255;
+	}
 	for (size_t i = 0; i < cmdline->arg_len; ++i) {
 		cmdline->arg[i] = term.buffer[start + i];
 	}

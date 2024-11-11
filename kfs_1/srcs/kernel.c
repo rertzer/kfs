@@ -10,8 +10,10 @@ void kernel_main(void) {
 
 	keypress_t keypress = init_keypress();
 
-	term_putstr("42\n");
+	term_putstr("echo 42\n");
+	readline();
 	term_prompt();
+	// term_prompt();
 	while (true) {
 		// printk("looping\n");
 		sleep();

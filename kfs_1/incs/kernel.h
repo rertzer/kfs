@@ -118,6 +118,7 @@ void		write_tab();
 
 /* ======================== utils ===================================== */
 size_t strlen(const char* str);
+bool   is_alnum(uint8_t c);
 
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);
@@ -175,5 +176,13 @@ void handle_delete();
 void handle_control_keypress(keypress_t keypress);
 
 /* ====================== readline ========================================= */
+typedef struct {
+	char   cmd[256];
+	size_t cmd_len;
+	char   arg[256];
+	size_t arg_len;
+} cmdline_t;
+
 bool readline();
+
 #endif

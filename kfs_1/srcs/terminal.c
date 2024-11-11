@@ -143,8 +143,7 @@ size_t term_putchar(char c) {
 			term_next_line();
 			break;
 		case BACKSPACE:
-			term_previous();
-			vga_write(' ', term.color, term.column, term.row);
+			term_backspace();
 			break;
 		default:
 			vga_write(c, term.color, term.column, term.row);
@@ -176,18 +175,24 @@ void term_down() {
 	update_cursor(term.column, term.row);
 }
 
-void term_left() {
+bool term_left() {
+	bool moved = false;
 	if ((term.row == term.prompt_row && term.column > term.prompt_column) ||
 		(term.row > term.prompt_row && term.column != 0)) {
 		--term.column;
+		moved = true;
 		update_cursor(term.column, term.row);
 	} else if (term.row > term.prompt_row && term.column == 0) {
 		--term.row;
 		term.column = VGA_WIDTH - 1;
+		moved = true;
+		update_cursor(term.column, term.row);
 	}
+	return (moved);
 }
 
-void term_right() {
+bool term_right() {
+	bool   moved = false;
 	size_t current_index = (term.row - term.prompt_row) * VGA_WIDTH + term.column;
 	if (current_index < term.line_len) {
 		if (term.column != VGA_WIDTH - 1) {
@@ -196,8 +201,10 @@ void term_right() {
 			++term.row;
 			term.column = 0;
 		}
+		moved = true;
 		update_cursor(term.column, term.row);
 	}
+	return (moved);
 }
 
 void term_fisrt_column() {
@@ -221,6 +228,32 @@ void term_next_row() {
 		++term.row;
 	}
 	update_cursor(term.column, term.row);
+}
+
+void term_backspace() {
+	if (term_left()) {
+		size_t current = term.row * VGA_WIDTH + term.column;
+		size_t end = term.prompt_row * VGA_WIDTH + term.line_len;
+		if (current == end) {
+			vga_write(' ', term.color, term.column, term.row);
+		} else {
+			for (; current < end; ++current) {
+				term.buffer[current] = term.buffer[current + 1];
+			}
+		}
+		--term.line_len;
+	}
+}
+
+void term_delete() {
+	size_t current = term.row * VGA_WIDTH + term.column;
+	size_t end = term.prompt_row * VGA_WIDTH + term.line_len;
+	if (current < end) {
+		for (; current < end; ++current) {
+			term.buffer[current] = term.buffer[current + 1];
+		}
+		--term.line_len;
+	}
 }
 
 void term_previous() {

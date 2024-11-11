@@ -74,7 +74,7 @@ void handle_default_keycode(keycode_t keycode) {
 			term_down();
 			break;
 		case DELETE:
-			term_putchar(' ');
+			term_delete();
 			break;
 		default:
 			break;

@@ -83,7 +83,10 @@ typedef union toto {
 void init_gdt();
 
 // assembly functions
-void set_gdt(uint32_t limit, uint32_t base);
+void	 set_gdt(uint32_t limit, uint32_t base);
+void	 init_pit();
+void	 reset_timer_counter();
+uint32_t get_timer_counter();
 
 /* ========================= terminal ================================ */
 void		vga_write(char c, uint8_t color, size_t x, size_t y);

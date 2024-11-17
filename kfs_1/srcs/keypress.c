@@ -56,10 +56,10 @@ bool handle_default_keypress(keypress_t keypress) {
 void handle_default_keycode(keycode_t keycode) {
 	switch (keycode) {
 		case HOME:
-			handle_home();
+			term_home();
 			break;
 		case END:
-			handle_end();
+			term_end();
 			break;
 		case LEFT:
 			term_left();
@@ -91,7 +91,3 @@ bool handle_default_ascii(uint8_t ascii) {
 }
 
 void term_readline() {}
-
-void handle_home() {}
-
-void handle_end() {}

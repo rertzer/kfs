@@ -207,6 +207,18 @@ bool term_right() {
 	return (moved);
 }
 
+void term_home() {
+	term.row = term.prompt_row;
+	term.column = term.prompt_column;
+	update_cursor(term.column, term.row);
+}
+
+void term_end() {
+	term.row = term.prompt_row + (term.line_len / VGA_WIDTH);
+	term.column = term.line_len % VGA_WIDTH;
+	update_cursor(term.column, term.row);
+}
+
 void term_fisrt_column() {
 	term.column = 0;
 	update_cursor(term.column, term.row);

@@ -46,7 +46,6 @@ printk_opts_t get_opts(const char* format, int i) {
 
 		if (ft_strrchr(CONV, format[y + 1]) == 0) {
 			opts.error = 1;
-			term_putstr("Error: invalid conv\n");
 		}
 
 	opts.counter = y - i;

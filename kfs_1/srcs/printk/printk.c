@@ -1,9 +1,5 @@
 #include "kernel.h"
 
-//TODO: if flag not recognized, print the whole string
-//Implemented: - + 0 width blank #
-//Not implemented: precision
-
 int printk(const char* format, ...) {
 	va_list l_args;
 	int		len = 0;
@@ -16,7 +12,6 @@ int printk(const char* format, ...) {
 			printk_opts_t opts = get_opts(format, i);
 
 			if (opts.error) {
-				term_putstr("Error: invalid flag\n");
 				while(!is_alpha(format[i]))
 					len += print_char(format[i++], (printk_opts_t){0});
 				len += print_char(format[i], (printk_opts_t){0});				
@@ -59,4 +54,13 @@ int printk(const char* format, ...) {
 	}
 	va_end(l_args);
 	return (len);
+}
+
+
+//Implemented: - + 0 width blank #
+//Not implemented: precision
+
+uint8_t test() {
+	printk("testing: %05k test test\n");
+	return (0);
 }

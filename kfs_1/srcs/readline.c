@@ -85,7 +85,7 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 					found = true;
 					break;
 				case TEST:
-					ret = test();
+					ret = hexdump();
 					found = true;
 					break;
 				default:

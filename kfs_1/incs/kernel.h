@@ -92,8 +92,8 @@ void	 reset_timer_counter();
 uint32_t get_timer_counter();
 
 /* ======================== utils ==================================== */
-size_t strlen(const char* str);
-void hexdump(void);
+size_t	strlen(const char* str);
+uint8_t	hexdump(void);
 /* ========================= terminal ================================ */
 void		vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);

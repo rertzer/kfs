@@ -27,6 +27,9 @@ typedef struct terminal_s {
 	uint16_t* buffer;
 	size_t	  row;
 	size_t	  column;
+	size_t	  prompt_row;
+	size_t	  prompt_column;
+	size_t	  line_len;
 	uint8_t	  color;
 } terminal_t;
 
@@ -81,7 +84,12 @@ typedef union toto {
 } gdt_entry_t;
 
 void init_gdt();
-void set_gdt();
+
+// assembly functions
+void	 set_gdt(uint32_t limit, uint32_t base);
+void	 init_pit();
+void	 reset_timer_counter();
+uint32_t get_timer_counter();
 
 /* ======================== utils ==================================== */
 size_t strlen(const char* str);
@@ -99,10 +107,14 @@ void		load_term_buffer(uint16_t* dest, uint16_t* src);
 void		switch_term(size_t next);
 void		switch_next_term();
 void		switch_previous_term();
+void		term_backspace();
+void		term_delete();
 void		term_up();
 void		term_down();
-void		term_left();
-void		term_right();
+bool		term_left();
+bool		term_right();
+void		term_home();
+void		term_end();
 void		term_first_column();
 void		term_last_column();
 void		term_previous_row();
@@ -115,9 +127,13 @@ void		term_back_color_next();
 void		term_set_buffer(size_t i, char c);
 size_t		term_putstr(const char* str);
 size_t		term_putchar(char c);
+void		term_prompt();
 void		write_tab();
 
 /* ======================== utils ===================================== */
+size_t strlen(const char* str);
+bool   is_alnum(uint8_t c);
+
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);
@@ -155,21 +171,30 @@ typedef void (*handle_fun_t)(keypress_t* k);
 
 keypress_t init_keypress();
 keypress_t update_keypress(keypress_t keypress);
-void	   handle_keypress(keypress_t keypress);
+bool	   handle_keypress(keypress_t keypress);
 void	   handle_control_keypress(keypress_t keypress);
 void	   handle_control_keycode(keycode_t keycode);
 void	   handle_control_ascii(uint8_t ascii);
-void	   handle_default_keypress(keypress_t keypress);
+bool	   handle_default_keypress(keypress_t keypress);
 void	   handle_default_keycode(keycode_t keycode);
-void	   handle_default_ascii(uint8_t ascii);
-void	   handle_home();
+bool	   handle_default_ascii(uint8_t ascii);
 // void handle_up(keypress_t* keypress);
 // void handle_page_up(keypress_t* keypress);
 void handle_left(keypress_t* keypress);
 void handle_right(keypress_t* keypress);
-void handle_end();
 // void handle_down(keypress_t* keypress);
 // void handle_page_down(keypress_t* keypress);
 void handle_delete();
 void handle_control_keypress(keypress_t keypress);
+
+/* ====================== readline ========================================= */
+typedef struct {
+	char   cmd[256];
+	size_t cmd_len;
+	char   arg[256];
+	size_t arg_len;
+} cmdline_t;
+
+bool readline();
+
 #endif

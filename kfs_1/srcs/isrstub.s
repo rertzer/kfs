@@ -1,6 +1,9 @@
 ; ===================== DATA ===============================
 extern exception_handler
 extern keyboard_handler
+extern pit_total_ms
+extern timer_counter
+
 
 section .data
 align 32
@@ -49,8 +52,20 @@ isr_stub_%+%1:
 %endmacro
 
 ; timer interrupt
-;isr_stub_32:
-;	iret
+isr_stub_32:
+	cli
+	pusha
+
+	inc dword [pit_total_ms]
+	inc dword [timer_counter]
+	
+
+	mov	al, 0x20	; set bit 4 of OCW 2
+	out	0x20, al	; write to primary PIC command register 
+	popa
+	sti
+
+	iret
 
 ; keyboard interrupt
 isr_stub_33:
@@ -104,7 +119,7 @@ isr_no_err_stub 28
 isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
-isr_no_err_stub 32 ;timer
+;isr_no_err_stub 32 ;timer
 ;isr_no_err_stub 33 ;keyboard
 isr_no_err_stub 34
 isr_no_err_stub 35

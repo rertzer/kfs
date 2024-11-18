@@ -28,6 +28,7 @@ SOURCES =	kernel.c \
 			keycode.c \
 			keypress.c \
 			terminal.c \
+			readline.c \
 			vga.c \
 			scancode.c \
 		  	gdt.c \
@@ -35,8 +36,12 @@ SOURCES =	kernel.c \
 			interrupts.c \
 			kernel_utils.c \
 			utils.c \
+			echo.c \
+			qwerty.c \
 			setgdt.s \
 			isrstub.s \
+			boot.s \
+			pit.s
 			boot.s \
 			hexdump.c 
 

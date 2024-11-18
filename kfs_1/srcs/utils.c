@@ -11,3 +11,11 @@ size_t strlen(const char* str) {
 	}
 	return (len);
 }
+
+bool is_alnum(uint8_t c) {
+	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+		return (true);
+	} else {
+		return (false);
+	}
+}

@@ -112,8 +112,26 @@ static inline bool is_alpha_code(uint8_t keycode) {
 }
 
 static uint8_t get_ascii(keypress_t current, bool upper) {
-	static unsigned char const codes[126][2] = {KEYCODES_TO_QWERTY};
+	unsigned const char(*codes)[2] = keyboard_layout(LAYOUT_DEFAULT);
 	return (codes[current.keycode][upper]);
+}
+
+unsigned char const (*keyboard_layout(keyboard_layout_t layout))[2] {
+	static const unsigned char qwerty_codes[126][2] = {KEYCODES_TO_QWERTY};
+	static const unsigned char azerty_codes[126][2] = {KEYCODES_TO_AZERTY};
+	static unsigned const char(*codes)[2] = qwerty_codes;
+
+	switch (layout) {
+		case LAYOUT_QWERTY:
+			codes = qwerty_codes;
+			break;
+		case LAYOUT_AZERTY:
+			codes = azerty_codes;
+			break;
+		default:
+			break;
+	}
+	return (codes);
 }
 
 static keypress_t handle_control(keypress_t current) {

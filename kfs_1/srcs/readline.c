@@ -15,15 +15,6 @@ bool readline() {
 	cmdline_init(&cmdline);
 	cmdline_set(&cmdline);
 
-	// printk("cmd is \t\"");
-	// for (size_t i = 0; i < cmdline.cmd_len; ++i) {
-	// 	term_putchar(cmdline.cmd[i]);
-	// }
-	// printk("\"\narg is \t\"");
-	// for (size_t i = 0; i < cmdline.arg_len; ++i) {
-	// 	term_putchar(cmdline.arg[i]);
-	// }
-	// printk("\"\n");
 	cmdline_exec(&cmdline);
 	return (true);
 }
@@ -83,6 +74,14 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 			switch (i) {
 				case ECHO:
 					ret = echo(cmdline->arg, cmdline->arg_len);
+					found = true;
+					break;
+				case AZERTY:
+					ret = azerty();
+					found = true;
+					break;
+				case QWERTY:
+					ret = qwerty();
 					found = true;
 					break;
 				default:

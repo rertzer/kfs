@@ -11,5 +11,7 @@ typedef enum { ECHO, QWERTY, AZERTY, QUIT, DIVIDE, INT, HELP, BUILTINS_NB } buil
 	[DIVIDE] = "divide", [INT] = "int", [HELP] = "help"
 
 uint8_t echo(char* word, size_t word_len);
+uint8_t qwerty();
+uint8_t azerty();
 
 #endif

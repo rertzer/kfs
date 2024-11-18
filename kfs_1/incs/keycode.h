@@ -10,6 +10,7 @@
 #define RELEASED 1
 
 typedef enum { SCAN_DEFAULT, SCAN_EXTENDED, SCAN_PAUSE } scanstatus_t;
+typedef enum { LAYOUT_DEFAULT, LAYOUT_QWERTY, LAYOUT_AZERTY } keyboard_layout_t;
 
 typedef enum {
 	NONE,
@@ -204,9 +205,42 @@ typedef enum {
 	[PAD_2] = {'2', '2'}, [PAD_3] = {'3', '3'}, [PAD_0] = {'0', '0'}, [PAD_DOT] = {'.', '.'},      \
 	[PAD_ENTER] = {'\n', '\n'}
 
+#define KEYCODES_TO_AZERTY                                                                         \
+	[ESCAPE] = {27, 27}, [KEY_1] = {'&', '1'}, [KEY_2] = {130, '2'}, [KEY_3] = {'"', '3'},         \
+	[KEY_4] = {'\'', '4'}, [KEY_5] = {'(', '5'}, [KEY_6] = {'-', '6'}, [KEY_7] = {138, '7'},       \
+	[KEY_8] = {'_', '8'}, [KEY_9] = {135, '9'}, [KEY_0] = {133, '0'}, [MINUS] = {')', 248},        \
+	[EQUAL] = {'=', '+'}, [BCKSPC] = {8, 8}, [TAB] = {'\t', '\t'}, [KEY_Q] = {'a', 'A'},           \
+	[KEY_W] = {'z', 'Z'}, [KEY_E] = {'e', 'E'}, [KEY_R] = {'r', 'R'}, [KEY_T] = {'t', 'T'},        \
+	[KEY_Y] = {'y', 'Y'}, [KEY_U] = {'u', 'U'}, [KEY_I] = {'i', 'I'}, [KEY_O] = {'o', 'O'},        \
+	[KEY_P] = {'p', 'P'}, [LBRC] = {'^', 249}, [RBRC] = {'$', 156}, [ENTER] = {'\n', '\n'},        \
+	[KEY_A] = {'q', 'Q'}, [KEY_S] = {'s', 'S'}, [KEY_D] = {'d', 'D'}, [KEY_F] = {'f', 'F'},        \
+	[KEY_G] = {'g', 'G'}, [KEY_H] = {'h', 'H'}, [KEY_J] = {'j', 'J'}, [KEY_K] = {'k', 'K'},        \
+	[KEY_L] = {'l', 'L'}, [SMCLN] = {'m', 'M'}, [QUOT] = {151, '%'}, [GRV] = {253, 253},           \
+	[BSLS] = {'*', 230}, [KEY_Z] = {'w', 'W'}, [KEY_X] = {'x', 'X'}, [KEY_C] = {'c', 'C'},         \
+	[KEY_V] = {'v', 'V'}, [KEY_B] = {'b', 'B'}, [KEY_N] = {'n', 'N'}, [KEY_M] = {',', '?'},        \
+	[COMM] = {';', '.'}, [DOT] = {':', '/'}, [SLSH] = {'!', 21}, [ASTR] = {'*', '*'},              \
+	[SPACE] = {' ', ' '}, [CAPSLOCK] = {0, 0}, [NUMLOCK] = {0, 0}, [SCROLLLOCK] = {0, 0},          \
+	[L_CONTROL] = {0, 0}, [R_CONTROL] = {0, 0}, [L_SHIFT] = {0, 0}, [R_SHIFT] = {0, 0},            \
+	[L_ALT] = {0, 0}, [R_ALT] = {0, 0}, [PREVIOUS_TRACK] = {0, 0}, [NEXT_TRACK] = {0, 0},          \
+	[MUTE] = {0, 0}, [CALCULATOR] = {0, 0}, [PLAY] = {0, 0}, [STOP] = {0, 0}, [VOL_DOWN] = {0, 0}, \
+	[VOL_UP] = {0, 0}, [WWW_HOME] = {0, 0}, [HOME] = {0, 0}, [UP] = {0, 0}, [PAGE_UP] = {0, 0},    \
+	[LEFT] = {0, 0}, [RIGHT] = {0, 0}, [END] = {0, 0}, [DOWN] = {0, 0}, [PAGE_DOWN] = {0, 0},      \
+	[INSERT] = {0, 0}, [DELETE] = {0, 0}, [L_GUI] = {0, 0}, [R_GUI] = {0, 0}, [APPS] = {0, 0},     \
+	[POWER] = {0, 0}, [SLEEP] = {0, 0}, [WAKE] = {0, 0}, [WWW_SEARCH] = {0, 0},                    \
+	[WWW_FAVORITE] = {0, 0}, [WWW_REFRESH] = {0, 0}, [WWW_STOP] = {0, 0}, [WWW_FORWARD] = {0, 0},  \
+	[WWW_BACK] = {0, 0}, [MY_COMPUTER] = {0, 0}, [EMAIL] = {0, 0}, [MEDIA_SELECT] = {0, 0},        \
+	[PAUSE] = {0, 0}, [FN_1] = {0, 0}, [FN_2] = {0, 0}, [FN_3] = {0, 0}, [FN_4] = {0, 0},          \
+	[FN_5] = {0, 0}, [FN_6] = {0, 0}, [FN_7] = {0, 0}, [FN_8] = {0, 0}, [FN_9] = {0, 0},           \
+	[FN_10] = {0, 0}, [FN_11] = {0, 0}, [FN_12] = {0, 0}, [PAD_7] = {'7', '7'},                    \
+	[PAD_8] = {'8', '8'}, [PAD_9] = {'9', '9'}, [PAD_MINUS] = {'-', '-'}, [PAD_4] = {'4', '4'},    \
+	[PAD_5] = {'5', '5'}, [PAD_6] = {'6', '6'}, [PAD_PLUS] = {'+', '+'}, [PAD_1] = {'1', '1'},     \
+	[PAD_2] = {'2', '2'}, [PAD_3] = {'3', '3'}, [PAD_0] = {'0', '0'}, [PAD_DOT] = {'.', '.'},      \
+	[PAD_ENTER] = {'\n', '\n'}
+
 /* ==================================== scancode ================================================ */
 uint8_t handle_scancode_default();
 uint8_t handle_scancode_extended();
 uint8_t handle_scancode_pause();
+unsigned char const (*keyboard_layout(keyboard_layout_t layout))[2];
 
 #endif

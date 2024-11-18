@@ -28,6 +28,7 @@ SOURCES =	kernel.c \
 			kernel_utils.c \
 			utils.c \
 			echo.c \
+			qwerty.c \
 			setgdt.s \
 			isrstub.s \
 			boot.s \

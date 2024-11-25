@@ -17,7 +17,6 @@ typedef struct {
 	uint8_t error : 1;
 	int 	counter;
 	int		width;
-
 } printk_opts_t;
 
 //=============== utils =================

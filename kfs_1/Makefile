@@ -46,11 +46,20 @@ SOURCES =	kernel.c \
 
 SOURCES += $(PRINTK_SOURCE)
 
+HEADER_FILES = builtin.h \
+			   interrupts.h \
+			   kernel.h \
+			   keycode.h \
+			   pic.h \
+			   printk.h \
+			   terminal.h
+
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))
 
 OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(OBJS_DIR)/%.o,$(SRCS)))
 DEPS = $(patsubst $(SRCS_DIR)/%.c,$(DEPS_DIR)/%.d,$(patsubst $(SRCS_DIR)/%.s,$(DEPS_DIR)/%.d,$(SRCS)))
 INCS = -I $(INCS_DIR)
+INCS_FILES = $(addprefix $(INCS_DIR)/, $(HEADER_FILES))
 
 ifneq ($(shell $(DOCKER) image list --format '{{.Repository}}' | grep -w $(DOCKER_CONT_NAME)),)
 all: $(PROJECT).iso
@@ -73,12 +82,12 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
 
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s 
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@$(DOCKER_EXEC) nasm -f elf32 $(INCS) $< -o $@
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))

@@ -162,17 +162,11 @@ void write_tab() {
 }
 
 void term_up() {
-	if (term.column != 0) {
-		--term.column;
-	}
-	update_cursor(term.column, term.row);
+	term_left();
 }
 
 void term_down() {
-	if (term.column != VGA_HEIGHT) {
-		++term.column;
-	}
-	update_cursor(term.column, term.row);
+	term_right();
 }
 
 bool term_left() {

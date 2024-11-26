@@ -13,7 +13,6 @@ static keypress_t  handle_gui(keypress_t keypress);
 static keypress_t  handle_capslock(keypress_t keypress);
 static keypress_t  handle_numlock(keypress_t keypress);
 static keypress_t  handle_scrolllock(keypress_t keypress);
-static void		   handle_fn(keypress_t* current);
 
 keypress_t init_keypress() {
 	keypress_t keypress;
@@ -85,7 +84,7 @@ static keypress_t handle_switches(keypress_t keypress) {
 	}
 	return (keypress);
 }
-////////////////////////////////////////////////////////
+
 static uint8_t handle_ascii(keypress_t current) {
 	bool upper = get_upper(current);
 	return (get_ascii(current, upper));
@@ -188,12 +187,4 @@ static keypress_t handle_scrolllock(keypress_t current) {
 		current.scrolllock = !current.scrolllock;
 	}
 	return (current);
-}
-
-static void handle_fn(keypress_t* current) {
-	if (current->keycode < 0x45) {
-		current->keycode = current->keycode - 0x3A;
-	} else {
-		current->keycode = current->keycode - 0x4C;
-	}
 }

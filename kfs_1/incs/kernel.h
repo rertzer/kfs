@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "keycode.h"
 #include "pic.h"
+#include "printk.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -66,7 +67,9 @@ typedef enum vga_blink_e {
 	BLINK = 1,
 } vga_blink_t;
 
-/* ============= global descriptor table ============================ */
+/* ============= GDT ============= */
+
+#define GDT_BUFFER 0x00000800
 
 typedef struct {
 	uint32_t base;
@@ -88,6 +91,9 @@ void	 init_pit();
 void	 reset_timer_counter();
 uint32_t get_timer_counter();
 
+/* ======================== utils ==================================== */
+size_t	strlen(const char* str);
+uint8_t	hexdump(void);
 /* ========================= terminal ================================ */
 void		vga_write(char c, uint8_t color, size_t x, size_t y);
 uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);

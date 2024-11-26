@@ -84,6 +84,10 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 					ret = qwerty();
 					found = true;
 					break;
+				case TEST:
+					ret = hexdump();
+					found = true;
+					break;
 				default:
 					break;
 			}

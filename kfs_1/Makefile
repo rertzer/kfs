@@ -13,6 +13,16 @@ DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_N
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
+DEPS_DIR = $(PROJECT_DIR)/deps
+
+PRINTK_SOURCE = printk/printk.c \
+				printk/hexa.c \
+				printk/integer.c \
+				printk/string.c \
+				printk/pointer.c \
+				printk/unsigned.c \
+				printk/utils.c \
+				printk/options.c
 
 SOURCES =	kernel.c \
 			keycode.c \
@@ -21,7 +31,6 @@ SOURCES =	kernel.c \
 			readline.c \
 			vga.c \
 			scancode.c \
-			printk.c \
 		  	gdt.c \
 			pic.c \
 			interrupts.c \
@@ -32,11 +41,15 @@ SOURCES =	kernel.c \
 			setgdt.s \
 			isrstub.s \
 			boot.s \
-			pit.s
+			pit.s \
+			hexdump.c 
+
+SOURCES += $(PRINTK_SOURCE)
 
 SRCS = $(addprefix $(SRCS_DIR)/, $(SOURCES))
 
 OBJS = $(patsubst $(SRCS_DIR)/%.c,$(OBJS_DIR)/%.o,$(patsubst $(SRCS_DIR)/%.s,$(OBJS_DIR)/%.o,$(SRCS)))
+DEPS = $(patsubst $(SRCS_DIR)/%.c,$(DEPS_DIR)/%.d,$(patsubst $(SRCS_DIR)/%.s,$(DEPS_DIR)/%.d,$(SRCS)))
 INCS = -I $(INCS_DIR)
 
 ifneq ($(shell $(DOCKER) image list --format '{{.Repository}}' | grep -w $(DOCKER_CONT_NAME)),)
@@ -55,24 +68,33 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso $(KFS_BUILD_DIR) -quiet
 	@echo "Done."
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s
+$(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
+	@echo "Linking files..."
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
+
+
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s 
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
-	@$(DOCKER_EXEC) nasm -f elf32 $< -o $@
+	@$(DOCKER_EXEC) nasm -f elf32 $(INCS) $< -o $@
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -c /app/$< -o /app/$@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
+						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
+						-std=gnu99 -ffreestanding -O2 -Wall -Wextra \
+						-c /app/$< \
+						-o /app/$@
 
-$(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
-	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
+-include $(DEPS)
 
 clean:
 	@echo "Cleaning files..."
 	@$(RM) -rf $(KFS_BUILD_DIR)
 	@$(RM) -rf $(OBJS_DIR)
+	@$(RM) -rf $(DEPS_DIR)
 
 fclean: clean
 	@echo "Cleaning build..."
@@ -91,3 +113,5 @@ start_iso: $(PROJECT).iso
 start_bin: $(PROJECT).bin
 	@echo "Starting BIN..."
 	@qemu-system-i386 -kernel $(PROJECT).bin
+
+.PHONY: all clean fclean re build_docker start_iso start_bin

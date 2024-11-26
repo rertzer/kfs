@@ -1,13 +1,11 @@
 bits 32
 ; multiboot constant header
+
 MALIGN equ 1 << 0
 MEMINFO equ 1 << 1
 MBFLAGS equ MALIGN | MEMINFO
 MAGIC equ 0x1BADB002
 CHECKSUM equ -(MAGIC + MBFLAGS)
-
-
-extern exception_handler
 
 ; multiboot header that marks the program as a kernel.
 section .multiboot
@@ -17,11 +15,14 @@ align 4
 	dd CHECKSUM
 
 ; creating a stack
+mov esp, 0x105000
+
 section .bss
-align 16
-stack_bottom:
-resb 16384
-stack_top:
+	align 16
+	global stack_bottom
+	stack_bottom:
+		resb 16384
+	stack_top:
 
 section .text
 ; start function: load the stack pointer, call the main kernel

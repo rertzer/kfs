@@ -24,4 +24,3 @@ set_gdt:
 	MOV		SS, AX
 	;STI
 	RET
-

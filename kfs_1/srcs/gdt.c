@@ -1,8 +1,9 @@
 #include "kernel.h"
 
-static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
-
+__attribute__((aligned(0x10)))
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
+
+static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
 
 void init_gdt() {
 	//                                                     base  limit  access flags

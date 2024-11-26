@@ -88,7 +88,6 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c
 						-c /app/$< \
 						-o /app/$@
 
--include $(DEPS)
 
 clean:
 	@echo "Cleaning files..."
@@ -113,5 +112,7 @@ start_iso: $(PROJECT).iso
 start_bin: $(PROJECT).bin
 	@echo "Starting BIN..."
 	@qemu-system-i386 -kernel $(PROJECT).bin
+
+-include $(DEPS)
 
 .PHONY: all clean fclean re build_docker start_iso start_bin

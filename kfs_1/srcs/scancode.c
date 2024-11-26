@@ -29,9 +29,23 @@ void keyboard_handler(uint8_t scan) {
 }
 
 uint8_t handle_scancode_pause() {
-	/* !!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!! */
-	current_code = PAUSE;
-	return (SCAN_DEFAULT);
+	static uint8_t pause_sequence[5] = {0x1D, 0x45, 0xE1, 0x9D, 0xc5};
+	static size_t  index;
+
+	uint8_t scan_status = SCAN_PAUSE;
+	if (current_scancode == pause_sequence[index]) {
+		++index;
+		if (index == 5) {
+			current_code = PAUSE;
+			index = 0;
+			scan_status = SCAN_DEFAULT;
+		}
+	} else {
+		index = 0;
+		scan_status = SCAN_DEFAULT;
+	}
+
+	return (scan_status);
 }
 
 uint8_t handle_scancode_default() {

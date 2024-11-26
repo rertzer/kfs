@@ -76,6 +76,9 @@ void handle_default_keycode(keycode_t keycode) {
 		case DELETE:
 			term_delete();
 			break;
+		case PAUSE:
+			// printk("pause\n");
+			break;
 		default:
 			break;
 	}

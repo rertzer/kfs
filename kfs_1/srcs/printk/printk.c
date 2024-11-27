@@ -55,12 +55,3 @@ int printk(const char* format, ...) {
 	va_end(l_args);
 	return (len);
 }
-
-
-//Implemented: - + 0 width blank #
-//Not implemented: precision
-
-uint8_t test() {
-	printk("testing: %05k test test\n");
-	return (0);
-}

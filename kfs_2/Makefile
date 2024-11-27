@@ -39,6 +39,7 @@ SOURCES =	kernel.c \
 			echo.c \
 			qwerty.c \
 			reboot.c \
+			registers.c \
 			setgdt.s \
 			isrstub.s \
 			boot.s \

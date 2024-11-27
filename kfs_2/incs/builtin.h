@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define REGS_NB 14
+
 typedef enum {
 	ECHO,
 	QWERTY,
@@ -11,18 +13,14 @@ typedef enum {
 	KREBOOT,
 	REBOOT,
 	HALT,
-	QUIT,
-	DIVIDE,
-	INT,
-	HELP,
+	REGISTERS,
 	HEXDUMP,
 	BUILTINS_NB
 } builtin_t;
 
-#define BUILTINS                                                                               \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot",          \
-	[REBOOT] = "reboot", [HALT] = "halt", [QUIT] = "quit", [DIVIDE] = "divide", [INT] = "int", \
-	[HELP] = "help", [HEXDUMP] = "hexdump"
+#define BUILTINS                                                                      \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot", \
+	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump"
 
 uint8_t echo(char* word, size_t word_len);
 uint8_t qwerty();
@@ -30,6 +28,7 @@ uint8_t azerty();
 uint8_t kreboot();
 uint8_t reboot();
 uint8_t halt();
+uint8_t registers();
 void	freboot();
 
 #endif

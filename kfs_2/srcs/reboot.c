@@ -6,6 +6,17 @@
  * it pulse de CPU's RESET pin
  * */
 uint8_t reboot() {
+	printk("rebooting ");
+	uint8_t counter = 0;
+	while (counter < 8) {
+		sleep();
+		uint32_t time = get_timer_counter();
+		if (time % 1000 == 0) {
+			printk(".", time);
+			++counter;
+		}
+	}
+
 	uint8_t good = 0x02;
 	while (good & 0x02)
 		good = inb(0x64);

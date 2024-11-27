@@ -41,8 +41,7 @@ SOURCES =	kernel.c \
 			setgdt.s \
 			isrstub.s \
 			boot.s \
-			pit.s \
-			hexdump.c 
+			pit.s
 
 SOURCES += $(PRINTK_SOURCE)
 

@@ -8,10 +8,9 @@ typedef enum { ECHO, QWERTY, AZERTY, QUIT, DIVIDE, INT, HELP, TEST, BUILTINS_NB}
 
 #define BUILTINS                                                                \
 	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [QUIT] = "quit", \
-	[DIVIDE] = "divide", [INT] = "int", [HELP] = "help", [TEST] = "test"
+	[DIVIDE] = "divide", [INT] = "int", [HELP] = "help"
 
 uint8_t echo(char* word, size_t word_len);
 uint8_t qwerty();
 uint8_t azerty();
-uint8_t test();
 #endif

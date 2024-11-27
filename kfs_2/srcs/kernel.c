@@ -11,7 +11,7 @@ void kernel_main(void) {
 
 	keypress_t keypress = init_keypress();
 
-	term_putstr("echo 42\n");
+	// term_putstr("echo 42\n");
 	readline();
 	term_prompt();
 	while (true) {

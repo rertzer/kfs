@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define REGS_NB 14
+
 typedef enum {
 	ECHO,
 	QWERTY,

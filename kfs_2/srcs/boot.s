@@ -36,3 +36,7 @@ _start:
 .hang: hlt
 	jmp .hang
 .end:
+
+global freboot
+freboot:
+	JMP 0xFFFF:0

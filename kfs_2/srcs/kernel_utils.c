@@ -10,6 +10,9 @@ void outb(unsigned char value, unsigned short port) {
 	asm volatile("out %%al, %%dx" : : "a"(value), "d"(port) : "memory");
 }
 
+void outw(uint16_t value, uint16_t port) {
+	asm volatile("outw %%ax, %%dx" : : "a"(value), "d"(port) : "memory");
+}
 void io_wait(void) {
 	outb(0, 0x80);
 }

@@ -84,6 +84,18 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 					ret = qwerty();
 					found = true;
 					break;
+				case KREBOOT:
+					ret = kreboot();
+					found = true;
+					break;
+				case REBOOT:
+					ret = reboot();
+					found = true;
+					break;
+				case HALT:
+					ret = halt();
+					found = true;
+					break;
 				case TEST:
 					ret = hexdump();
 					found = true;

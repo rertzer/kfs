@@ -15,21 +15,22 @@ align 4
 	dd CHECKSUM
 
 ; creating a stack
-mov esp, 0x105000
 
 section .bss
 	align 16
 	global stack_bottom
-	stack_bottom:
-		resb 16384
+	global stack_top
+
 	stack_top:
+		resb 16384
+	stack_bottom:
 
 section .text
 ; start function: load the stack pointer, call the main kernel
 ; and enter in an infinite loop
 global _start:function (_start.end - _start)
 _start:
-	mov esp, stack_top
+	mov esp, stack_bottom
 	extern kernel_main
 	call kernel_main
 	cli

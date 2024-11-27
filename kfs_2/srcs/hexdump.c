@@ -1,19 +1,30 @@
 #include "kernel.h"
 
-static uint32_t* get_stack_pointer(void) {
-	uint32_t* ebp;
-	__asm__ volatile("movl %%ebp, %0" : "=r"(ebp));
-	return (ebp);
+extern uint32_t stack_top;
+extern uint32_t stack_bottom;
+
+void print_line(uint32_t *stack_pointer) {
+	uint32_t *stack_pointer_end = stack_pointer + 6;
+	printk("%08x	", stack_pointer);
+	for (uint32_t *i = stack_pointer; i < stack_pointer_end; i++) {
+		printk("%08x ", *i);
+	}
+	printk("\n");
 }
 
 uint8_t hexdump(void) {
-	int			frame = 0;
-	uint32_t	*ebp = get_stack_pointer();
-	
-	for (; ebp[0] && frame < 10; frame++) {
-        printk("  #%d  %08x\n", frame, ebp[1]);
-        ebp = (uint32_t *)(ebp[0]);
+	char testB[6000] = {};
+	for (size_t i = 0; i < sizeof(testB); i++) {
+		testB[i] = 'B';
+	}
+	for (uint32_t *stack_pointer = &stack_top; stack_pointer <= &stack_bottom; stack_pointer++) {		
+		print_line(stack_pointer);
     }
-	printk("  #%d  %08x\n", frame, ebp[1]);
+
+	printk("Stack Bottom: 0x%08x\n", &stack_top);
+	printk("Stack top: 0x%08x\n", &stack_bottom);
+
+	printk("Stack size: %d\n", (uint32_t)&stack_bottom - (uint32_t)&stack_top);
+
 	return (0);
 }

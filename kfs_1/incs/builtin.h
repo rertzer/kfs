@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef enum { ECHO, QWERTY, AZERTY, QUIT, DIVIDE, INT, HELP, TEST, BUILTINS_NB} builtin_t;
 
 #define BUILTINS                                                                \
 	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [QUIT] = "quit", \

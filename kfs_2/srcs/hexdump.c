@@ -59,7 +59,6 @@ uint8_t hexdump(void) {
 
 	printk("\nStack bottom: 0x%08x\n", &stack_top);
 	printk("Stack top:    0x%08x\n", &stack_bottom);
-
 	printk("Stack size: %d\n", (uint32_t)&stack_bottom - (uint32_t)&stack_top);
 
 	return (0);

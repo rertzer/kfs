@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define REGS_NB 14
+#define REGS_NB 15
 
 typedef enum {
 	ECHO,

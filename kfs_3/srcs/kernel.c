@@ -4,6 +4,8 @@ extern volatile uint8_t current_code;
 
 void kernel_main(void) {
 	all_terms_init();
+	printk("kernel main\n");
+	tabledump();
 	init_gdt();
 	init_PIC();
 	init_pit();

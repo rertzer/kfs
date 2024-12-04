@@ -3,6 +3,9 @@
 extern uint32_t			stack_top;
 extern uint32_t			stack_bottom;
 extern volatile uint8_t current_code;
+extern uint32_t			page_dir;
+extern uint32_t			low_kernel_page_table;
+extern uint32_t			high_kernel_page_table;
 
 static bool sleepy();
 
@@ -36,6 +39,21 @@ static bool sleepy() {
 		sleep();
 	}
 	return (end);
+}
+
+void tabledump(void) {
+	printk("page dir at   0x%08x\n", &page_dir);
+	for (uint32_t* i = &page_dir; i < &page_dir + 4; ++i) {
+		printk("%08x \n", *i);
+	}
+	printk("low page at  0x%08x\n", &low_kernel_page_table);
+	uint32_t index = 0;
+	for (uint32_t* i = &low_kernel_page_table; i < &low_kernel_page_table + 4; ++i) {
+		printk("%08x: %08x \n", index, *i);
+		++index;
+	}
+	printk("high page at 0x%08x\n", &high_kernel_page_table);
+	printk("setgdt: 0x%08x\n", set_gdt);
 }
 
 uint8_t hexdump(void) {

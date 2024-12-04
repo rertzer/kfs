@@ -9,6 +9,7 @@ static idtr_t idtr;
 static bool	  vectors[IDT_MAX_DESCRIPTORS];
 
 void init_idt() {
+	printk("IDTIDTIDTIDTIDTIDTIDTIDTIDTIDTIDTIDITIDTIDTIDTIDDT\n");
 	idtr.base = (uint32_t)&idt[0];
 	idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
@@ -31,6 +32,10 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 	descriptor->reserved = 0;
 	descriptor->attributes = flags;
 	descriptor->isr_high = (uint32_t)isr >> 16;
+}
+
+void page_fault_handler() {
+	printk("page fault!\n");
 }
 
 void exception_handler() {

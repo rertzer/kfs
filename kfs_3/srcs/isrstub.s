@@ -1,4 +1,5 @@
 ; ===================== DATA ===============================
+extern page_fault_handler
 extern exception_handler
 extern keyboard_handler
 extern pit_total_ms
@@ -28,7 +29,7 @@ isr_stub_%+%1:
 	pusha
 	mov eax, %+%1
 	mov [hereafter], eax ;%+%1
-    call exception_handler
+    call page_fault_handler
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register
 	popa
@@ -44,12 +45,25 @@ isr_stub_%+%1:
 	out	0x20, al	; write to primary PIC command register
 	mov eax, %+%1
 	mov [hereafter], eax;%+%1
-    call exception_handler
+    call page_fault_handler
 	; send EOI to primary PIC
 	popa
 	sti
     iret
 %endmacro
+
+; page fault exception 
+isr_stub_14:
+	cli
+	pusha
+	
+	call page_fault_handler
+	halt
+	 
+	popa
+	sti
+
+	iret
 
 ; timer interrupt
 isr_stub_32:
@@ -101,7 +115,7 @@ isr_err_stub    10
 isr_err_stub    11
 isr_err_stub    12
 isr_err_stub    13
-isr_err_stub    14
+; isr_err_stub    14
 isr_no_err_stub 15
 isr_no_err_stub 16
 isr_err_stub    17

@@ -14,10 +14,10 @@ SECTIONS
 	LOW_KERNEL_END = .;
 
 	/* high kernel section (3 Gb)*/
-	. += 0xC0000000;
+	/*. += 0xC0000000;*/
 	HIGH_KERNEL_START = .;
 
-	.text ALIGN(4K): /* AT(ADDR(.text) - 0xC0000000) */
+	.text ALIGN(4K):  /*AT(ADDR(.text) - 0xC0000000)*/
 		{
 		*(.text)
 	}

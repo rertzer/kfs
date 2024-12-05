@@ -1,5 +1,8 @@
 ENTRY(_start)
 
+
+HIGH_SHIFT = 0xC0000000;
+
 SECTIONS
 	{
 	/* low kernel start address */
@@ -7,29 +10,28 @@ SECTIONS
 	LOW_KERNEL_START = .;
 
 	/* low kernel section */ 
-	lk_multiboot  : {*(.multiboot)}
-	lk_text ALIGN (0x1000) : {*(.low_kernel_text)}
-	lk_data ALIGN (0x1000) : {*(.low_kernel_data)}
-	lk_bss ALIGN (0x1000) : {*(.low_kernel_bss)}
+	.multiboot.data  : {. = ALIGN(8); KEEP(*(.multiboot.data))}
+	.multiboot.text ALIGN (0x1000) : {*(.multiboot.text)}
+	.multiboot.bss ALIGN (0x1000) : {*(.multiboot.bss)}
 	LOW_KERNEL_END = .;
 
 	/* high kernel section (3 Gb)*/
-	/*. += 0xC0000000;*/
+	. += HIGH_SHIFT;
 	HIGH_KERNEL_START = .;
 
-	.text ALIGN(4K):  /*AT(ADDR(.text) - 0xC0000000)*/
+	.text ALIGN(4K):  AT(ADDR(.text) - HIGH_SHIFT)
 		{
 		*(.text)
 	}
-	.rodata  ALIGN(4K):  /*AT(ADDR(.rodata) - 0xC0000000)*/
+	.rodata  ALIGN(4K):  AT(ADDR(.rodata) - HIGH_SHIFT)
 	{
 		*(.rodata)
 	}
-	.data ALIGN(4K):  /*AT(ADDR(.data) - 0xC0000000)*/
+	.data ALIGN(4K):  AT(ADDR(.data) - HIGH_SHIFT)
 	{
 		*(.data)
 	}
-	.bss ALIGN(4K):  /*AT(ADDR(.bss) - 0xC0000000)*/
+	.bss ALIGN(4K):  AT(ADDR(.bss) - HIGH_SHIFT)
 	{
 		*(COMMON)
 		*(.bss)

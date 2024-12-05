@@ -13,7 +13,7 @@ set_gdt:
 	LGDT	[gdtr_storage]
 
 	; Reload CS register containing code selector:
-	JMP   0x08:.reload_CS ; kernel code segment
+	;JMP   0x08:.reload_CS ; kernel code segment
 	.reload_CS:
    ; Reload data and stack segment registers
 	MOV		AX, 0x10 ; kernel data segment
@@ -23,5 +23,5 @@ set_gdt:
 	MOV		GS, AX
 	MOV		AX, 0x18 ; kernel stack segment 
 	MOV		SS, AX
-	STI
+	;STI
 	RET

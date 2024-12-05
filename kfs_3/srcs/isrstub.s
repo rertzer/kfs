@@ -29,7 +29,7 @@ isr_stub_%+%1:
 	pusha
 	mov eax, %+%1
 	mov [hereafter], eax ;%+%1
-    call page_fault_handler
+    call exception_handler
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register
 	popa
@@ -45,7 +45,7 @@ isr_stub_%+%1:
 	out	0x20, al	; write to primary PIC command register
 	mov eax, %+%1
 	mov [hereafter], eax;%+%1
-    call page_fault_handler
+    call exception_handler
 	; send EOI to primary PIC
 	popa
 	sti

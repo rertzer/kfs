@@ -9,7 +9,6 @@ static idtr_t idtr;
 static bool	  vectors[IDT_MAX_DESCRIPTORS];
 
 void init_idt() {
-	printk("IDTIDTIDTIDTIDTIDTIDTIDTIDTIDTIDTIDITIDTIDTIDTIDDT\n");
 	idtr.base = (uint32_t)&idt[0];
 	idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 

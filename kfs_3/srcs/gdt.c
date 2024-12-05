@@ -24,16 +24,18 @@ void init_gdt() {
 
 	printk("before set_gdt\n");
 
-	printk("gdt: 0x%08x\n", gdt);
-	printk("GDT_BUFFER: 0x%08x\n", GDT_BUFFER);
-	uint32_t index = 0;
-
-	for (uint32_t* i = (uint32_t*)gdt; i < (uint32_t*)gdt + 14; ++i) {
-		printk("gdt %08x: %08x \n", index, *i);
-		++index;
-	}
+	// printk("gdt: 0x%08x\n", gdt);
+	// printk("GDT_BUFFER: 0x%08x\n", GDT_BUFFER);
+	// uint32_t index = 0;
+	//
+	// for (uint32_t* i = (uint32_t*)gdt; i < (uint32_t*)gdt + 14; ++i) {
+	// 	printk("gdt %08x: %08x \n", index, *i);
+	// 	++index;
+	// }
 	set_gdt(sizeof(uint64_t) * 7 - 1, GDT_BUFFER);
-	printk("after set_gdt\n");
+	printk(
+		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nFFFFFFFFFFFFFFFFF"
+		"FFFFFFFFF\nTEREREREREREafter set_gdt\n");
 }
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {

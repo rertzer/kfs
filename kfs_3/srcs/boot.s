@@ -22,13 +22,13 @@ extern kernel_main
 
 ; =================== low kernel ==========================
 ; multiboot header that marks the program as a kernel.
-section .multiboot
+section .multiboot.data
 align 4
 	dd MAGIC
 	dd MBFLAGS
 	dd CHECKSUM
 
-section .low_kernel_bss nobits
+section .multiboot.bss nobits
 alignb 4096
 page_dir:
 	resd 1024
@@ -37,13 +37,13 @@ low_kernel_page_table:
 high_kernel_page_table:
 	resd 1024
 
-section .low_kernel_data
 
-section .low_kernel_text progbits
+section .multiboot.text progbits
 global _start
 _start:
 	; page directory table
-	;low kernel entry
+	;low kernel entry_
+
 	global page_dir
 	global low_kernel_page_table
 	global high_kernel_page_table
@@ -52,28 +52,31 @@ _start:
 	or dword [page_dir], PAGE_PERM
 	;high kernel entry (3 Gb = 768 * 4 Mb)
 	mov eax, high_kernel_page_table
-	;mov [page_dir + 768 * 4], eax
+	or eax, PAGE_PERM
+	mov [page_dir + 768 * 4], eax
 	;self referencing dir table
 	mov eax, page_dir
-	;mov [page_dir + 1023 * 4], eax
+	or eax, PAGE_PERM
+	mov [page_dir + 1023 * 4], eax
 
 	; low_kernel_page_table : identity mapping of the first 4 Mb
 	; high kernel_page_table: first 4 Mb mapped to the high part (3 Gb)
 	mov eax, 0x0		;table index
 	mov ebx, 0x0		;physical address start 
 	or ebx, PAGE_PERM	; add permissions
-	page_table_init_loop:
+	.page_table_init_loop:
 	mov [low_kernel_page_table + eax * 4], ebx
 	mov [high_kernel_page_table + eax * 4], ebx
 	add ebx, PAGE_SIZE
 	inc eax
 	cmp eax, 1024
-	jne page_table_init_loop
+	jne .page_table_init_loop
 
 	; enable paging
 	mov eax, page_dir
 	mov cr3, eax			;load the page dir register 
-	mov eax, 0x80000000
+	mov eax, cr0
+	or eax, 0x80000000
 	mov cr0, eax			;set PG field
 
 	; call the high kernel

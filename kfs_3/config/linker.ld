@@ -10,7 +10,7 @@ SECTIONS
 	LOW_KERNEL_START = .;
 
 	/* low kernel section */ 
-	.multiboot.data  : {. = ALIGN(8); KEEP(*(.multiboot.data))}
+	.multiboot.data  ALIGN (0x1000) : {*(.multiboot.data)}
 	.multiboot.text ALIGN (0x1000) : {*(.multiboot.text)}
 	.multiboot.bss ALIGN (0x1000) : {*(.multiboot.bss)}
 	LOW_KERNEL_END = .;
@@ -20,7 +20,7 @@ SECTIONS
 	HIGH_KERNEL_START = .;
 
 	.text ALIGN(4K):  AT(ADDR(.text) - HIGH_SHIFT)
-		{
+	{
 		*(.text)
 	}
 	.rodata  ALIGN(4K):  AT(ADDR(.rodata) - HIGH_SHIFT)

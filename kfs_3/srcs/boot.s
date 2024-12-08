@@ -18,6 +18,8 @@ extern HIGH_KERNEL_SIZE
 PAGE_PERM equ 0x00000003			;supervisor read/write present
 PAGE_SIZE equ 4096
 extern kernel_main
+extern godot
+extern invalidate_low_kernel
 
 
 ; =================== low kernel ==========================
@@ -34,8 +36,6 @@ page_dir:
 	resd 1024
 low_kernel_page_table:
 	resd 1024
-high_kernel_page_table:
-	resd 1024
 
 
 section .multiboot.text progbits
@@ -46,13 +46,11 @@ _start:
 
 	global page_dir
 	global low_kernel_page_table
-	global high_kernel_page_table
+
 	mov eax, low_kernel_page_table
+	or dword eax, PAGE_PERM
 	mov [page_dir], eax
-	or dword [page_dir], PAGE_PERM
 	;high kernel entry (3 Gb = 768 * 4 Mb)
-	mov eax, high_kernel_page_table
-	or eax, PAGE_PERM
 	mov [page_dir + 768 * 4], eax
 	;self referencing dir table
 	mov eax, page_dir
@@ -66,7 +64,6 @@ _start:
 	or ebx, PAGE_PERM	; add permissions
 	.page_table_init_loop:
 	mov [low_kernel_page_table + eax * 4], ebx
-	mov [high_kernel_page_table + eax * 4], ebx
 	add ebx, PAGE_SIZE
 	inc eax
 	cmp eax, 1024
@@ -79,7 +76,7 @@ _start:
 	or eax, 0x80000000
 	mov cr0, eax			;set PG field
 
-	; call the high kernel
+	; switch to high kernel addresses
 	mov esp, stack_bottom	; load the stack pointer
 	call kernel_main		; call the main kernel
 	cli
@@ -103,3 +100,26 @@ section .text
 global freboot
 freboot:
 	JMP 0xFFFF:0
+
+
+global boom
+boom:
+mov eax, [ss:esp]
+jmp 0x08:.theend
+	.theend:
+	RET
+
+global get_retaddr
+get_retaddr:
+    mov  eax, [esp]
+    ret 
+
+godot:
+	.waiting_for_godot:
+	hlt
+	jmp .waiting_for_godot
+	ret
+	
+invalidate_low_kernel:
+	mov dword [page_dir], 0x0
+    invlpg [0]

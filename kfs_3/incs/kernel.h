@@ -14,8 +14,8 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-#define VGA_TEXT_MODE_BUFFER 0x000B8000
-#define GDT_BUFFER 0x00000800
+#define VGA_TEXT_MODE_BUFFER 0xc00B8000
+#define GDT_BUFFER 0xc0000800
 
 #define MAX_TERM_NB 8
 
@@ -68,8 +68,6 @@ typedef enum vga_blink_e {
 } vga_blink_t;
 
 /* ============= GDT ============= */
-
-#define GDT_BUFFER 0x00000800
 
 typedef struct {
 	uint32_t base;
@@ -141,6 +139,8 @@ void		  outb(unsigned char value, unsigned short port);
 void		  outw(uint16_t value, uint16_t port);
 void		  io_wait(void);
 void		  sleep();
+void		  godot();
+void		  invalidate_low_kernel();
 /* ======================= keyboard =================================== */
 #define LOG_INFO "INFO "
 #define LOG_WARNING "WARNING "

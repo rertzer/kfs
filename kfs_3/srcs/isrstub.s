@@ -1,5 +1,6 @@
 ; ===================== DATA ===============================
 extern page_fault_handler
+extern general_protection_handler
 extern exception_handler
 extern keyboard_handler
 extern pit_total_ms
@@ -52,13 +53,24 @@ isr_stub_%+%1:
     iret
 %endmacro
 
+
+; general protection fault
+isr_stub_13:
+	cli
+	pop word [hereafter] 
+	pusha
+	call general_protection_handler
+	hlt
+	popa
+	sti
+	iret
 ; page fault exception 
 isr_stub_14:
 	cli
 	pusha
 	
 	call page_fault_handler
-	halt
+	hlt
 	 
 	popa
 	sti
@@ -114,7 +126,7 @@ isr_no_err_stub 9
 isr_err_stub    10
 isr_err_stub    11
 isr_err_stub    12
-isr_err_stub    13
+;isr_err_stub    13
 ; isr_err_stub    14
 isr_no_err_stub 15
 isr_no_err_stub 16

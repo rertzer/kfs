@@ -4,13 +4,12 @@ extern volatile uint8_t current_code;
 
 void kernel_main(void) {
 	all_terms_init();
-	printk("kernel main\n");
-	tabledump();
 	init_gdt();
 	init_PIC();
 	init_pit();
 	init_idt();
-
+	invalidate_low_kernel();
+	tabledump();
 	keypress_t keypress = init_keypress();
 
 	term_putstr("echo 42\n");

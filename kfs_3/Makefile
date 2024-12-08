@@ -81,13 +81,13 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -nostdlib /app/$(OBJS) -lgcc
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -O2 -g -nostdlib /app/$(OBJS) -lgcc
 
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
-	@$(DOCKER_EXEC) nasm -f elf32 $(INCS) $< -o $@
+	@$(DOCKER_EXEC) nasm -g -f elf32 $(INCS) $< -o $@
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@echo "Compiling $(notdir $<)..."
@@ -95,7 +95,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						-std=gnu99 -ffreestanding -O2 -Wall -Wextra \
+						-std=gnu99 -ffreestanding -O2 -g -Wall -Wextra \
 						-c /app/$< \
 						-o /app/$@
 

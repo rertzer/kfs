@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define REGS_NB 15
+#define REGS_NB 17
 
 typedef enum {
 	ECHO,
@@ -22,13 +22,15 @@ typedef enum {
 	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot", \
 	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump"
 
-uint8_t echo(char* word, size_t word_len);
-uint8_t qwerty();
-uint8_t azerty();
-uint8_t kreboot();
-uint8_t reboot();
-uint8_t halt();
-uint8_t registers();
-void	freboot();
+uint8_t	 echo(char* word, size_t word_len);
+uint8_t	 qwerty();
+uint8_t	 azerty();
+uint8_t	 kreboot();
+uint8_t	 reboot();
+uint8_t	 halt();
+uint8_t	 registers();
+void	 freboot();
+uint32_t boom();
+uint32_t get_retaddr();
 
 #endif

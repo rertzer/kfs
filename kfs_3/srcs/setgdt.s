@@ -1,8 +1,8 @@
-section .data
+section .multiboot.data
 gdtr_storage DW 0 ; For limit storage
      DD 0 ; For base storage
 
-section .text
+section .multiboot.text
 global set_gdt
 set_gdt:
 	CLI
@@ -13,7 +13,7 @@ set_gdt:
 	LGDT	[gdtr_storage]
 
 	; Reload CS register containing code selector:
-	;JMP   0x08:.reload_CS ; kernel code segment
+	JMP   0x08:.reload_CS ; kernel code segment
 	.reload_CS:
    ; Reload data and stack segment registers
 	MOV		AX, 0x10 ; kernel data segment

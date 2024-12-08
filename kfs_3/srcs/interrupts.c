@@ -1,4 +1,5 @@
 #include "interrupts.h"
+#include "builtin.h"
 #include "kernel.h"
 
 extern volatile uint32_t						  hereafter;
@@ -17,7 +18,6 @@ void init_idt() {
 						   IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
 		vectors[vector] = true;
 	}
-
 	vectors[7] = false;
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
@@ -33,13 +33,20 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 	descriptor->isr_high = (uint32_t)isr >> 16;
 }
 
+void general_protection_handler(uint32_t error_code) {
+	tabledump();
+	printk("general protection fault\nerror code: %08x", hereafter);
+}
+
 void page_fault_handler() {
 	printk("page fault!\n");
+	godot();
 }
 
 void exception_handler() {
 	uint32_t ex_number = hereafter;
 	hereafter = 666;
 	printk("exception %d !\n", ex_number);
-	// __asm__ volatile("cli; hlt");
+	registers();
+	__asm__ volatile("cli; hlt");
 }

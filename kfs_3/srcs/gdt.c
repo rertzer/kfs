@@ -1,3 +1,4 @@
+#include "builtin.h"
 #include "kernel.h"
 
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
@@ -22,7 +23,7 @@ void init_gdt() {
 	add_gdt_descriptor(&gdt[5], user_data_desc);
 	add_gdt_descriptor(&gdt[6], user_stack_desc);
 
-	printk("before set_gdt\n");
+	// printk("before set_gdt\n");
 
 	// printk("gdt: 0x%08x\n", gdt);
 	// printk("GDT_BUFFER: 0x%08x\n", GDT_BUFFER);
@@ -32,10 +33,9 @@ void init_gdt() {
 	// 	printk("gdt %08x: %08x \n", index, *i);
 	// 	++index;
 	// }
+	// registers();
+
 	set_gdt(sizeof(uint64_t) * 7 - 1, GDT_BUFFER);
-	printk(
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nFFFFFFFFFFFFFFFFF"
-		"FFFFFFFFF\nTEREREREREREafter set_gdt\n");
 }
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {

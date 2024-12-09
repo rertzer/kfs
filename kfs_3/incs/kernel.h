@@ -67,6 +67,8 @@ typedef enum vga_blink_e {
 	BLINK = 1,
 } vga_blink_t;
 
+/* =========== multiboot ======== */
+
 /* ============= GDT ============= */
 
 typedef struct {
@@ -88,6 +90,8 @@ void	 set_gdt(uint32_t limit, uint32_t base);
 void	 init_pit();
 void	 reset_timer_counter();
 uint32_t get_timer_counter();
+void	 godot();
+void	 invalidate_low_kernel();
 
 /* ======================== utils ==================================== */
 size_t	strlen(const char* str);
@@ -139,12 +143,13 @@ void		  outb(unsigned char value, unsigned short port);
 void		  outw(uint16_t value, uint16_t port);
 void		  io_wait(void);
 void		  sleep();
-void		  godot();
-void		  invalidate_low_kernel();
+uint32_t*	  to_upper_kernel(uint32_t* low_address);
 /* ======================= keyboard =================================== */
 #define LOG_INFO "INFO "
 #define LOG_WARNING "WARNING "
 #define LOG_ERROR "ERROR "
+#define MULTIBOOT_MAGIC_1 0x2BADB002
+#define MULTIBOOT_MAGIC_2 0x36D76289
 
 unsigned char get_input();
 void		  term_next_line();

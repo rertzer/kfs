@@ -104,6 +104,10 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 					ret = hexdump();
 					found = true;
 					break;
+				case BOOT_INFOS:
+					ret = boot_infos();
+					found = true;
+					break;
 				default:
 					break;
 			}

@@ -9,7 +9,6 @@ void kernel_main(void) {
 	init_pit();
 	init_idt();
 	invalidate_low_kernel();
-	tabledump();
 	keypress_t keypress = init_keypress();
 
 	term_putstr("echo 42\n");

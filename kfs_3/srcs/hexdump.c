@@ -47,8 +47,7 @@ void tabledump(void) {
 	}
 	uint32_t* hp = &page_dir;
 	hp += 768;
-	uint32_t* high_kernel_page_table = &low_kernel_page_table;
-	high_kernel_page_table += 0xC0000000 / 4;
+	uint32_t* high_kernel_page_table = to_upper_kernel(&low_kernel_page_table);
 	printk("dir 768: 0x%08x\n", *hp);
 	printk("high page at  0x%08x\n", high_kernel_page_table);
 	uint32_t index = 0;

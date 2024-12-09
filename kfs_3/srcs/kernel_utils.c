@@ -29,3 +29,8 @@ void update_cursor(size_t x, size_t y) {
 	outb(0x0F, (uint16_t)0x3D4);
 	outb((uint8_t)(pos & 0xFF), (uint16_t)0x3D5);
 }
+
+uint32_t* to_upper_kernel(uint32_t* low_address) {
+	uint32_t* high_address = low_address + 0xC0000000 / 4;
+	return (high_address);
+}

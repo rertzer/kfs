@@ -15,12 +15,14 @@ typedef enum {
 	HALT,
 	REGISTERS,
 	HEXDUMP,
+	BOOT_INFOS,
 	BUILTINS_NB
 } builtin_t;
 
-#define BUILTINS                                                                      \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot", \
-	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump"
+#define BUILTINS                                                                            \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot",       \
+	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump", \
+	[BOOT_INFOS] = "bootinfos",
 
 uint8_t	 echo(char* word, size_t word_len);
 uint8_t	 qwerty();
@@ -29,6 +31,7 @@ uint8_t	 kreboot();
 uint8_t	 reboot();
 uint8_t	 halt();
 uint8_t	 registers();
+uint8_t	 boot_infos();
 void	 freboot();
 uint32_t boom();
 uint32_t get_retaddr();

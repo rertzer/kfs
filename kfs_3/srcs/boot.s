@@ -20,6 +20,8 @@ PAGE_SIZE equ 4096
 extern kernel_main
 extern godot
 extern invalidate_low_kernel
+extern multiboot_magic
+extern multiboot_tags
 
 
 ; =================== low kernel ==========================
@@ -31,19 +33,27 @@ align 4
 	dd CHECKSUM
 
 section .multiboot.bss nobits
+; paging
 alignb 4096
 page_dir:
 	resd 1024
 low_kernel_page_table:
 	resd 1024
+; multiboot infos
+multiboot_magic:
+	resd 1
+multiboot_tags:
+	resd 1
 
 
 section .multiboot.text progbits
 global _start
 _start:
+	; store multiboot infos
+	mov [multiboot_magic], eax
+	mov [multiboot_tags], ebx
 	; page directory table
 	;low kernel entry_
-
 	global page_dir
 	global low_kernel_page_table
 
@@ -104,10 +114,13 @@ freboot:
 
 global boom
 boom:
-mov eax, [ss:esp]
-jmp 0x08:.theend
+jmp  0x08:.theend
 	.theend:
-	RET
+pop eax
+push 0x08
+push eax 
+
+	RETF
 
 global get_retaddr
 get_retaddr:

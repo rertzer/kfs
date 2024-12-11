@@ -93,6 +93,8 @@ _start:
 .hang: hlt					; enter in an infinite loop
 	jmp .hang
 
+
+
 ; ======================= high kernel sections ==================
 section .data
 section .bss
@@ -106,21 +108,11 @@ section .bss
 
 section .text
 
-; ====================== dirty reboot ===============================	
+; ====================== kernel utils ==============================
 global freboot
 freboot:
 	JMP 0xFFFF:0
 
-
-global boom
-boom:
-jmp  0x08:.theend
-	.theend:
-pop eax
-push 0x08
-push eax 
-
-	RETF
 
 global get_retaddr
 get_retaddr:
@@ -136,3 +128,14 @@ godot:
 invalidate_low_kernel:
 	mov dword [page_dir], 0x0
     invlpg [0]
+
+section .multiboot.text
+extern boom
+boom:
+	jmp  0x08:.theend
+.theend:
+	pop eax
+	push 0x08
+	push eax 
+	retf	
+

@@ -68,7 +68,7 @@ typedef enum vga_blink_e {
 } vga_blink_t;
 
 /* =========== multiboot ======== */
-
+uint32_t get_mem_size();
 /* ============= GDT ============= */
 
 typedef struct {

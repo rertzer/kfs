@@ -4,6 +4,12 @@
 extern uint32_t multiboot_magic;
 extern uint32_t multiboot_tags;
 
+uint32_t get_mem_size() {
+	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
+	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
+	return (multiboot_infos[2]);
+}
+
 uint8_t boot_infos() {
 	uint32_t  magic = *to_upper_kernel(&multiboot_magic);
 	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
@@ -34,6 +40,7 @@ uint8_t boot_infos() {
 	printk("mmap length:  0x%08x\n", multiboot_mmap_length);
 	printk("mmap addr:  0x%08x\n", multiboot_mmap_addr);
 	uint32_t i = 0;
+	multiboot_mmap_length = 4;	// ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 	while (i < multiboot_mmap_length) {
 		printk("base address 1: 0x%08x\t", multiboot_mmap_addr[i]);
 		++i;

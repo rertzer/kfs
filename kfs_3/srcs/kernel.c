@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "builtin.h"
 
 extern volatile uint8_t current_code;
 
@@ -8,8 +9,10 @@ void kernel_main(void) {
 	init_PIC();
 	init_pit();
 	init_idt();
-	invalidate_low_kernel();
 	keypress_t keypress = init_keypress();
+	invalidate_low_kernel();
+	// printk("boom at 0x%08x\n", boom);
+	// boom();
 
 	term_putstr("echo 42\n");
 	readline();

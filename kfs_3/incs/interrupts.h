@@ -23,7 +23,7 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 void exception_handler();
-void general_protection_handler(uint32_t error_code);
+void general_protection_handler(uint32_t registers[8], uint32_t error_code);
 void page_fault_handler();
 void keyboard_handler(uint8_t scan);
 

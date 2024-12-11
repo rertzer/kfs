@@ -57,13 +57,13 @@ isr_stub_%+%1:
 ; general protection fault
 isr_stub_13:
 	cli
-	pop word [hereafter] 
 	pusha
 	call general_protection_handler
 	hlt
 	popa
 	sti
 	iret
+
 ; page fault exception 
 isr_stub_14:
 	cli

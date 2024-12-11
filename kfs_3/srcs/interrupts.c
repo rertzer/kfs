@@ -33,9 +33,8 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 	descriptor->isr_high = (uint32_t)isr >> 16;
 }
 
-void general_protection_handler(uint32_t error_code) {
-	tabledump();
-	printk("general protection fault\nerror code: %08x", hereafter);
+void general_protection_handler(uint32_t registers[8], uint32_t error_code) {
+	printk("general protection fault\nerror code: %08x", error_code);
 }
 
 void page_fault_handler() {

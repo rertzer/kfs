@@ -128,14 +128,16 @@ godot:
 invalidate_low_kernel:
 	mov dword [page_dir], 0x0
     invlpg [0]
+	ret
 
-section .multiboot.text
-extern boom
+;section .multiboot.text
+global boom
 boom:
-	jmp  0x08:.theend
-.theend:
-	pop eax
 	push 0x08
+	lea eax, [theend]
 	push eax 
 	retf	
+
+theend:
+	ret
 

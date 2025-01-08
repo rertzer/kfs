@@ -37,11 +37,6 @@ void general_protection_handler(uint32_t registers[8], uint32_t error_code) {
 	printk("general protection fault\nerror code: %08x", error_code);
 }
 
-void page_fault_handler() {
-	printk("page fault!\n");
-	godot();
-}
-
 void exception_handler() {
 	uint32_t ex_number = hereafter;
 	hereafter = 666;

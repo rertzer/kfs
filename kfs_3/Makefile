@@ -45,7 +45,9 @@ SOURCES =	kernel.c \
 			isrstub.s \
 			boot.s \
 			pit.s \
-			hexdump.c 
+			hexdump.c \
+			paging.c \
+			page_fault.c
 
 SOURCES += $(PRINTK_SOURCE)
 

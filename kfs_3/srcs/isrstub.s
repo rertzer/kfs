@@ -67,12 +67,11 @@ isr_stub_13:
 ; page fault exception 
 isr_stub_14:
 	cli
-	pusha
-	
+	mov eax, cr2
+	push eax
 	call page_fault_handler
+	pop eax
 	hlt
-	 
-	popa
 	sti
 
 	iret

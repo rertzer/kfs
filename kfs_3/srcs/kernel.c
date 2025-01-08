@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "builtin.h"
+// #include "builtin.h"
 
 extern volatile uint8_t current_code;
 
@@ -13,6 +13,7 @@ void kernel_main(void) {
 	invalidate_low_kernel();
 	// printk("boom at 0x%08x\n", boom);
 	// boom();
+	page_testing();
 
 	term_putstr("echo 42\n");
 	readline();

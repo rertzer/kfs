@@ -9,6 +9,10 @@
 #define IDT_FLAG_PRESENT 0x80
 #define IDT_FLAG_32BIT_INTERRUPT 0x0E
 
+#define PAGE_FAULT_P 1
+#define PAGE_FAULT_PKR 32
+#define PAGE_FAULT_SS 64
+
 typedef struct {
 	uint16_t isr_low;	  // Lower 16 bits of the ISR's address
 	uint16_t kernel_cs;	  // GDT segment selector loaded into CS
@@ -24,9 +28,8 @@ typedef struct {
 
 void exception_handler();
 void general_protection_handler(uint32_t registers[8], uint32_t error_code);
-void page_fault_handler();
+void page_fault_handler(uint32_t l_address, uint32_t error_code);
 void keyboard_handler(uint8_t scan);
-
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 void init_idt(void);
 

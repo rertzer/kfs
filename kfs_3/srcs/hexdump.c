@@ -41,17 +41,20 @@ static bool sleepy() {
 }
 
 void tabledump(void) {
-	printk("page dir at   0x%08x\n", &page_dir);
-	for (uint32_t* i = &page_dir; i < &page_dir + 4; ++i) {
-		printk("%08x \n", *i);
-	}
+	// printk("page dir at   0x%08x\n", &page_dir);
+	// for (uint32_t* i = &page_dir; i < &page_dir + 4; ++i) {
+	// 	printk("%08x \n", *i);
+	// }
+	printk("tabledump\n");
+	godot();
 	uint32_t* hp = &page_dir;
-	hp += 768;
+	// hp += 768;
+	hp += 33;
 	uint32_t* high_kernel_page_table = to_upper_kernel(&low_kernel_page_table);
 	printk("dir 768: 0x%08x\n", *hp);
 	printk("high page at  0x%08x\n", high_kernel_page_table);
 	uint32_t index = 0;
-
+	godot();
 	for (uint32_t* i = high_kernel_page_table; i < high_kernel_page_table + 4; ++i) {
 		printk("%08x: %08x \n", index, *i);
 		++index;

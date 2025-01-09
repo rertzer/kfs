@@ -71,7 +71,6 @@ isr_stub_14:
 	push eax
 	call page_fault_handler
 	pop eax
-	hlt
 	sti
 
 	iret

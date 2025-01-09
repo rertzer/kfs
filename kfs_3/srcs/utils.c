@@ -27,3 +27,12 @@ void page_testing() {
 	printk("%s\n", good_string);
 	printk("my funny addr %s\n", fake_addr);
 }
+
+void ft_memset(char* address, char c, uint32_t size) {
+	for (uint32_t i = 0; i < size; ++i) {
+		address[i] = c;
+		if (i == 2) {
+			godot();
+		}
+	}
+}

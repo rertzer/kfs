@@ -92,11 +92,13 @@ void	 reset_timer_counter();
 uint32_t get_timer_counter();
 void	 godot();
 void	 invalidate_low_kernel();
+void	 flush_tlb();
 
 /* ======================== utils ==================================== */
 size_t	strlen(const char* str);
 uint8_t hexdump(void);
 void	tabledump();
+void	ft_memset(char* address, char c, uint32_t size);
 
 void page_testing();
 /* ========================= terminal ================================ */

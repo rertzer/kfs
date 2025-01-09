@@ -20,6 +20,7 @@ PAGE_SIZE equ 4096
 extern kernel_main
 extern godot
 extern invalidate_low_kernel
+extern flush_tlb
 extern multiboot_magic
 extern multiboot_tags
 
@@ -128,6 +129,12 @@ godot:
 invalidate_low_kernel:
 	mov dword [page_dir], 0x0
     invlpg [0]
+	ret
+
+flush_tlb:
+	mov eax, page_dir
+	mov cr3, eax			;load the page dir register 
+	mov eax, cr0
 	ret
 
 ;section .multiboot.text

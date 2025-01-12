@@ -8,6 +8,7 @@
 #define IDT_MAX_DESCRIPTORS 48
 #define IDT_FLAG_PRESENT 0x80
 #define IDT_FLAG_32BIT_INTERRUPT 0x0E
+#define PAGE_TABLE_MASK 0x3FF000
 
 typedef struct {
 	uint16_t isr_low;	  // Lower 16 bits of the ISR's address

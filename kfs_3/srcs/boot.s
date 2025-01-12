@@ -15,6 +15,7 @@ extern HIGH_KERNEL_END
 extern HIGH_KERNEL_SIZE
 
 ; kernel constants
+PAGING_ENABLED equ 0x80000000
 PAGE_PERM equ 0x00000003			;supervisor read/write present
 PAGE_SIZE equ 4096
 extern kernel_main
@@ -84,7 +85,7 @@ _start:
 	mov eax, page_dir
 	mov cr3, eax			;load the page dir register 
 	mov eax, cr0
-	or eax, 0x80000000
+	or eax, PAGING_ENABLED 
 	mov cr0, eax			;set PG field
 
 	; switch to high kernel addresses

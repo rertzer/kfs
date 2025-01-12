@@ -72,7 +72,6 @@ isr_stub_14:
 	call page_fault_handler
 	pop eax
 	sti
-
 	iret
 
 ; timer interrupt

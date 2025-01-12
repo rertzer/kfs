@@ -98,7 +98,7 @@ void	 flush_tlb();
 size_t	strlen(const char* str);
 uint8_t hexdump(void);
 void	tabledump();
-void	ft_memset(char* address, char c, uint32_t size);
+void	ft_memset(uint8_t* address, char c, uint32_t size);
 
 void page_testing();
 /* ========================= terminal ================================ */

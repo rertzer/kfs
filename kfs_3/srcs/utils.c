@@ -4,9 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "builtin.h"
+
 size_t strlen(const char* str) {
 	size_t len = 0;
-
 	while (str[len]) {
 		++len;
 	}
@@ -25,14 +26,19 @@ void page_testing() {
 	char* good_string = "hello word\n";
 	char* fake_addr = (char*)0xD09DC300;
 	printk("%s\n", good_string);
-	printk("my funny addr %s\n", fake_addr);
+	// printk("my funny addr %s\n", fake_addr);
+	char cacahuete = fake_addr[0];
+	godot();
+	if (cacahuete == 'x') {
+		printk("xxx\n");
+	} else {
+		printk("yyy\n");
+	}
+	registers();
 }
 
-void ft_memset(char* address, char c, uint32_t size) {
+void ft_memset(uint8_t* address, char c, uint32_t size) {
 	for (uint32_t i = 0; i < size; ++i) {
 		address[i] = c;
-		if (i == 2) {
-			godot();
-		}
 	}
 }

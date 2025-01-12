@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "paging.h"
 
 extern uint32_t			stack_top;
 extern uint32_t			stack_bottom;
@@ -46,18 +47,10 @@ void tabledump(void) {
 	// 	printk("%08x \n", *i);
 	// }
 	printk("tabledump\n");
-	godot();
-	uint32_t* hp = &page_dir;
-	// hp += 768;
-	hp += 33;
-	uint32_t* high_kernel_page_table = to_upper_kernel(&low_kernel_page_table);
-	printk("dir 768: 0x%08x\n", *hp);
-	printk("high page at  0x%08x\n", high_kernel_page_table);
-	uint32_t index = 0;
-	godot();
-	for (uint32_t* i = high_kernel_page_table; i < high_kernel_page_table + 4; ++i) {
-		printk("%08x: %08x \n", index, *i);
-		++index;
+
+	uint32_t* dir_entry = (uint32_t*)PAGE_DIR_ADDR;
+	for (uint32_t i = 830; i < 840; ++i) {
+		printk("%u: %08x \n", i, *(dir_entry + i));
 	}
 	// printk("setgdt: 0x%08x\n", set_gdt);
 	// printk("init_gdt: 0x%08x\n", init_gdt);

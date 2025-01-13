@@ -28,13 +28,13 @@ void page_testing() {
 	printk("%s\n", good_string);
 	// printk("my funny addr %s\n", fake_addr);
 	char cacahuete = fake_addr[0];
-	godot();
 	if (cacahuete == 'x') {
 		printk("xxx\n");
 	} else {
 		printk("yyy\n");
 	}
-	registers();
+	fake_addr[0] = 'Z';
+	printk("fake cacahuete %c\n", fake_addr[0]);
 }
 
 void ft_memset(uint8_t* address, char c, uint32_t size) {

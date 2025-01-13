@@ -70,7 +70,7 @@ isr_stub_14:
 	mov eax, cr2
 	push eax
 	call page_fault_handler
-	pop eax
+	add esp, 8	
 	sti
 	iret
 

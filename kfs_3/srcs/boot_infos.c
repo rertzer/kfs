@@ -1,3 +1,4 @@
+#include "boot_infos.h"
 #include "builtin.h"
 #include "kernel.h"
 
@@ -8,6 +9,23 @@ uint32_t get_mem_size() {
 	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
 	return (multiboot_infos[2]);
+}
+
+void memory_map_infos() {
+	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
+	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
+	uint32_t		  i;
+
+	for (i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
+		multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*)(mbd->mmap_addr + i);
+
+		printk("Start Addr: %x | Length: %x | Size: %x | Type: %d\n", mmmt->addr, mmmt->len,
+			   mmmt->size, mmmt->type);
+
+		if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE) {
+			printk("available\n");
+		}
+	}
 }
 
 uint8_t boot_infos() {

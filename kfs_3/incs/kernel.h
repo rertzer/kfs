@@ -67,8 +67,6 @@ typedef enum vga_blink_e {
 	BLINK = 1,
 } vga_blink_t;
 
-/* =========== multiboot ======== */
-uint32_t get_mem_size();
 /* ============= GDT ============= */
 
 typedef struct {
@@ -152,8 +150,6 @@ uint32_t*	  to_upper_kernel(uint32_t* low_address);
 #define LOG_INFO "INFO "
 #define LOG_WARNING "WARNING "
 #define LOG_ERROR "ERROR "
-#define MULTIBOOT_MAGIC_1 0x2BADB002
-#define MULTIBOOT_MAGIC_2 0x36D76289
 
 unsigned char get_input();
 void		  term_next_line();

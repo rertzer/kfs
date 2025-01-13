@@ -7,8 +7,7 @@ static bool dir_page_missing(uint32_t l_address);
 static bool page_table_missing(uint32_t l_address);
 
 void page_fault_handler(uint32_t l_address, uint32_t error_code) {
-	static int oups;
-	bool	   ok = true;
+	bool ok = true;
 	printk("page fault!\nerror code is 0x%08x\n", error_code);
 	uint32_t access_error =
 		error_code & (PAGE_FAULT_P | PAGE_FAULT_W | PAGE_FAULT_PKR | PAGE_FAULT_SS);
@@ -26,7 +25,6 @@ void page_fault_handler(uint32_t l_address, uint32_t error_code) {
 	}
 	flush_tlb();
 	printk("page handling done\n");
-	++oups;
 	// if (oups > 2)
 	// 	godot();
 	// tabledump();

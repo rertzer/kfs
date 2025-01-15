@@ -17,15 +17,13 @@ void memory_map_infos() {
 	multiboot_memory_map_t* mmmp =
 		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
 	uint32_t total_size = 0;
-	for (uint32_t i = 0; i < mbd->mmap_length / sizeof(multiboot_memory_map_t); ++i) {
-		multiboot_memory_map_t* mmmp_entry = mmmp + i;
-
+	for (multiboot_memory_map_t* mmmp_entry = mmmp;
+		 mmmp_entry < mmmp + mbd->mmap_length / sizeof(multiboot_memory_map_t); ++mmmp_entry) {
 		total_size += mmmp_entry->len;
 		uint32_t len = mmmp_entry->len;
 		uint32_t addr = mmmp_entry->addr;
 		uint32_t type = mmmp_entry->type;
 		printk("Start Addr: %x | Len: %u | Type: %u | \n", addr, len, type);
-		// printk("total size %u %u\n", total_size, mmmp_entry->size);
 		// if (mmmp_entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
 		// 	printk("available\n");
 		// } else {

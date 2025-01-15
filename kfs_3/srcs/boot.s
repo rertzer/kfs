@@ -103,10 +103,18 @@ section .bss
 	align 16
 	global stack_bottom
 	global stack_top
+	global p_mmap_start
+	global p_mmap_end
 
 	stack_top:
 		resb 16384
 	stack_bottom:
+
+	p_mmap_start:
+		resb 524288 
+	p_mmap_end:
+	
+
 
 section .text
 

@@ -1,6 +1,7 @@
 #include "boot_infos.h"
 #include "builtin.h"
 #include "kernel.h"
+#include "memory.h"
 
 extern uint32_t multiboot_magic;
 extern uint32_t multiboot_tags;
@@ -24,13 +25,28 @@ void memory_map_infos() {
 		uint32_t addr = mmmp_entry->addr;
 		uint32_t type = mmmp_entry->type;
 		printk("Start Addr: %x | Len: %u | Type: %u | \n", addr, len, type);
-		// if (mmmp_entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
-		// 	printk("available\n");
-		// } else {
-		// 	printk("\n");
-		// }
 	}
 	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
+}
+
+void memory_map_freeze() {
+	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
+	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
+	multiboot_memory_map_t* mmmp =
+		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
+	for (multiboot_memory_map_t* mmmp_entry = mmmp;
+		 mmmp_entry < mmmp + mbd->mmap_length / sizeof(multiboot_memory_map_t); ++mmmp_entry) {
+		uint32_t len = mmmp_entry->len;
+		uint32_t addr = mmmp_entry->addr;
+		uint32_t type = mmmp_entry->type;
+		if (type != MULTIBOOT_MEMORY_AVAILABLE) {
+			freeze_memory((uint8_t*)addr, len);
+			printk("freezing %08x, %u\n", addr, len);
+
+		} else {
+			printk("available %08x, %u\n", addr, len);
+		}
+	}
 }
 
 uint8_t boot_infos() {

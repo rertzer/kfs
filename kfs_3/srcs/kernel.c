@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "boot_infos.h"
+#include "memory.h"
 // #include "builtin.h"
 
 extern volatile uint8_t current_code;
@@ -15,11 +16,12 @@ void kernel_main(void) {
 	// printk("boom at 0x%08x\n", boom);
 	// boom();
 	// page_testing();
-	memory_map_infos();
+	init_memory();
+	// memory_map_infos();
 
 	uint32_t mem_size = get_mem_size();
-	printk("memory size: %u\n", mem_size);
-
+	// printk("memory size: %u\n", mem_size);
+	godot();
 	term_putstr("echo 42\n");
 	readline();
 	term_prompt();

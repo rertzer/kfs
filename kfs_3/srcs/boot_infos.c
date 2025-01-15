@@ -14,18 +14,25 @@ uint32_t get_mem_size() {
 void memory_map_infos() {
 	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	uint32_t		  i;
+	multiboot_memory_map_t* mmmp =
+		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
+	uint32_t total_size = 0;
+	for (uint32_t i = 0; i < mbd->mmap_length / sizeof(multiboot_memory_map_t); ++i) {
+		multiboot_memory_map_t* mmmp_entry = mmmp + i;
 
-	for (i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
-		multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*)(mbd->mmap_addr + i);
-
-		printk("Start Addr: %x | Length: %x | Size: %x | Type: %d\n", mmmt->addr, mmmt->len,
-			   mmmt->size, mmmt->type);
-
-		if (mmmt->type == MULTIBOOT_MEMORY_AVAILABLE) {
-			printk("available\n");
-		}
+		total_size += mmmp_entry->len;
+		uint32_t len = mmmp_entry->len;
+		uint32_t addr = mmmp_entry->addr;
+		uint32_t type = mmmp_entry->type;
+		printk("Start Addr: %x | Len: %u | Type: %u | \n", addr, len, type);
+		// printk("total size %u %u\n", total_size, mmmp_entry->size);
+		// if (mmmp_entry->type == MULTIBOOT_MEMORY_AVAILABLE) {
+		// 	printk("available\n");
+		// } else {
+		// 	printk("\n");
+		// }
 	}
+	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
 }
 
 uint8_t boot_infos() {

@@ -49,7 +49,8 @@ SOURCES =	kernel.c \
 			paging.c \
 			page_fault.c \
 			memory.c \
-			p_map.c
+			p_map.c \
+			mmap.c
 
 SOURCES += $(PRINTK_SOURCE)
 

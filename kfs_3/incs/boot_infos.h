@@ -113,6 +113,6 @@ typedef struct multiboot_mmap_entry {
 /* ---------------------- functions -----------------------------------------*/
 uint32_t get_mem_size();
 void	 memory_map_infos();
-void	 memory_map_freeze();
+void	 boot_infos_memory_map_freeze();
 
 #endif

@@ -29,7 +29,7 @@ void memory_map_infos() {
 	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
 }
 
-void memory_map_freeze() {
+void boot_infos_memory_map_freeze() {
 	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
 	multiboot_memory_map_t* mmmp =

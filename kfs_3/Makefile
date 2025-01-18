@@ -24,33 +24,33 @@ PRINTK_SOURCE = printk/printk.c \
 				printk/utils.c \
 				printk/options.c
 
-SOURCES =	kernel.c \
-			keycode.c \
-			keypress.c \
-			terminal.c \
-			readline.c \
-			vga.c \
-			scancode.c \
-		  	gdt.c \
-			pic.c \
-			interrupts.c \
-			kernel_utils.c \
-			utils.c \
-			echo.c \
-			qwerty.c \
-			reboot.c \
-			registers.c \
-			boot_infos.c \
-			setgdt.s \
-			isrstub.s \
-			boot.s \
-			pit.s \
-			hexdump.c \
-			paging.c \
-			page_fault.c \
-			memory.c \
-			p_map.c \
-			mmap.c
+SOURCES =	boot/boot.s \
+			boot/boot_infos.c \
+			boot/reboot.c \
+			builtins/echo.c \
+			builtins/hexdump.c \
+			builtins/qwerty.c \
+			builtins/readline.c \
+			builtins/registers.c \
+		  	gdt/gdt.c \
+			gdt/setgdt.s \
+			interrupts/interrupts.c \
+			interrupts/pic.c \
+			interrupts/pit.s \
+			interrupts/isrstub.s \
+			kernel/kernel.c \
+			kernel/kernel_utils.c \
+			keyboard/keycode.c \
+			keyboard/keypress.c \
+			keyboard/scancode.c \
+			memory/paging.c \
+			memory/page_fault.c \
+			memory/memory.c \
+			memory/p_map.c \
+			memory/mmap.c \
+			terminal/terminal.c \
+			terminal/vga.c \
+			utils/utils.c
 
 SOURCES += $(PRINTK_SOURCE)
 

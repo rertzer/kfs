@@ -51,7 +51,7 @@ void init_mmap(mmap_t* mmap, uint8_t* start) {
 }
 
 void set_memory_size(mmap_t* mmap, uint32_t size) {
-	printk("memory size : %u\n", size);
+	// printk("memory size : %u\n", size);
 	set_all_memory_free(mmap);
 	uint8_t* start = (uint8_t*)size;
 	uint32_t len = MMAP_MAX_BYTE_SIZE - size;

@@ -5,7 +5,9 @@
  * kreboot reboot the computer using the 8042 keyboard controller
  * it pulse de CPU's RESET pin
  * */
-uint8_t reboot() {
+uint8_t reboot(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	printk("rebooting ");
 	uint8_t counter = 0;
 	while (counter < 8) {
@@ -26,12 +28,16 @@ uint8_t reboot() {
 }
 
 /* reboot by triggering a triple fault. */
-uint8_t kreboot() {
+uint8_t kreboot(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	freboot();
 	return (1);
 }
 
-uint8_t halt() {
+uint8_t halt(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	outw(0x2000, 0x604);
 	return (1);
 }

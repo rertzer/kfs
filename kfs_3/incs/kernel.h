@@ -94,7 +94,7 @@ void	 flush_tlb();
 
 /* ======================== utils ==================================== */
 size_t	strlen(const char* str);
-uint8_t hexdump(void);
+uint8_t hexdump(char* pointer, size_t len);
 void	tabledump();
 void	ft_memset(uint8_t* address, char c, uint32_t size);
 

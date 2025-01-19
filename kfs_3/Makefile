@@ -26,7 +26,7 @@ PRINTK_SOURCE = printk/printk.c \
 
 SOURCES =	boot/boot.s \
 			boot/boot_infos.c \
-			boot/reboot.c \
+			builtins/reboot.c \
 			builtins/echo.c \
 			builtins/hexdump.c \
 			builtins/qwerty.c \

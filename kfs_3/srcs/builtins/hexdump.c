@@ -56,7 +56,9 @@ void tabledump(void) {
 	// printk("init_gdt: 0x%08x\n", init_gdt);
 }
 
-uint8_t hexdump(void) {
+uint8_t hexdump(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	current_code = 0;
 	// volatile char testB[6000];
 	// for (size_t i = 0; i < 6000; i++) {

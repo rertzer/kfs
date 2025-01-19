@@ -41,6 +41,6 @@ void exception_handler() {
 	uint32_t ex_number = hereafter;
 	hereafter = 666;
 	printk("exception %d !\n", ex_number);
-	registers();
+	registers(NULL, 0);
 	__asm__ volatile("cli; hlt");
 }

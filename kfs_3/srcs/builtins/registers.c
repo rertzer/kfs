@@ -1,7 +1,9 @@
 #include "builtin.h"
 #include "kernel.h"
 
-uint8_t registers() {
+uint8_t registers(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	uint32_t regs[REGS_NB];
 
 	for (uint32_t i = 0; i < REGS_NB; ++i) {

@@ -64,53 +64,56 @@ static size_t cmdline_word(size_t pos, bool inside) {
 }
 
 static uint8_t cmdline_exec(cmdline_t* cmdline) {
-	static const char* builtins[BUILTINS_NB] = {BUILTINS};
+	static const char*		   builtins[BUILTINS_NB] = {BUILTINS};
+	static const builtin_fun_t builtins_fun[BUILTINS_NB] = {BUILTIN_FUNCTIONS};
 
 	uint8_t ret = 0;
 	bool	found = false;
 
 	for (size_t i = 0; i < BUILTINS_NB; ++i) {
 		if (cmd_cmp(cmdline, builtins[i]) == 0) {
-			switch (i) {
-				case ECHO:
-					ret = echo(cmdline->arg, cmdline->arg_len);
-					found = true;
-					break;
-				case AZERTY:
-					ret = azerty();
-					found = true;
-					break;
-				case QWERTY:
-					ret = qwerty();
-					found = true;
-					break;
-				case KREBOOT:
-					ret = kreboot();
-					found = true;
-					break;
-				case REBOOT:
-					ret = reboot();
-					found = true;
-					break;
-				case HALT:
-					ret = halt();
-					found = true;
-					break;
-				case REGISTERS:
-					ret = registers();
-					found = true;
-					break;
-				case HEXDUMP:
-					ret = hexdump();
-					found = true;
-					break;
-				case BOOT_INFOS:
-					ret = boot_infos();
-					found = true;
-					break;
-				default:
-					break;
-			}
+			ret = builtins_fun[i](cmdline->arg, cmdline->arg_len);
+			found = true;
+			// switch (i) {
+			// 	case ECHO:
+			// 		ret = echo(cmdline->arg, cmdline->arg_len);
+			// 		found = true;
+			// 		break;
+			// 	case AZERTY:
+			// 		ret = azerty();
+			// 		found = true;
+			// 		break;
+			// 	case QWERTY:
+			// 		ret = qwerty();
+			// 		found = true;
+			// 		break;
+			// 	case KREBOOT:
+			// 		ret = kreboot();
+			// 		found = true;
+			// 		break;
+			// 	case REBOOT:
+			// 		ret = reboot();
+			// 		found = true;
+			// 		break;
+			// 	case HALT:
+			// 		ret = halt();
+			// 		found = true;
+			// 		break;
+			// 	case REGISTERS:
+			// 		ret = registers();
+			// 		found = true;
+			// 		break;
+			// 	case HEXDUMP:
+			// 		ret = hexdump();
+			// 		found = true;
+			// 		break;
+			// 	case BOOT_INFOS:
+			// 		ret = boot_infos();
+			// 		found = true;
+			// 		break;
+			// 	default:
+			// 		break;
+			// }
 		}
 		if (found == true) {
 			break;

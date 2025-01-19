@@ -49,7 +49,9 @@ void boot_infos_memory_map_freeze(mmap_t* mmap) {
 	}
 }
 
-uint8_t boot_infos() {
+uint8_t boot_infos(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	uint32_t  magic = *to_upper_kernel(&multiboot_magic);
 	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
@@ -79,7 +81,7 @@ uint8_t boot_infos() {
 	printk("mmap length:  0x%08x\n", multiboot_mmap_length);
 	printk("mmap addr:  0x%08x\n", multiboot_mmap_addr);
 	uint32_t i = 0;
-	multiboot_mmap_length = 4;	// ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+	multiboot_mmap_length = 4;
 	while (i < multiboot_mmap_length) {
 		printk("base address 1: 0x%08x\t", multiboot_mmap_addr[i]);
 		++i;

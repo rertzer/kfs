@@ -6,6 +6,7 @@
 extern uint32_t multiboot_magic;
 extern uint32_t multiboot_tags;
 
+// value in Kib
 uint32_t boot_infos_get_mem_size() {
 	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);

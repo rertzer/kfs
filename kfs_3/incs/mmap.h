@@ -24,6 +24,7 @@
 #define BITS_PER_PAGE_SHIFT 1
 #define MMAP_PAGE_MASK 3
 
+#define MMAP_MAX_BYTE_SIZE 4294967296  // 4 Gb
 // 4 Gb give 1048576 pages, bitmap hold 4 pages per byte, gives 262144 bytes to hold 1 page
 // chunks in the bitmap
 #define ONE_PAGE_BYTES_NB 262144

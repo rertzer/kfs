@@ -16,7 +16,7 @@ void kernel_main(void) {
 	// printk("boom at 0x%08x\n", boom);
 	// boom();
 	// page_testing();
-	// init_memory();
+	init_memory();
 	// memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();

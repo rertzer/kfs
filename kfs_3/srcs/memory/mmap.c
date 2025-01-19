@@ -5,6 +5,8 @@ static inline uint32_t get_byte(uint32_t chunk_index);
 static inline uint32_t get_offset(uint32_t chunk_index);
 static uint8_t		   set_byte_status(uint8_t byte, chunk_t chunk);
 static uint8_t		   get_byte_status(uint8_t byte, uint8_t offset);
+static void			   set_chunks_lists_pointers(mmap_t* mmap, uint8_t* start);
+static void			   set_big_chunks_as_free(mmap_t* mmap);
 
 static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
@@ -33,16 +35,23 @@ uint32_t get_chunk_index(chunk_t chunk) {
 }
 
 void init_mmap(mmap_t* mmap, uint8_t* start) {
+	set_chunks_lists_pointers(mmap, start);
+	set_big_chunks_as_free(mmap);
+}
+
+static void set_chunks_lists_pointers(mmap_t* mmap, uint8_t* start) {
 	(*mmap)[0] = start;
 	uint32_t offset = ONE_PAGE_BYTES_NB;
 
-	printk("map 0 %u %08x\n", offset, (*mmap)[0]);
+	// printk("map 0 %u %08x\n", offset, (*mmap)[0]);
 	for (uint32_t i = 1; i <= MMAP_MAX_SIZE; ++i) {
 		(*mmap)[i] = (*mmap)[i - 1] + offset;
-		printk("map %u %u %08x\n", i, offset, (*mmap)[i]);
+		// printk("map %u %u %08x\n", i, offset, (*mmap)[i]);
 		offset >>= 1;
 	}
-	// higher blocks size 2^15 available
+}
+
+static void set_big_chunks_as_free(mmap_t* mmap) {
 	for (uint32_t i = 0; i < MAX_SIZE_PAGE_BYTES_NB; ++i) {
 		(*mmap)[MMAP_MAX_SIZE][i] = 0xFF;
 	}
@@ -74,7 +83,7 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 		chunk.offset = get_offset(current_index);
 		uint32_t byte = (*mmap)[chunk.size][chunk.byte];
 		chunk.status = get_byte_status(byte, chunk.offset);
-		if (chunk.status == MMAP_FREE) {
+		if (chunk.status != MMAP_UNAVAILABLE) {
 			break;
 		}
 	}
@@ -88,7 +97,7 @@ void set_chunk_status(mmap_t* mmap, chunk_t chunk) {
 
 void split_chunk(mmap_t* mmap, chunk_t);
 
-uint32_t get_start_max_chunk_size(uint32_t page_index) {
+uint32_t get_start_max_possible_chunk_size(uint32_t page_index) {
 	uint32_t max = 0;
 
 	for (; max < MMAP_MAX_SIZE; ++max) {
@@ -101,7 +110,7 @@ uint32_t get_start_max_chunk_size(uint32_t page_index) {
 	return (max);
 }
 
-uint32_t get_len_max_chunk_size(uint32_t len) {
+uint32_t get_len_max_possible_chunk_size(uint32_t len) {
 	uint32_t max = MMAP_MAX_SIZE - 1;
 
 	if (len >= (1 << MMAP_MAX_SIZE)) {

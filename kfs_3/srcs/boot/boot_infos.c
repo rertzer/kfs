@@ -40,11 +40,10 @@ void boot_infos_memory_map_freeze() {
 		uint32_t addr = mmmp_entry->addr;
 		uint32_t type = mmmp_entry->type;
 		if (type != MULTIBOOT_MEMORY_AVAILABLE) {
+			// printk("freezing %08x, %u\n", addr, len);
 			freeze_memory((uint8_t*)addr, len);
-			printk("freezing %08x, %u\n", addr, len);
-
 		} else {
-			printk("available %08x, %u\n", addr, len);
+			// printk("available %08x, %u\n", addr, len);
 		}
 	}
 }

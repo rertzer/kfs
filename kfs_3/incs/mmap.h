@@ -44,8 +44,8 @@ chunk_t	 get_chunk(mmap_t* mmap, uint32_t page_index);
 void	 set_chunk(mmap_t* mmap, chunk_t);
 void	 set_chunk_status(mmap_t* mmap, chunk_t chunk);
 void	 split_chunk(mmap_t* mmap, chunk_t chunk);
-uint32_t get_start_max_chunk_size(uint32_t page_index);
-uint32_t get_len_max_chunk_size(uint32_t len);
+uint32_t get_start_max_possible_chunk_size(uint32_t page_index);
+uint32_t get_len_max_possible_chunk_size(uint32_t len);
 uint32_t get_chunk_index(chunk_t chunk);
 
 #endif

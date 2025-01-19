@@ -74,46 +74,6 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 		if (cmd_cmp(cmdline, builtins[i]) == 0) {
 			ret = builtins_fun[i](cmdline->arg, cmdline->arg_len);
 			found = true;
-			// switch (i) {
-			// 	case ECHO:
-			// 		ret = echo(cmdline->arg, cmdline->arg_len);
-			// 		found = true;
-			// 		break;
-			// 	case AZERTY:
-			// 		ret = azerty();
-			// 		found = true;
-			// 		break;
-			// 	case QWERTY:
-			// 		ret = qwerty();
-			// 		found = true;
-			// 		break;
-			// 	case KREBOOT:
-			// 		ret = kreboot();
-			// 		found = true;
-			// 		break;
-			// 	case REBOOT:
-			// 		ret = reboot();
-			// 		found = true;
-			// 		break;
-			// 	case HALT:
-			// 		ret = halt();
-			// 		found = true;
-			// 		break;
-			// 	case REGISTERS:
-			// 		ret = registers();
-			// 		found = true;
-			// 		break;
-			// 	case HEXDUMP:
-			// 		ret = hexdump();
-			// 		found = true;
-			// 		break;
-			// 	case BOOT_INFOS:
-			// 		ret = boot_infos();
-			// 		found = true;
-			// 		break;
-			// 	default:
-			// 		break;
-			// }
 		}
 		if (found == true) {
 			break;
@@ -123,9 +83,6 @@ static uint8_t cmdline_exec(cmdline_t* cmdline) {
 		ret = cmd_error(cmdline);
 	}
 	return (ret);
-	// for (size_t i = 0; i < BUILTINS_NB; ++i) {
-	// 	printk("%d : %s\n", i, builtins[i]);
-	// }
 }
 
 static uint8_t cmd_cmp(cmdline_t* cmdline, const char* builtin) {

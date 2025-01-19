@@ -29,6 +29,7 @@ SOURCES =	boot/boot.s \
 			builtins/reboot.c \
 			builtins/echo.c \
 			builtins/hexdump.c \
+			builtins/memory_infos.c \
 			builtins/qwerty.c \
 			builtins/readline.c \
 			builtins/registers.c \

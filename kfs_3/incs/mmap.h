@@ -39,6 +39,7 @@ typedef struct chunk {
 } chunk_t;
 
 void	 init_mmap(mmap_t* mmap, uint8_t* start);
+void	 set_memory_size(mmap_t* mmap, uint32_t size);
 chunk_t	 make_chunk(uint32_t size, uint32_t chunk_index, uint32_t status);
 chunk_t	 get_chunk(mmap_t* mmap, uint32_t page_index);
 void	 set_chunk(mmap_t* mmap, chunk_t);
@@ -47,5 +48,7 @@ void	 split_chunk(mmap_t* mmap, chunk_t chunk);
 uint32_t get_start_max_possible_chunk_size(uint32_t page_index);
 uint32_t get_len_max_possible_chunk_size(uint32_t len);
 uint32_t get_chunk_index(chunk_t chunk);
+uint32_t get_page_index(void* addr);
+void	 freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len);
 
 #endif

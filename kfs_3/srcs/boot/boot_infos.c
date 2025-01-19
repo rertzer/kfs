@@ -1,12 +1,12 @@
 #include "boot_infos.h"
 #include "builtin.h"
 #include "kernel.h"
-#include "memory.h"
+#include "mmap.h"
 
 extern uint32_t multiboot_magic;
 extern uint32_t multiboot_tags;
 
-uint32_t get_mem_size() {
+uint32_t boot_infos_get_mem_size() {
 	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
 	return (multiboot_infos[2]);
@@ -29,7 +29,7 @@ void memory_map_infos() {
 	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
 }
 
-void boot_infos_memory_map_freeze() {
+void boot_infos_memory_map_freeze(mmap_t* mmap) {
 	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
 	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
 	multiboot_memory_map_t* mmmp =
@@ -41,7 +41,7 @@ void boot_infos_memory_map_freeze() {
 		uint32_t type = mmmp_entry->type;
 		if (type != MULTIBOOT_MEMORY_AVAILABLE) {
 			// printk("freezing %08x, %u\n", addr, len);
-			freeze_memory((uint8_t*)addr, len);
+			freeze_memory(mmap, (uint8_t*)addr, len);
 		} else {
 			// printk("available %08x, %u\n", addr, len);
 		}

@@ -5,8 +5,11 @@ static inline uint32_t get_byte(uint32_t chunk_index);
 static inline uint32_t get_offset(uint32_t chunk_index);
 static uint8_t		   set_byte_status(uint8_t byte, chunk_t chunk);
 static uint8_t		   get_byte_status(uint8_t byte, uint8_t offset);
-static void			   set_chunks_lists_pointers(mmap_t* mmap, uint8_t* start);
-static void			   set_big_chunks_as_free(mmap_t* mmap);
+static void*		   memory_adder(void* addr, uint32_t len);
+static bool			   memory_overflow(void* addr, uint32_t len);
+static void		freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index);
+static void		freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size);
+static uint32_t get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
 
 static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
@@ -35,11 +38,6 @@ uint32_t get_chunk_index(chunk_t chunk) {
 }
 
 void init_mmap(mmap_t* mmap, uint8_t* start) {
-	set_chunks_lists_pointers(mmap, start);
-	set_big_chunks_as_free(mmap);
-}
-
-static void set_chunks_lists_pointers(mmap_t* mmap, uint8_t* start) {
 	(*mmap)[0] = start;
 	uint32_t offset = ONE_PAGE_BYTES_NB;
 
@@ -51,7 +49,8 @@ static void set_chunks_lists_pointers(mmap_t* mmap, uint8_t* start) {
 	}
 }
 
-static void set_big_chunks_as_free(mmap_t* mmap) {
+void set_memory_size(mmap_t* mmap, uint32_t size) {
+	// printk("memory size : %u\n", size);
 	for (uint32_t i = 0; i < MAX_SIZE_PAGE_BYTES_NB; ++i) {
 		(*mmap)[MMAP_MAX_SIZE][i] = 0xFF;
 	}
@@ -145,4 +144,65 @@ void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	// parent
 	chunk.status = MMAP_UNAVAILABLE;
 	set_chunk_status(mmap, chunk);
+}
+
+void freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len) {
+	uint32_t start_page_index = get_page_index(addr);
+
+	uint32_t end_page_index = get_page_index(memory_adder(addr, len));
+	freeze_pages(mmap, start_page_index, end_page_index);
+}
+
+uint32_t get_page_index(void* addr) {
+	return ((uint32_t)addr >> 12);
+}
+
+static void freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index) {
+	uint32_t size = get_page_range_chunk_size(start_page_index, end_page_index);
+	freeze_page(mmap, start_page_index, size);
+	start_page_index += 1 << size;
+	if (start_page_index <= end_page_index) {
+		freeze_pages(mmap, start_page_index, end_page_index);
+	}
+}
+
+static uint32_t get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index) {
+	uint32_t size = get_start_max_possible_chunk_size(start_page_index);
+	uint32_t len = get_len_max_possible_chunk_size(end_page_index - start_page_index + 1);
+	size = size < len ? size : len;
+	return (size);
+}
+
+static void* memory_adder(void* addr, uint32_t len) {
+	uint32_t sum;
+	if (memory_overflow(addr, len)) {
+		sum = UINT32_MAX;
+	} else {
+		sum = (uint32_t)addr + len - 1;
+	}
+	return ((void*)sum);
+}
+
+static bool memory_overflow(void* addr, uint32_t len) {
+	bool over = false;
+	if (len > UINT32_MAX - (uint32_t)addr) {
+		over = true;
+	}
+	return (over);
+}
+
+static void freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size) {
+	chunk_t chunk = get_chunk(mmap, page_index);
+	if (chunk.status == MMAP_FREEZED) {
+		return;
+	}
+	if (chunk.status == MMAP_FREE) {
+		if (chunk.size == size) {
+			chunk.status = MMAP_FREEZED;
+			set_chunk_status(mmap, chunk);
+		} else {
+			split_chunk(mmap, chunk);
+			freeze_page(mmap, page_index, size);
+		}
+	}
 }

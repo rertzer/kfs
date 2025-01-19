@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "mmap.h"
+
 #define MULTIBOOT_MAGIC_1 0x2BADB002
 #define MULTIBOOT_MAGIC_2 0x36D76289
 
@@ -111,8 +113,8 @@ typedef struct multiboot_mmap_entry {
 } __attribute__((packed)) multiboot_memory_map_t;
 
 /* ---------------------- functions -----------------------------------------*/
-uint32_t get_mem_size();
+uint32_t boot_infos_get_mem_size();
 void	 memory_map_infos();
-void	 boot_infos_memory_map_freeze();
+void	 boot_infos_memory_map_freeze(mmap_t* mmap);
 
 #endif

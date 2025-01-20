@@ -17,6 +17,8 @@ static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t 
 static uint32_t	  get_free_offset(uint8_t byte);
 static chunk_t	  get_free_chunk_by_size(mmap_t* mmap, uint32_t size);
 static chunk_t	  get_unavailable_chunk();
+static uint32_t	  get_buddy_offset(uint32_t offset);
+static chunk_t	  get_parent(mmap_t* mmap, chunk_t kid);
 
 static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
@@ -109,6 +111,10 @@ void set_chunk_status(mmap_t* mmap, chunk_t chunk) {
 	(*mmap)[chunk.size][chunk.byte] = byte;
 }
 
+uint32_t get_chunk_status(mmap_t* mmap, chunk_t chunk) {
+	uint32_t byte = (*mmap)[chunk.size][chunk.byte];
+	return (get_byte_status(byte, chunk.offset));
+}
 uint32_t get_start_max_possible_chunk_size(uint32_t page_index) {
 	uint32_t max = 0;
 
@@ -158,6 +164,62 @@ void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	// right child
 	kid_chunk.offset += BITS_PER_CHUNK;
 	set_chunk_status(mmap, kid_chunk);
+}
+
+FREE and fuze have to be thorougly checked !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	void
+	fuse_chunk(mmap_t * mmap, chunk_t chunk) {
+	if (chunk.size == 15 || chunk.status != MMAP_FREE) {
+		return;
+	}
+	chunk_t buddy = get_buddy(mmap, chunk);
+	if (buddy.status != MMAP_FREE) {
+		return;
+	}
+	chunk.status = MMAP_UNAVAILABLE;
+	buddy.status = MMAP_UNAVAILABLE;
+	set_chunk_status(mmap, chunk);
+	set_chunk_status(mmap, buddy);
+	chunk = get_parent(mmap, chunk);
+
+	set_chunk_status(mmap, chunk);
+	fuse_chunk(mmap, chunk);
+}
+
+static chunk_t get_parent(mmap_t* mmap, chunk_t kid) {
+	uint32_t index = get_chunk_index(kid);
+	// twice less entries one higher level
+	index >>= 1;
+	chunk_t parent;
+	parent.size = kid.size + 1;
+	parent.byte = get_byte(index);
+	parent.offset = get_offset(index);
+	parent.status = MMAP_FREE;
+
+	return (parent);
+}
+
+chunk_t get_buddy(mmap_t* mmap, chunk_t chunk) {
+	chunk_t buddy;
+	buddy.size = chunk.size;
+	buddy.byte = chunk.byte;
+	buddy.offset = get_buddy_offset(chunk.offset);
+	buddy.status = get_chunk_status(mmap, buddy);
+	return (buddy);
+}
+
+static uint32_t get_buddy_offset(uint32_t offset) {
+	if ((offset < 7) && (offset % 2 == 0)) {
+		if (offset % 4 == 0) {
+			offset += BITS_PER_CHUNK;
+		} else {
+			offset -= BITS_PER_CHUNK;
+		}
+	} else {
+		offset = MMAP_NOT_FOUND_OFFSET;
+	}
+	return (offset);
 }
 
 void freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len) {
@@ -320,7 +382,23 @@ static chunk_t get_unavailable_chunk() {
 	chunk_t chunk;
 	chunk.size = 0;
 	chunk.byte = 0;
-	chunk.offset = 0;
+	chunk.offset = MMAP_NOT_FOUND_OFFSET;
 	chunk.status = MMAP_UNAVAILABLE;
 	return (chunk);
+}
+
+uint8_t free_by_address(mmap_t* mmap, void* addr) {
+	uint8_t	 ret = 0;
+	uint32_t page_index = get_page_index(addr);
+
+	chunk_t chunk = get_chunk(mmap, page_index);
+	if (chunk.status == MMAP_USED) {
+		chunk.status = MMAP_FREE;
+		set_chunk_status(mmap, chunk);
+		fuse_chunk(mmap, chunk);
+	} else {
+		ret = 1;
+	}
+
+	return (ret);
 }

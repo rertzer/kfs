@@ -41,3 +41,7 @@ void* k_mmap(uint32_t size) {
 uint32_t k_size(void* addr) {
 	return (get_size_by_address(&p_mmap, addr));
 }
+
+uint8_t k_free(void* addr) {
+	return (free_by_address(&p_mmap, addr));
+}

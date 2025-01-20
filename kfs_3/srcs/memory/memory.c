@@ -14,3 +14,8 @@ void init_memory() {
 	boot_infos_memory_map_freeze(&p_mmap);
 	freeze_memory(&p_mmap, 0, KERNEL_SIZE);
 }
+mem_info_t get_memory_infos() {
+	mem_info_t mem_infos;
+	mem_infos = get_mmap_infos(&p_mmap);
+	return (mem_infos);
+}

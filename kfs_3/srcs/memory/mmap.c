@@ -7,10 +7,12 @@ static inline uint8_t  set_byte_status(uint8_t byte, chunk_t chunk);
 static inline uint8_t  get_byte_status(uint8_t byte, uint8_t offset);
 static void*		   memory_adder(void* addr, uint32_t len);
 static bool			   memory_overflow(void* addr, uint32_t len);
-static void		freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index);
-static void		freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size);
-static uint32_t get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
-static void		set_all_memory_free(mmap_t* mmap);
+static void		  freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index);
+static void		  freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size);
+static uint32_t	  get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
+static void		  set_all_memory_free(mmap_t* mmap);
+static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size, mem_info_t mem_infos);
+static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
 
 static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
@@ -40,7 +42,7 @@ uint32_t get_chunk_index(chunk_t chunk) {
 
 void init_mmap(mmap_t* mmap, uint8_t* start) {
 	(*mmap)[0] = start;
-	uint32_t offset = ONE_PAGE_BYTES_NB;
+	uint32_t offset = SIZE_ONE_BYTES_NB;
 
 	// printk("map 0 %u %08x\n", offset, (*mmap)[0]);
 	for (uint32_t i = 1; i <= MMAP_MAX_SIZE; ++i) {
@@ -211,4 +213,44 @@ static void freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size) {
 			freeze_page(mmap, page_index, size);
 		}
 	}
+}
+
+mem_info_t get_mmap_infos(mmap_t* mmap) {
+	mem_info_t mem_infos = {0, 0, 0};
+
+	for (uint32_t i = 0; i <= MMAP_MAX_SIZE; ++i) {
+		uint32_t size = MMAP_MAX_SIZE - i;
+		mem_infos = add_mem_infos_by_size(mmap, size, mem_infos);
+	}
+	return (mem_infos);
+}
+
+static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size, mem_info_t mem_infos) {
+	uint32_t len = (uint32_t)SIZE_ONE_BYTES_NB >> size;
+
+	for (uint32_t i = 0; i < len; ++i) {
+		uint8_t byte = (*mmap)[size][i];
+		// printk("size %u, byte %u, byte value %u\n", size, i, byte);
+		mem_infos = add_mem_infos_by_byte(byte, size, mem_infos);
+	}
+	return (mem_infos);
+}
+
+static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos) {
+	for (uint32_t offset = 0; offset < 8; offset += 2) {
+		uint32_t status = get_byte_status(byte, offset);
+		switch (status) {
+			case MMAP_FREE:
+				mem_infos.free += 1 << size;
+				mem_infos.total += 1 << size;
+				break;
+			case MMAP_USED:
+				mem_infos.used += 1 << size;
+				mem_infos.total += 1 << size;
+				break;
+			default:
+				break;
+		}
+	}
+	return (mem_infos);
 }

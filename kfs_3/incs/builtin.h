@@ -25,7 +25,7 @@ typedef enum {
 #define BUILTINS                                                                            \
 	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot",       \
 	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump", \
-	[BOOT_INFOS] = "bootinfos"[MEMORY_INFOS] = "memoryinfos",
+	[BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos",
 
 typedef uint8_t (*builtin_fun_t)(char* pointer, size_t len);
 

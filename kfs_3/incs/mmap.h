@@ -48,6 +48,7 @@ typedef struct mem_infos {
 
 void	   init_mmap(mmap_t* mmap, uint8_t* start);
 void	   set_memory_size(mmap_t* mmap, uint32_t size);
+uint32_t   get_size_by_address(mmap_t* mmap, void* addr);
 chunk_t	   make_chunk(uint32_t size, uint32_t chunk_index, uint32_t status);
 chunk_t	   get_chunk(mmap_t* mmap, uint32_t page_index);
 void	   set_chunk_status(mmap_t* mmap, chunk_t chunk);

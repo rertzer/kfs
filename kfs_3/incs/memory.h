@@ -12,4 +12,5 @@
 void	   init_memory();
 mem_info_t get_memory_infos();
 void*	   k_mmap(uint32_t size);
+uint32_t   k_size(void* addr);
 #endif

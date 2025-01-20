@@ -62,6 +62,16 @@ void set_memory_size(mmap_t* mmap, uint32_t size) {
 	freeze_memory(mmap, start, len);
 }
 
+uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
+	uint32_t size = 0;
+	uint32_t page_index = get_page_index(addr);
+	chunk_t	 chunk = get_chunk(mmap, page_index);
+	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED) {
+		size = (1 << chunk.size) * PAGE_SIZE;
+	}
+	return (size);
+}
+
 static void set_all_memory_free(mmap_t* mmap) {
 	for (uint32_t i = 0; i < MAX_SIZE_PAGE_BYTES_NB; ++i) {
 		(*mmap)[MMAP_MAX_SIZE][i] = 0xFF;

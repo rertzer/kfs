@@ -22,10 +22,11 @@ void kernel_main(void) {
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
 
-	// for (int i = 0; i < 15; ++i) {
-	// 	void* addr = k_mmap((1 << 4) * 4096);
-	// 	printk("%u, %08x\n", i, addr);
-	// }
+	for (int i = 0; i < 15; ++i) {
+		void*	 addr = k_mmap((1 << i) * 4096);
+		uint32_t size = k_size(addr);
+		printk("%u, %08x %u\n", i, addr, size);
+	}
 
 	// godot();
 	term_putstr("echo 42\n");

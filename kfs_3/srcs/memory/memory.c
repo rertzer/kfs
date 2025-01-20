@@ -37,3 +37,7 @@ void* k_mmap(uint32_t size) {
 	void* address = get_chunk_address(chunk);
 	return (address);
 }
+
+uint32_t k_size(void* addr) {
+	return (get_size_by_address(&p_mmap, addr));
+}

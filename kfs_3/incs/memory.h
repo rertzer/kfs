@@ -11,5 +11,5 @@
 
 void	   init_memory();
 mem_info_t get_memory_infos();
-void*	   p_map(uint32_t size);
+void*	   k_mmap(uint32_t size);
 #endif

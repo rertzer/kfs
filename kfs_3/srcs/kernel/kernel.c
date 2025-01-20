@@ -21,6 +21,12 @@ void kernel_main(void) {
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
+
+	// for (int i = 0; i < 15; ++i) {
+	// 	void* addr = k_mmap((1 << 4) * 4096);
+	// 	printk("%u, %08x\n", i, addr);
+	// }
+
 	// godot();
 	term_putstr("echo 42\n");
 	readline();

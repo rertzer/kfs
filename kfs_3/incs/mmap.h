@@ -23,6 +23,7 @@
 #define BITS_PER_CHUNK 2
 #define BITS_PER_PAGE_SHIFT 1
 #define MMAP_PAGE_MASK 3
+#define MMAP_NOT_FOUND_OFFSET 8
 
 #define MMAP_MAX_BYTE_SIZE 4294967296  // 4 Gb
 // 4 Gb give 1048576 pages, bitmap hold 4 pages per byte, gives 262144 bytes to hold 1 page
@@ -49,7 +50,6 @@ void	   init_mmap(mmap_t* mmap, uint8_t* start);
 void	   set_memory_size(mmap_t* mmap, uint32_t size);
 chunk_t	   make_chunk(uint32_t size, uint32_t chunk_index, uint32_t status);
 chunk_t	   get_chunk(mmap_t* mmap, uint32_t page_index);
-void	   set_chunk(mmap_t* mmap, chunk_t);
 void	   set_chunk_status(mmap_t* mmap, chunk_t chunk);
 void	   split_chunk(mmap_t* mmap, chunk_t chunk);
 uint32_t   get_start_max_possible_chunk_size(uint32_t page_index);
@@ -58,5 +58,7 @@ uint32_t   get_chunk_index(chunk_t chunk);
 uint32_t   get_page_index(void* addr);
 void	   freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len);
 mem_info_t get_mmap_infos(mmap_t* mmap);
+chunk_t	   get_free_chunk(mmap_t* mmap, uint32_t size);
+void*	   get_chunk_address(chunk_t chunk);
 
 #endif

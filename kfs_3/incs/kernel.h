@@ -93,10 +93,11 @@ void	 invalidate_low_kernel();
 void	 flush_tlb();
 
 /* ======================== utils ==================================== */
-size_t	strlen(const char* str);
-uint8_t hexdump(char* pointer, size_t len);
-void	tabledump();
-void	ft_memset(uint8_t* address, char c, uint32_t size);
+size_t	 strlen(const char* str);
+uint8_t	 hexdump(char* pointer, size_t len);
+void	 tabledump();
+void	 ft_memset(uint8_t* address, char c, uint32_t size);
+uint32_t round_up_power_two(uint32_t n);
 
 void page_testing();
 /* ========================= terminal ================================ */

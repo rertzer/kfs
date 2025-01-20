@@ -42,3 +42,19 @@ void ft_memset(uint8_t* address, char c, uint32_t size) {
 		address[i] = c;
 	}
 }
+
+uint32_t round_up_power_two(uint32_t n) {
+	uint32_t offset = 31;
+	if (n == 0) {
+		return (0);
+	}
+	for (; offset != 0; --offset) {
+		if ((n >> offset) == 1) {
+			break;
+		}
+	}
+	if ((n - (1 << offset)) != 0) {
+		++offset;
+	}
+	return (offset);
+}

@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "boot_infos.h"
+#include "builtin.h"
 #include "memory.h"
-// #include "builtin.h"
 
 extern volatile uint8_t current_code;
 
@@ -22,10 +22,15 @@ void kernel_main(void) {
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
 
-	for (int i = 0; i < 15; ++i) {
-		void*	 addr = k_mmap((1 << i) * 4096);
+	for (int i = 0; i < 5; ++i) {
+		printk("---- %u ----\n", i);
+		// memory_infos(NULL, 0);
+		void*	 addr = k_mmap((1 << 3) * 4096);
 		uint32_t size = k_size(addr);
-		printk("%u, %08x %u\n", i, addr, size);
+		printk("%u, %08x %u\n\n", i, addr, size);
+		// memory_infos(NULL, 0);
+		// k_free(addr);
+		// memory_infos(NULL, 0);
 	}
 
 	// godot();

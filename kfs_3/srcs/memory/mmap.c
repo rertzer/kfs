@@ -166,10 +166,7 @@ void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	set_chunk_status(mmap, kid_chunk);
 }
 
-FREE and fuze have to be thorougly checked !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-	void
-	fuse_chunk(mmap_t * mmap, chunk_t chunk) {
+void fuse_chunk(mmap_t* mmap, chunk_t chunk) {
 	if (chunk.size == 15 || chunk.status != MMAP_FREE) {
 		return;
 	}

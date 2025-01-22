@@ -8,8 +8,11 @@ static inline uint8_t  set_byte_status(uint8_t byte, chunk_t chunk);
 static inline uint8_t  get_byte_status(uint8_t byte, uint8_t offset);
 static void*		   memory_adder(void* addr, uint32_t len);
 static bool			   memory_overflow(void* addr, uint32_t len);
-static void		  freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index);
-static void		  freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size);
+static void			   book_pages(mmap_t*  mmap,
+								  uint32_t start_page_index,
+								  uint32_t end_page_index,
+								  uint32_t status);
+static void			   book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status);
 static uint32_t	  get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
 static void		  set_all_memory_free(mmap_t* mmap);
 static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
@@ -61,7 +64,7 @@ void set_memory_size(mmap_t* mmap, uint32_t size) {
 	set_all_memory_free(mmap);
 	uint8_t* start = (uint8_t*)size;
 	uint32_t len = MMAP_MAX_BYTE_SIZE - size;
-	freeze_memory(mmap, start, len);
+	book_memory(mmap, start, len, MMAP_FREEZED);
 }
 
 uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
@@ -219,24 +222,27 @@ static uint32_t get_buddy_offset(uint32_t offset) {
 	return (offset);
 }
 
-void freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len) {
+void book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status) {
 	uint32_t start_page_index = get_page_index(addr);
 
 	uint32_t end_page_index = get_page_index(memory_adder(addr, len));
-	freeze_pages(mmap, start_page_index, end_page_index);
+	book_pages(mmap, start_page_index, end_page_index, status);
 }
 
 uint32_t get_page_index(void* addr) {
 	return ((uint32_t)addr >> 12);
 }
 
-static void freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index) {
+static void book_pages(mmap_t*	mmap,
+					   uint32_t start_page_index,
+					   uint32_t end_page_index,
+					   uint32_t status) {
 	sleep();
 	uint32_t size = get_page_range_chunk_size(start_page_index, end_page_index);
-	freeze_page(mmap, start_page_index, size);
+	book_page(mmap, start_page_index, size, status);
 	start_page_index += 1 << size;
 	if (start_page_index <= end_page_index) {
-		freeze_pages(mmap, start_page_index, end_page_index);
+		book_pages(mmap, start_page_index, end_page_index, status);
 	}
 }
 
@@ -265,22 +271,22 @@ static bool memory_overflow(void* addr, uint32_t len) {
 	return (over);
 }
 
-static void freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size) {
+static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status) {
 	chunk_t chunk = get_chunk(mmap, page_index);
-	if (chunk.status == MMAP_FREEZED) {
+	if (chunk.status == status) {
 		return;
 	}
 	if (chunk.size < size) {
 		size -= 1;
-		freeze_page(mmap, page_index, size);
-		freeze_page(mmap, page_index + (1 << size), size);
+		book_page(mmap, page_index, size, status);
+		book_page(mmap, page_index + (1 << size), size, status);
 	} else if (chunk.status == MMAP_FREE) {
 		if (chunk.size == size) {
 			chunk.status = MMAP_FREEZED;
 			set_chunk_status(mmap, chunk);
 		} else {
 			split_chunk(mmap, chunk);
-			freeze_page(mmap, page_index, size);
+			book_page(mmap, page_index, size, status);
 		}
 	}
 }

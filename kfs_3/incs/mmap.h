@@ -60,7 +60,7 @@ uint32_t get_start_max_possible_chunk_size(uint32_t page_index);
 uint32_t get_len_max_possible_chunk_size(uint32_t len);
 uint32_t get_chunk_index(chunk_t chunk);
 uint32_t get_page_index(void* addr);
-void	 freeze_memory(mmap_t* mmap, uint8_t* addr, uint32_t len);
+void	 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);
 void	 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
 chunk_t	 get_free_chunk(mmap_t* mmap, uint32_t size);
 void*	 get_chunk_address(chunk_t chunk);

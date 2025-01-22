@@ -1,5 +1,6 @@
 #include "paging.h"
 #include "kernel.h"
+#include "memory.h"
 
 extern uint32_t page_dir;
 
@@ -31,33 +32,30 @@ uint32_t get_page_table_offset(uint32_t l_address) {
 }
 
 bool create_page_table(uint32_t offset) {
-	static uint32_t count;
+	// static uint32_t count;
 
 	bool ok = true;
 	// frame_alloc ;
-	uint32_t address = 0x009EC000 + PAGE_SIZE * count;	// temporary fake address
-	++count;
-	printk("create page at address %08x\n", address);
-	if (address == 0) {
+	// uint32_t address = 0x009EC000 + PAGE_SIZE * count;	// temporary fake address
+	// ++count;
+	uint32_t* address = k_mmap(PAGE_SIZE);
+	if (address == NULL) {
 		printk("panic!\n");
 		ok = false;
 
 	} else {
-		ok = add_page_to_dir_page(offset, (uint32_t*)address,
+		ok = add_page_to_dir_page(offset, address,
 								  PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT);
 		if (ok == true) {
 			flush_tlb();
 			uint32_t offoffset = (offset) << 12;
 			uint8_t* memset_address = (uint8_t*)PAGE_DIR_BASE + offoffset;
-			printk("memset at address %08x + %08x = %08x\n", PAGE_DIR_BASE, offoffset,
-				   memset_address);
 			ft_memset(memset_address, 0, PAGE_SIZE);
-			printk("memset done\n");
 			flush_tlb();
 		}
 	}
 
-	return (ok);  //(physical page address);
+	return (ok);
 }
 
 bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address, uint32_t flags) {

@@ -1,5 +1,6 @@
 #include "interrupts.h"
 #include "kernel.h"
+#include "memory.h"
 #include "paging.h"
 
 static bool page_missing(uint32_t l_address);
@@ -45,11 +46,11 @@ static bool dir_page_missing(uint32_t l_address) {
 	uint32_t page_offset = get_dir_page_offset(l_address);
 
 	uint32_t* addr = (uint32_t*)PAGE_DIR_ADDR + page_offset;
-	printk("page offset and value %u %08x\n", page_offset, *addr);
+	// printk("page offset and value %u %08x\n", page_offset, *addr);
 	if (*addr & PAGE_FAULT_P) {
-		printk("dir page entry present\n");
+		// printk("dir page entry present\n");
 	} else {
-		printk("dir page entry missing\n");
+		// printk("dir page entry missing\n");
 		ok = create_page_table(page_offset);
 		flush_tlb();
 	}
@@ -58,25 +59,31 @@ static bool dir_page_missing(uint32_t l_address) {
 }
 
 static bool page_table_missing(uint32_t l_address) {
-	static uint32_t count;
+	// static uint32_t count;
 	printk("page table missing \n");
 
 	bool	  ok = true;
 	uint32_t* page_address = get_page_table_address(l_address);
 	uint32_t  page_offset = get_page_table_offset(l_address);
-	printk("page address is %08x\n", page_address);
-	printk("page offset is %08x\n", page_offset);
+	// printk("page address is %08x\n", page_address);
+	// printk("page offset is %08x\n", page_offset);
 	uint32_t* entry = page_address + page_offset;
 
 	// get a physical address 	static uint32_t count;
-	uint32_t address = 0x00c23000 + PAGE_SIZE * count;	// temporary fake address
-	++count;
+	// uint32_t address = 0x00c23000 + PAGE_SIZE * count;	// temporary fake address
+	// ++count;
+	void* address = k_mmap(PAGE_SIZE);
+	if (address == NULL) {
+		printk("page fault: error: no physical memory available\n");
+		ok = false;
+	} else {
+		// printk("page table missing: virtual address is %08x \n", l_address);
+		// printk("page table missing: physical address is %08x \n", address);
+		*entry = (uint32_t)address | PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT;
 
-	printk("page table missing: address is %08x \n", address);
-	printk("page table missing: entry address is %08x \n", entry);
-	*entry = address | PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT;
+		flush_tlb();
+		// printk("page table missing: value is %08x \n", *entry);
+	}
 
-	flush_tlb();
-	printk("page table missing: value is %08x \n", *entry);
 	return (ok);
 }

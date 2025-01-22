@@ -12,7 +12,7 @@ static void		  freeze_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t en
 static void		  freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size);
 static uint32_t	  get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
 static void		  set_all_memory_free(mmap_t* mmap);
-static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size, mem_info_t mem_infos);
+static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
 static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
 static uint32_t	  get_free_offset(uint8_t byte);
 static chunk_t	  get_free_chunk_by_size(mmap_t* mmap, uint32_t size);
@@ -285,24 +285,22 @@ static void freeze_page(mmap_t* mmap, uint32_t page_index, uint32_t size) {
 	}
 }
 
-mem_info_t get_mmap_infos(mmap_t* mmap) {
-	mem_info_t mem_infos = {0, 0, 0};
-
+void get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos) {
 	for (uint32_t i = 0; i <= MMAP_MAX_SIZE; ++i) {
 		uint32_t size = MMAP_MAX_SIZE - i;
-		mem_infos = add_mem_infos_by_size(mmap, size, mem_infos);
+		mem_infos[i] = add_mem_infos_by_size(mmap, size);
 	}
-	return (mem_infos);
 }
 
-static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size, mem_info_t mem_infos) {
-	uint32_t len = (uint32_t)SIZE_ONE_BYTES_NB >> size;
+static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size) {
+	uint32_t   len = (uint32_t)SIZE_ONE_BYTES_NB >> size;
+	mem_info_t mem_info = {0, 0, 0};
 
 	for (uint32_t i = 0; i < len; ++i) {
 		uint8_t byte = (*mmap)[size][i];
-		mem_infos = add_mem_infos_by_byte(byte, size, mem_infos);
+		mem_info = add_mem_infos_by_byte(byte, size, mem_info);
 	}
-	return (mem_infos);
+	return (mem_info);
 }
 
 static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos) {

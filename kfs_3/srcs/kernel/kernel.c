@@ -25,11 +25,11 @@ void kernel_main(void) {
 	for (int i = 0; i < 5; ++i) {
 		printk("---- %u ----\n", i);
 		// memory_infos(NULL, 0);
-		void*	 addr = k_mmap((1 << 3) * 4096);
+		void*	 addr = k_mmap((1 << i) * 4096);
 		uint32_t size = k_size(addr);
 		printk("%u, %08x %u\n\n", i, addr, size);
 		// memory_infos(NULL, 0);
-		// k_free(addr);
+		k_free(addr);
 		// memory_infos(NULL, 0);
 	}
 

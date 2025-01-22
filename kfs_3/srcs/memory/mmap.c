@@ -273,7 +273,7 @@ static bool memory_overflow(void* addr, uint32_t len) {
 
 static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status) {
 	chunk_t chunk = get_chunk(mmap, page_index);
-	if (chunk.status == status) {
+	if (chunk.status == status && status != MMAP_UNAVAILABLE) {
 		return;
 	}
 	if (chunk.size < size) {
@@ -282,7 +282,7 @@ static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t
 		book_page(mmap, page_index + (1 << size), size, status);
 	} else if (chunk.status == MMAP_FREE) {
 		if (chunk.size == size) {
-			chunk.status = MMAP_FREEZED;
+			chunk.status = status;
 			set_chunk_status(mmap, chunk);
 		} else {
 			split_chunk(mmap, chunk);

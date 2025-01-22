@@ -22,20 +22,20 @@ void kernel_main(void) {
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
 
-	// for (int i = 0; i < 5; ++i) {
-	// 	printk("---- %u ----\n", i);
-	// 	// memory_infos(NULL, 0);
-	// 	void*	 addr = k_mmap((1 << i) * 4096);
-	// 	uint32_t size = k_size(addr);
-	// 	printk("%u, %08x %u\n\n", i, addr, size);
-	// 	// memory_infos(NULL, 0);
-	// 	// k_free(addr);
-	// 	// memory_infos(NULL, 0);
-	// }
+	for (int i = 0; i < 5; ++i) {
+		printk("---- %u ----\n", i);
+		// memory_infos(NULL, 0);
+		void*	 addr = k_mmap((1 << i) * 4096);
+		uint32_t size = k_size(addr);
+		printk("%u, %08x %u\n\n", i, addr, size);
+		// memory_infos(NULL, 0);
+		k_free(addr);
+		// memory_infos(NULL, 0);
+	}
 
 	// godot();
-	// term_putstr("echo 42\n");
-	term_putstr("memoryinfos\n");
+	term_putstr("echo 42\n");
+	// term_putstr("memoryinfos\n");
 	readline();
 	term_prompt();
 	while (true) {

@@ -15,7 +15,7 @@
 
 #define MMAP_MAX_SIZE 15
 #define MMAP_UNAVAILABLE 0
-#define MMAP_FREEZED 1
+#define MMAP_USED_WONLY 1
 #define MMAP_USED 2
 #define MMAP_FREE 3
 

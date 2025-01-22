@@ -64,14 +64,14 @@ void set_memory_size(mmap_t* mmap, uint32_t size) {
 	set_all_memory_free(mmap);
 	uint8_t* start = (uint8_t*)size;
 	uint32_t len = MMAP_MAX_BYTE_SIZE - size;
-	book_memory(mmap, start, len, MMAP_FREEZED);
+	book_memory(mmap, start, len, MMAP_UNAVAILABLE);
 }
 
 uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
 	uint32_t size = 0;
 	uint32_t page_index = get_page_index(addr);
 	chunk_t	 chunk = get_chunk(mmap, page_index);
-	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED) {
+	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_WONLY) {
 		size = (1 << chunk.size) * PAGE_SIZE;
 	}
 	return (size);
@@ -321,6 +321,10 @@ static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t 
 				mem_info.used += 1 << size;
 				mem_info.total += 1 << size;
 				break;
+			case MMAP_USED_WONLY:
+				mem_info.used += 1 << size;
+				mem_info.total += 1 << size;
+				break;
 			default:
 				break;
 		}
@@ -393,7 +397,7 @@ uint8_t free_by_address(mmap_t* mmap, void* addr) {
 	uint32_t page_index = get_page_index(addr);
 
 	chunk_t chunk = get_chunk(mmap, page_index);
-	if (chunk.status == MMAP_USED) {
+	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_WONLY) {
 		chunk.status = MMAP_FREE;
 		set_chunk_status(mmap, chunk);
 		fuse_chunk(mmap, chunk);

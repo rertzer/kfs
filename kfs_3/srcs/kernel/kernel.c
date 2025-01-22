@@ -34,7 +34,8 @@ void kernel_main(void) {
 	// }
 
 	// godot();
-	term_putstr("echo 42\n");
+	// term_putstr("echo 42\n");
+	term_putstr("memoryinfos\n");
 	readline();
 	term_prompt();
 	while (true) {

@@ -105,6 +105,8 @@ section .bss
 	global stack_top
 	global p_mmap_start
 	global p_mmap_end
+	global v_mmap_start
+	global v_mmap_end
 
 	stack_top:
 		resb 16384
@@ -113,6 +115,9 @@ section .bss
 	p_mmap_start:
 		resb 524288 
 	p_mmap_end:
+	v_mmap_start:
+		resb 524288 
+	v_mmap_end:
 	
 
 

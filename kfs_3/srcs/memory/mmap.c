@@ -14,7 +14,6 @@ static void			   book_pages(mmap_t*  mmap,
 								  uint32_t status);
 static void			   book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status);
 static uint32_t	  get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
-static void		  set_all_memory_free(mmap_t* mmap);
 static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
 static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
 static uint32_t	  get_free_offset(uint8_t byte);
@@ -59,12 +58,15 @@ void init_mmap(mmap_t* mmap, uint8_t* start) {
 	}
 }
 
+// size in Kib
 void set_memory_size(mmap_t* mmap, uint32_t size) {
-	// printk("memory size : %u\n", size);
+	// printk("memory size : %u Kib\n", size);
 	set_all_memory_free(mmap);
-	uint8_t* start = (uint8_t*)size;
-	uint32_t len = MMAP_MAX_BYTE_SIZE - size;
-	book_memory(mmap, start, len, MMAP_UNAVAILABLE);
+	if (size != MMAP_MAX_KBYTE_SIZE) {
+		uint8_t* start = (uint8_t*)(size * 1024);
+		uint32_t len = (MMAP_MAX_KBYTE_SIZE - size) * 1024;
+		book_memory(mmap, start, len, MMAP_UNAVAILABLE);
+	}
 }
 
 uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
@@ -77,7 +79,7 @@ uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
 	return (size);
 }
 
-static void set_all_memory_free(mmap_t* mmap) {
+void set_all_memory_free(mmap_t* mmap) {
 	for (uint32_t i = 0; i < MAX_SIZE_PAGE_BYTES_NB; ++i) {
 		(*mmap)[MMAP_MAX_SIZE][i] = 0xFF;
 	}

@@ -25,7 +25,7 @@
 #define MMAP_PAGE_MASK 3
 #define MMAP_NOT_FOUND_OFFSET 8
 
-#define MMAP_MAX_BYTE_SIZE 4294967296  // 4 Gb
+#define MMAP_MAX_KBYTE_SIZE 4194304	 // 4 Gb
 // 4 Gb give 1048576 pages, bitmap hold 4 pages per byte, gives 262144 bytes to hold 1 page
 // chunks in the bitmap
 #define SIZE_ONE_BYTES_NB 262144
@@ -48,6 +48,7 @@ typedef struct mem_infos {
 
 void	 init_mmap(mmap_t* mmap, uint8_t* start);
 void	 set_memory_size(mmap_t* mmap, uint32_t size);
+void	 set_all_memory_free(mmap_t* mmap);
 uint32_t get_size_by_address(mmap_t* mmap, void* addr);
 chunk_t	 make_chunk(uint32_t size, uint32_t chunk_index, uint32_t status);
 chunk_t	 get_chunk(mmap_t* mmap, uint32_t page_index);

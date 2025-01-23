@@ -9,7 +9,7 @@ mmap_t p_mmap;
 
 void init_memory() {
 	init_mmap(&p_mmap, (uint8_t*)&p_mmap_start);
-	uint32_t memory_size = 1024 * boot_infos_get_mem_size();
+	uint32_t memory_size = boot_infos_get_mem_size();
 	set_memory_size(&p_mmap, memory_size);
 	boot_infos_memory_map_freeze(&p_mmap);
 	book_memory(&p_mmap, 0, KERNEL_SIZE, MMAP_USED);

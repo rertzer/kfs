@@ -29,9 +29,15 @@
 // 4 Gb give 1048576 pages, bitmap hold 4 pages per byte, gives 262144 bytes to hold 1 page
 // chunks in the bitmap
 #define SIZE_ONE_BYTES_NB 262144
+// 1 byte holds 4 pages or 16 Kb; 1 MB hold in 64 bytes
+#define BYTES_PER_MB 64
 #define MAX_SIZE_PAGE_BYTES_NB 8
 
-typedef uint8_t* mmap_t[MMAP_MAX_SIZE + 1];
+typedef struct {
+	uint32_t start_index;
+	uint32_t end_index;
+	uint8_t* mmap[MMAP_MAX_SIZE + 1];
+} mmap_t;
 
 typedef struct chunk {
 	uint32_t size;
@@ -46,8 +52,7 @@ typedef struct mem_infos {
 	uint32_t total;
 } mem_info_t;
 
-void	 init_mmap(mmap_t* mmap, uint8_t* start);
-void	 set_memory_size(mmap_t* mmap, uint32_t size);
+void	 init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size);
 void	 set_all_memory_free(mmap_t* mmap);
 uint32_t get_size_by_address(mmap_t* mmap, void* addr);
 chunk_t	 make_chunk(uint32_t size, uint32_t chunk_index, uint32_t status);
@@ -64,7 +69,7 @@ uint32_t get_page_index(void* addr);
 void	 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);
 void	 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
 chunk_t	 get_free_chunk(mmap_t* mmap, uint32_t size);
-void*	 get_chunk_address(chunk_t chunk);
+void*	 get_chunk_address(mmap_t* mmap, chunk_t chunk);
 uint8_t	 free_by_address(mmap_t* mmap, void* addr);
 
 #endif

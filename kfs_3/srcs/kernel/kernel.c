@@ -31,8 +31,8 @@ void kernel_main(void) {
 	// 	k_free(addr);
 	// 	// memory_infos(NULL, 0);
 	// }
-
-	page_testing();
+	memory_map_infos();
+	// page_testing();
 	// godot();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");

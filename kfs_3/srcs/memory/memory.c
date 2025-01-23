@@ -8,9 +8,9 @@ extern uint32_t p_mmap_start;
 mmap_t p_mmap;
 
 void init_memory() {
-	init_mmap(&p_mmap, (uint8_t*)&p_mmap_start);
 	uint32_t memory_size = boot_infos_get_mem_size();
-	set_memory_size(&p_mmap, memory_size);
+	printk("boot mem size %u\n", memory_size);
+	init_mmap(&p_mmap, (uint8_t*)&p_mmap_start, 0, memory_size);
 	boot_infos_memory_map_freeze(&p_mmap);
 	book_memory(&p_mmap, 0, KERNEL_SIZE, MMAP_USED);
 }
@@ -33,7 +33,7 @@ void* k_mmap(uint32_t size) {
 	}
 	chunk.status = MMAP_USED;
 	set_chunk_status(&p_mmap, chunk);
-	void* address = get_chunk_address(chunk);
+	void* address = get_chunk_address(&p_mmap, chunk);
 	// printk("k_mmap found the address %08x\n", address);
 	return (address);
 }

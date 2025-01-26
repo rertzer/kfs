@@ -13,25 +13,27 @@ static void			   book_pages(mmap_t*  mmap,
 								  uint32_t end_page_index,
 								  uint32_t status);
 static void			   book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status);
-static uint32_t	  get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index);
-static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
-static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
-static uint32_t	  get_free_offset(uint8_t byte);
-static chunk_t	  get_free_chunk_by_size(mmap_t* mmap, uint32_t size);
-static chunk_t	  get_unavailable_chunk();
-static uint32_t	  get_buddy_offset(uint32_t offset);
-static chunk_t	  get_parent(mmap_t* mmap, chunk_t kid);
-static uint32_t	  get_pages_len(mmap_t* mmap);
-static bool		  valid_page_index(mmap_t* mmap, uint32_t page_index);
-static bool		  valid_max_chunk_aligned_page_index(uint32_t page_index);
-static uint32_t	  get_size_bytes_len(mmap_t* mmap, uint32_t size);
-static uint32_t	  get_local_page_index(mmap_t* mmap, uint32_t page_index);
-static void*	  get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
-static void		  set_mmap_addresses(mmap_t* mmap, uint8_t* start, uint32_t memory_size);
-static void		  set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size);
-static uint32_t	  round_up_memory_size(uint32_t size);
-static uint32_t	  get_remain_len(uint32_t size);
-static uint8_t*	  get_remain_start(uint8_t* memory_start, uint32_t memory_size);
+static uint32_t		   get_page_range_chunk_size(uint32_t max_size,
+												 uint32_t start_page_index,
+												 uint32_t end_page_index);
+static mem_info_t	   add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
+static mem_info_t	   add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
+static uint32_t		   get_free_offset(uint8_t byte);
+static chunk_t		   get_free_chunk_by_size(mmap_t* mmap, uint32_t size);
+static chunk_t		   get_unavailable_chunk();
+static uint32_t		   get_buddy_offset(uint32_t offset);
+static chunk_t		   get_parent(mmap_t* mmap, chunk_t kid);
+static uint32_t		   get_pages_len(mmap_t* mmap);
+static bool			   valid_page_index(mmap_t* mmap, uint32_t page_index);
+static bool			   valid_max_chunk_aligned_page_index(uint32_t page_index);
+static uint32_t		   get_size_bytes_len(mmap_t* mmap, uint32_t size);
+static uint32_t		   get_local_page_index(mmap_t* mmap, uint32_t page_index);
+static void*		   get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
+static void			   set_mmap_addresses(mmap_t* mmap, uint8_t* start, uint32_t memory_size);
+static void			   set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size);
+static uint32_t		   round_up_memory_size(uint32_t size);
+static uint32_t		   get_remain_len(uint32_t size);
+static uint8_t*		   get_remain_start(uint8_t* memory_start, uint32_t memory_size);
 
 static uint32_t round_up_memory_size(uint32_t size) {
 	if (size % (1 << MMAP_MAX_SIZE) != 0) {
@@ -49,9 +51,8 @@ static void* get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_i
 static uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index) {
 	return (page_index - mmap->start_index);
 }
-LE CODE BLOC LA IL FAUT AVOIR UNE SIZE MAX DYNAMIC		   A 1 /
-	4 min DE LA PUISSANCE SUP ARRONDIE CHANGER LA FONCTION D'ARRONDI static uint32_t
-	get_size_bytes_len(mmap_t* mmap, uint32_t size) {
+
+static uint32_t get_size_bytes_len(mmap_t* mmap, uint32_t size) {
 	printk("pages len %u %u\n", size, get_pages_len(mmap));
 	return ((get_pages_len(mmap) / (uint32_t)PAGES_PER_BYTE) >> size);
 }
@@ -117,7 +118,6 @@ void init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t mem
 	set_memory_size(mmap, memory_start, memory_size);
 	set_mmap_addresses(mmap, start, memory_size);
 	set_all_memory_free(mmap);
-
 	book_memory(mmap, get_remain_start(memory_start, memory_size), get_remain_len(memory_size),
 				MMAP_UNAVAILABLE);
 }
@@ -134,10 +134,12 @@ static uint32_t get_remain_len(uint32_t size) {
 static void set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size) {
 	// printk("memory size : %u Kib\n", size);
 	mmap->start_index = get_page_index(start_addr);
-	size = round_up_memory_size(size);
+	mmap->max_size = round_up_memory_size(size) >> 2;
 	// 4 Kib per page
-	mmap->end_index = mmap->start_index + (size >> 2) - 1;
-	printk("start %u end %u len %u\n", mmap->start_index, mmap->end_index, get_pages_len(mmap));
+	mmap->end_index = mmap->start_index + (mmap->max_size) - 1;
+	mmap->max_size = round_up_power_two(mmap->max_size >> 2);
+	printk("size %u start %u end %u len %u\n", mmap->max_size, mmap->start_index, mmap->end_index,
+		   get_pages_len(mmap));
 
 	if (valid_max_chunk_aligned_page_index(mmap->start_index) == false) {
 		printk("memory error: memory start must be 2^15 bytes aligned\n");
@@ -150,7 +152,7 @@ static void set_mmap_addresses(mmap_t* mmap, uint8_t* start, uint32_t memory_siz
 	mmap->mmap[0] = start;
 	uint32_t offset = BYTES_PER_MB * (memory_size >> 10);
 
-	for (uint32_t i = 1; i <= MMAP_MAX_SIZE; ++i) {
+	for (uint32_t i = 1; i <= mmap->max_size; ++i) {
 		mmap->mmap[i] = mmap->mmap[i - 1] + offset;
 		offset >>= 1;
 	}
@@ -167,11 +169,11 @@ uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
 }
 
 void set_all_memory_free(mmap_t* mmap) {
-	printk("size by len %u\n", get_size_bytes_len(mmap, MMAP_MAX_SIZE));
-	for (uint32_t byte_index = 0; byte_index < get_size_bytes_len(mmap, MMAP_MAX_SIZE);
-		 ++byte_index) {
-		printk("setting free %u", byte_index);
-		mmap->mmap[MMAP_MAX_SIZE][byte_index] = 0xFF;
+	uint32_t size_bytes_len = get_size_bytes_len(mmap, mmap->max_size);
+	printk("size by len %u\n", size_bytes_len);
+	for (uint32_t byte_index = 0; byte_index < size_bytes_len; ++byte_index) {
+		printk("setting free %u\n", byte_index);
+		mmap->mmap[mmap->max_size][byte_index] = 0xFF;
 	}
 }
 
@@ -192,7 +194,7 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 		printk("memory: error: invalid page index %u \n", page_index);
 		printk("It's time to Panic\n");
 	}
-	for (chunk.size = MMAP_MAX_SIZE; chunk.size != UINT32_MAX; --chunk.size) {
+	for (chunk.size = mmap->max_size; chunk.size != UINT32_MAX; --chunk.size) {
 		uint32_t chunk_index = (get_local_page_index(mmap, page_index)) >> chunk.size;
 		chunk.byte = get_byte(chunk_index);
 		chunk.offset = get_offset(chunk_index);
@@ -202,13 +204,19 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 			break;
 		}
 	}
+	printk("found  %u chunk %u %u %u %u\n", page_index, chunk.size, chunk.byte, chunk.offset,
+		   chunk.status);
 	return (chunk);
 }
 
 void set_chunk_status(mmap_t* mmap, chunk_t chunk) {
 	uint8_t byte = mmap->mmap[chunk.size][chunk.byte];
+	printk("set chunk %u %u %u %u    - ", chunk.size, chunk.byte, chunk.offset, byte);
 	byte = set_byte_status(byte, chunk);
+	printk("%u     -   ", byte);
 	mmap->mmap[chunk.size][chunk.byte] = byte;
+	uint32_t new_status = get_chunk_status(mmap, chunk);
+	printk("%u\n", new_status);
 }
 
 uint32_t get_chunk_status(mmap_t* mmap, chunk_t chunk) {
@@ -216,10 +224,10 @@ uint32_t get_chunk_status(mmap_t* mmap, chunk_t chunk) {
 	return (get_byte_status(byte, chunk.offset));
 }
 
-uint32_t get_start_max_possible_chunk_size(uint32_t page_index) {
+uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint32_t page_index) {
 	uint32_t max = 0;
 
-	for (; max < MMAP_MAX_SIZE; ++max) {
+	for (; max < max_size; ++max) {
 		if ((page_index & 1) == 1) {
 			break;
 		}
@@ -228,11 +236,11 @@ uint32_t get_start_max_possible_chunk_size(uint32_t page_index) {
 	return (max);
 }
 
-uint32_t get_len_max_possible_chunk_size(uint32_t len) {
-	uint32_t max = MMAP_MAX_SIZE - 1;
+uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len) {
+	uint32_t max = max_size - 1;
 
-	if (len >= (1 << MMAP_MAX_SIZE)) {
-		return (MMAP_MAX_SIZE);
+	if (len >= (1 << max_size)) {
+		return (max_size);
 	}
 	for (; max > 0; --max) {
 		if ((len & (1 << (max))) != 0) {
@@ -245,13 +253,19 @@ void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	if (chunk.size == 0 || chunk.status != MMAP_FREE) {
 		return;
 	}
+	printk("spliting chunk %u %u %u %u \n", chunk.byte, chunk.offset, chunk.size, chunk.status);
 	// parent
 	chunk.status = MMAP_UNAVAILABLE;
 	set_chunk_status(mmap, chunk);
+	chunk.status = get_chunk_status(mmap, chunk);
+	printk("parent now %u %u %u %u\n", chunk.size, chunk.byte, chunk.offset, chunk.status);
 	// kids
 	uint32_t index = get_chunk_index(chunk);
 	// twice more entries one level lower
 	index <<= 1;
+	// chunk = get_chunk(mmap, 32639);
+
+	printk("page inside split %u %u %u %u\n", chunk.size, chunk.byte, chunk.offset, chunk.status);
 
 	chunk_t kid_chunk;
 	// left child
@@ -330,7 +344,8 @@ static void book_pages(mmap_t*	mmap,
 					   uint32_t start_page_index,
 					   uint32_t end_page_index,
 					   uint32_t status) {
-	uint32_t size = get_page_range_chunk_size(start_page_index, end_page_index);
+	printk("book pages %u %u %u\n", start_page_index, end_page_index, status);
+	uint32_t size = get_page_range_chunk_size(mmap->max_size, start_page_index, end_page_index);
 	book_page(mmap, start_page_index, size, status);
 	start_page_index += 1 << size;
 	if (start_page_index <= end_page_index) {
@@ -338,9 +353,11 @@ static void book_pages(mmap_t*	mmap,
 	}
 }
 
-static uint32_t get_page_range_chunk_size(uint32_t start_page_index, uint32_t end_page_index) {
-	uint32_t size = get_start_max_possible_chunk_size(start_page_index);
-	uint32_t len = get_len_max_possible_chunk_size(end_page_index - start_page_index + 1);
+static uint32_t get_page_range_chunk_size(uint32_t max_size,
+										  uint32_t start_page_index,
+										  uint32_t end_page_index) {
+	uint32_t size = get_start_max_possible_chunk_size(max_size, start_page_index);
+	uint32_t len = get_len_max_possible_chunk_size(max_size, end_page_index - start_page_index + 1);
 	size = size < len ? size : len;
 	return (size);
 }
@@ -364,10 +381,16 @@ static bool memory_overflow(void* addr, uint32_t len) {
 }
 
 static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status) {
+	static int count;
+
+	++count;
+	if (count > 3)
+		godot();
 	if (valid_page_index(mmap, page_index) == false) {
 		printk("invalid page\n");
 		return;
 	}
+	printk("book page %u %u %u\n", page_index, size, status);
 	chunk_t chunk = get_chunk(mmap, page_index);
 	if (chunk.status == status && status != MMAP_UNAVAILABLE) {
 		return;
@@ -382,6 +405,10 @@ static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t
 			set_chunk_status(mmap, chunk);
 		} else {
 			split_chunk(mmap, chunk);
+			chunk = get_chunk(mmap, page_index);
+
+			printk("page after split %u %u %u %u\n", chunk.size, chunk.byte, chunk.offset,
+				   chunk.status);
 			book_page(mmap, page_index, size, status);
 		}
 	}
@@ -389,14 +416,16 @@ static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t
 
 void get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos) {
 	for (uint32_t i = 0; i <= MMAP_MAX_SIZE; ++i) {
-		uint32_t size = MMAP_MAX_SIZE - i;
+		uint32_t size = mmap->max_size - i;
 		mem_infos[size] = add_mem_infos_by_size(mmap, size);
 	}
 }
 static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size) {
 	uint32_t   len = (uint32_t)SIZE_ONE_BYTES_NB >> size;
 	mem_info_t mem_info = {0, 0, 0};
-
+	if (size > mmap->max_size) {
+		return (mem_info);
+	}
 	for (uint32_t i = 0; i < len; ++i) {
 		uint8_t byte = mmap->mmap[size][i];
 		mem_info = add_mem_infos_by_byte(byte, size, mem_info);

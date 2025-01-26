@@ -36,6 +36,7 @@
 typedef struct {
 	uint32_t start_index;
 	uint32_t end_index;
+	uint32_t max_size;
 	uint8_t* mmap[MMAP_MAX_SIZE + 1];
 } mmap_t;
 
@@ -62,8 +63,8 @@ void	 set_chunk_status(mmap_t* mmap, chunk_t chunk);
 void	 split_chunk(mmap_t* mmap, chunk_t chunk);
 void	 fuse_chunk(mmap_t* mmap, chunk_t chunk);
 chunk_t	 get_buddy(mmap_t* mmap, chunk_t chunk);
-uint32_t get_start_max_possible_chunk_size(uint32_t page_index);
-uint32_t get_len_max_possible_chunk_size(uint32_t len);
+uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint32_t page_index);
+uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len);
 uint32_t get_chunk_index(chunk_t chunk);
 uint32_t get_page_index(void* addr);
 void	 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);

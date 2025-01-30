@@ -28,7 +28,7 @@
 #define MMAP_MAX_KBYTE_SIZE 4194304	 // 4 Gb
 // 4 Gb give 1048576 pages, bitmap hold 4 pages per byte, gives 262144 bytes to hold 1 page
 // chunks in the bitmap
-#define SIZE_ONE_BYTES_NB 262144
+#define MAX_SIZE_ONE_BYTES_NB 262144
 // 1 byte holds 4 pages or 16 Kb; 1 MB hold in 64 bytes
 #define BYTES_PER_MB 64
 #define MAX_SIZE_PAGE_BYTES_NB 8
@@ -37,6 +37,7 @@ typedef struct {
 	uint32_t start_index;
 	uint32_t end_index;
 	uint32_t max_size;
+	uint32_t bytes_nb;
 	uint8_t* mmap[MMAP_MAX_SIZE + 1];
 } mmap_t;
 
@@ -51,6 +52,7 @@ typedef struct mem_infos {
 	uint32_t free;
 	uint32_t used;
 	uint32_t total;
+	// uint32_t max_size;
 } mem_info_t;
 
 void	 init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size);

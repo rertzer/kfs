@@ -11,6 +11,7 @@ mmap_t p_mmap;
 
 void init_memory() {
 	uint32_t memory_size = boot_infos_get_mem_size();
+	printk("memory size is %u\n", memory_size);
 	init_mmap(&p_mmap, (uint8_t*)&p_mmap_start, 0, memory_size);
 	boot_infos_memory_map_freeze(&p_mmap);
 	book_memory(&p_mmap, 0, KERNEL_SIZE, MMAP_USED);

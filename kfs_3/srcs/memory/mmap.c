@@ -111,7 +111,6 @@ static uint32_t get_remain_len(uint32_t size) {
 void set_all_memory_free(mmap_t* mmap) {
 	uint32_t size_bytes_len = get_bytes_nb(mmap, mmap->max_size);
 	for (uint32_t byte_index = 0; byte_index < size_bytes_len; ++byte_index) {
-		uint8_t old_value = mmap->mmap[mmap->max_size][byte_index];
 		mmap->mmap[mmap->max_size][byte_index] = 0xFF;
 	}
 }
@@ -191,7 +190,7 @@ static inline uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32
 
 static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t status) {
 	if (valid_page_index(mmap, page_index) == false) {
-		printk("invalid page\n");
+		printk("%u : invalid page index\n", page_index);
 		return;
 	}
 	chunk_t chunk = get_chunk(mmap, page_index);
@@ -208,8 +207,6 @@ static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uint32_t
 			set_chunk_status(mmap, chunk);
 		} else {
 			split_chunk(mmap, chunk);
-			chunk = get_chunk(mmap, page_index);
-
 			book_page(mmap, page_index, size, status);
 		}
 	}
@@ -289,7 +286,6 @@ void set_chunk_status(mmap_t* mmap, chunk_t chunk) {
 	uint8_t byte = mmap->mmap[chunk.size][chunk.byte];
 	byte = set_byte_status(byte, chunk);
 	mmap->mmap[chunk.size][chunk.byte] = byte;
-	uint32_t new_status = get_chunk_status(mmap, chunk);
 }
 
 static inline uint8_t set_byte_status(uint8_t byte, chunk_t chunk) {

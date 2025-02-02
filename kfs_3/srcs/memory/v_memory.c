@@ -30,7 +30,6 @@ void* v_mmap(uint32_t size, bool level, bool rw) {
 		return (NULL);
 	}
 	// printk("kmmap search chunk of size %u\n", size);
-
 	chunk_t chunk = get_free_chunk(mmap, size);
 	if (chunk.status != MMAP_FREE) {
 		return (NULL);

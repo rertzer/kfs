@@ -4,8 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "builtin.h"
-
 extern volatile uint8_t current_code;
 
 size_t strlen(const char* str) {
@@ -63,7 +61,6 @@ uint32_t round_up_power_two(uint32_t n) {
 
 void press_any() {
 	keypress_t keypress = init_keypress();
-	bool	   end = false;
 
 	printk("press any key to continue\n");
 

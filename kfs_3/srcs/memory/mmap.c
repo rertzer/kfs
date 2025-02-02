@@ -338,8 +338,7 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 
 uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
 	uint32_t size = 0;
-	uint32_t local_page_index = get_local_page_index(mmap, get_page_index(addr));
-	chunk_t	 chunk = get_chunk(mmap, local_page_index);
+	chunk_t	 chunk = get_chunk(mmap, get_page_index(addr));
 	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_WONLY) {
 		size = (1 << chunk.size) * PAGE_SIZE;
 	}

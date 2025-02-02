@@ -17,22 +17,23 @@ void kernel_main(void) {
 	// boom();
 	init_memory();
 	init_v_memory();
-	virtual_memory_infos(NULL, 0);
+	// virtual_memory_infos(NULL, 0);
 	// memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
 
-	// for (int i = 0; i < 5; ++i) {
-	// 	printk("---- %u ----\n", i);
-	// 	// memory_infos(NULL, 0);
-	// 	void*	 addr = k_mmap((1 << i) * 4096);
-	// 	uint32_t size = k_size(addr);
-	// 	printk("%u, %08x %u\n\n", i, addr, size);
-	// 	// memory_infos(NULL, 0);
-	// 	k_free(addr);
-	// 	// memory_infos(NULL, 0);
-	// }
+	for (int i = 0; i < 5; ++i) {
+		printk("---- %u ----\n", i);
+		// memory_infos(NULL, 0);
+		void*	 addr = v_mmap((1 << i) * 4096, SUPERVISOR_LEVEL, READ_WRITE);
+		uint32_t size = v_size(addr);
+		// printk("%u, address %08x size %u\n\n", i, addr, size);
+		// memory_infos(NULL, 0);
+		// v_free(addr);
+		virtual_memory_infos(NULL, 0);
+		press_any();
+	}
 	// memory_map_infos();
 	// page_testing();
 	// godot();

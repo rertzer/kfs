@@ -16,6 +16,8 @@ void kernel_main(void) {
 	// printk("boom at 0x%08x\n", boom);
 	// boom();
 	init_memory();
+	init_v_memory();
+	virtual_memory_infos(NULL, 0);
 	// memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();

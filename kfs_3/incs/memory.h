@@ -9,6 +9,13 @@
 #define PAGE_SIZE 4096
 #define KERNEL_SIZE 1024 * PAGE_SIZE
 #define VIRTUAL_MEMORY_KIB_SIZE 4194304
+#define USER_VIRTUAL_MEMORY_KIB_SIZE 3145728
+#define KERNEL_VIRTUAL_MEMORY_KIB_SIZE 1048576
+#define KERNEL_VIRTUAL_MEMORY_START 3221225472
+#define USER_LEVEL 1
+#define SUPERVISOR_LEVEL 0
+#define READ_WRITE 1
+#define READ_ONLY 0
 
 // physical memory
 void	 init_memory();
@@ -19,7 +26,8 @@ uint8_t	 k_free(void* addr);
 
 // virtual memory
 void	 init_v_memory();
-void*	 v_mmap(uint32_t size);
+void	 get_virtual_memory_infos(mem_info_t* mem_infos, bool level);
+void*	 v_mmap(uint32_t size, bool level, bool rw);
 uint32_t v_size(void* addr);
-uint32_t v_free(void* addr);
+uint8_t	 v_free(void* addr);
 #endif

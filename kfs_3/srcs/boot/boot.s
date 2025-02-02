@@ -105,8 +105,10 @@ section .bss
 	global stack_top
 	global p_mmap_start
 	global p_mmap_end
-	global v_mmap_start
-	global v_mmap_end
+	global user_v_mmap_start
+	global user_v_mmap_end
+	global kernel_v_mmap_start
+	global kernel_v_mmap_end
 
 	stack_top:
 		resb 16384
@@ -115,9 +117,12 @@ section .bss
 	p_mmap_start:
 		resb 524288 
 	p_mmap_end:
-	v_mmap_start:
-		resb 524288 
-	v_mmap_end:
+	user_v_mmap_start:
+		resb 393216 
+	user_v_mmap_end:
+	kernel_v_mmap_start:
+		resb 131072
+	kernel_v_mmap_end:
 	
 
 

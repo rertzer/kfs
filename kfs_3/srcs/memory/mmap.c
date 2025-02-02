@@ -44,6 +44,7 @@ static void*		   memory_adder(void* addr, uint32_t len);
 /* =============================== init map ================================= */
 
 void init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size) {
+	printk("start address %08x\n", start);
 	set_memory_size(mmap, memory_start, memory_size);
 	set_mmap_addresses(mmap, start);
 	set_all_memory_free(mmap);
@@ -62,6 +63,8 @@ static void set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size) {
 	}
 	// 4 pages per size
 	mmap->bytes_nb = page_nb >> 2;
+	printk("start_index %u end_index %u max size %u\n", mmap->start_index, mmap->end_index,
+		   mmap->max_size);
 
 	if (valid_max_chunk_aligned_page_index(mmap->start_index) == false) {
 		printk("memory error: memory start must be 2^15 bytes aligned\n");
@@ -94,6 +97,7 @@ static void set_mmap_addresses(mmap_t* mmap, uint8_t* start) {
 
 	for (uint32_t i = 1; i <= mmap->max_size; ++i) {
 		mmap->mmap[i] = mmap->mmap[i - 1] + offset;
+		printk("%u %08x %u\n", i, mmap->mmap[i], offset);
 		offset >>= 1;
 	}
 }
@@ -110,7 +114,9 @@ static uint32_t get_remain_len(uint32_t size) {
 
 void set_all_memory_free(mmap_t* mmap) {
 	uint32_t size_bytes_len = get_bytes_nb(mmap, mmap->max_size);
+	printk("max size %u\n", mmap->max_size);
 	for (uint32_t byte_index = 0; byte_index < size_bytes_len; ++byte_index) {
+		printk("byte index %u\n", byte_index);
 		mmap->mmap[mmap->max_size][byte_index] = 0xFF;
 	}
 }
@@ -118,6 +124,10 @@ void set_all_memory_free(mmap_t* mmap) {
 /* =============================== book memory ============================== */
 
 void book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status) {
+	printk("book memory %08x %u\n", addr, len);
+	if (len == 0) {
+		return;
+	}
 	uint32_t start_page_index = get_page_index(addr);
 
 	uint32_t end_page_index = get_page_index(memory_adder(addr, len));

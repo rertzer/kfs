@@ -6,6 +6,8 @@
 
 #include "builtin.h"
 
+extern volatile uint8_t current_code;
+
 size_t strlen(const char* str) {
 	size_t len = 0;
 	while (str[len]) {
@@ -57,4 +59,24 @@ uint32_t round_up_power_two(uint32_t n) {
 		++offset;
 	}
 	return (offset);
+}
+
+void press_any() {
+	keypress_t keypress = init_keypress();
+	bool	   end = false;
+
+	printk("press any key to continue\n");
+
+	while (true) {
+		keypress.keycode = current_code;
+		current_code = 0;
+		if (keypress.keycode != 0) {
+			keypress = update_keypress(keypress);
+
+			if (keypress.pressed == PRESSED) {
+				break;
+			}
+		}
+		sleep();
+	}
 }

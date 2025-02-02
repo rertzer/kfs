@@ -43,6 +43,7 @@ uint8_t	 halt(char* pointer, size_t len);
 uint8_t	 registers(char* pointer, size_t len);
 uint8_t	 boot_infos(char* pointer, size_t len);
 uint8_t	 memory_infos(char* pointer, size_t len);
+uint8_t	 virtual_memory_infos(char* pointer, size_t len);
 void	 freboot();
 uint32_t boom();
 uint32_t get_retaddr();

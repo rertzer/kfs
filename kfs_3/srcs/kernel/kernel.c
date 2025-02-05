@@ -35,7 +35,8 @@ void kernel_main(void) {
 	// 	press_any();
 	// }
 	// memory_map_infos();
-	page_testing();
+	// page_testing();
+	mbook_test();
 	// godot();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");

@@ -27,11 +27,26 @@ void* mbook(uint32_t size, bool level, bool rw) {
 	uint32_t	page_v_addr = (uint32_t)v_addr;
 	uint32_t	page_p_addr = (uint32_t)p_addr;
 	while (size != 0) {
-		add_page_entry(page_v_addr, page_p_addr, flags);
+		bool ok = add_page_entry(page_v_addr, page_p_addr, flags);
+		if (ok == false) {
+			printk("mbook: page table error\n");
+			k_free(p_addr);
+			v_free(v_addr);
+			// il faut aussi clean les tables
+			return (NULL);
+		}
 		page_v_addr += PAGE_SIZE;
 		page_p_addr += PAGE_SIZE;
 		size -= PAGE_SIZE;
 	}
 
 	return (v_addr);
+}
+
+void mbook_test() {
+	printk("mbook\n");
+	uint8_t* addr = mbook(PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
+	printk("addr is %08x\n", addr);
+	addr[0] = 'Z';
+	printk("at index 0: %c ('Z' expected)\n", addr[0]);
 }

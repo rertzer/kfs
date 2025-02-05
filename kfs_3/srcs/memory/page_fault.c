@@ -4,7 +4,6 @@
 #include "paging.h"
 
 static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw);
-static bool dir_page_missing(uint32_t l_address);
 static bool add_page_table_entry(uint32_t l_address, uint32_t flags);
 
 void page_fault_handler(uint32_t l_address, uint32_t error_code) {
@@ -33,7 +32,7 @@ static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
 	mmap_info_t mmap_info = v_mmap_check((void*)l_address, fault_level, fault_rw);
 	ok = mmap_info.valid;
 	if (ok == true) {
-		ok = dir_page_missing(l_address);
+		ok = confirm_dir_page(l_address);
 		if (ok == true) {
 			uint32_t flags = get_page_table_flags(mmap_info);
 			ok = add_page_table_entry(l_address, flags);
@@ -43,44 +42,16 @@ static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
 	return (ok);
 }
 
-static bool dir_page_missing(uint32_t l_address) {
-	bool	 ok = true;
-	uint32_t page_offset = get_dir_page_offset(l_address);
-
-	uint32_t* addr = (uint32_t*)PAGE_DIR_ADDR + page_offset;
-	// printk("page offset and value %u %08x\n", page_offset, *addr);
-	if (*addr & PAGE_FAULT_P) {
-		// printk("dir page entry present\n");
-	} else {
-		// printk("dir page entry missing\n");
-		ok = create_page_table(page_offset);
-		flush_tlb();
-	}
-
-	return (ok);
-}
-
 static bool add_page_table_entry(uint32_t l_address, uint32_t flags) {
 	printk("page table missing \n");
 
-	bool	  ok = true;
-	uint32_t* page_address = get_page_table_address(l_address);
-	uint32_t  page_offset = get_page_table_offset(l_address);
-	// printk("page address is %08x\n", page_address);
-	// printk("page offset is %08x\n", page_offset);
-	uint32_t* entry = page_address + page_offset;
-
-	void* address = k_mmap(PAGE_SIZE);
-	if (address == NULL) {
+	bool  ok = true;
+	void* p_address = k_mmap(PAGE_SIZE);
+	if (p_address == NULL) {
 		printk("page fault: error: no physical memory available\n");
 		ok = false;
 	} else {
-		// printk("page table missing: virtual address is %08x \n", l_address);
-		// printk("page table missing: physical address is %08x \n", address);
-		*entry = (uint32_t)address | flags;
-
-		flush_tlb();
-		// printk("page table missing: value is %08x \n", *entry);
+		ok = set_page_table_entry(l_address, (uint32_t)p_address, flags);
 	}
 
 	return (ok);

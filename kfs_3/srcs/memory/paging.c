@@ -63,25 +63,6 @@ bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address,
 	return (ok);
 }
 
-void page_testing() {
-	uint32_t offset = 0;
-	char*	 good_string = "hello word\n";
-	char*	 addr = v_mmap(1, SUPERVISOR_LEVEL, READ_WRITE);
-	// char* fake_addr = (char*)0xD09DC300;
-	// char* addr = (char*)0xc0400000;
-	printk("%s\n", good_string);
-	printk("my funny addr %08x has size %u \n", addr, v_size(addr));
-	press_any();
-	// virtual_memory_infos(NULL, 0);
-	// godot();
-	char cacahuete = addr[offset];
-	printk("Got the cacahuete '%c'\n", cacahuete);
-	addr[offset] = 'Z';
-	printk("cacahuete (expect 'Z') %c\n", addr[offset]);
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////
-bool add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {}
-
 uint32_t get_page_table_flags(mmap_info_t mmap_info) {
 	uint32_t flags = 0;
 
@@ -92,24 +73,19 @@ uint32_t get_page_table_flags(mmap_info_t mmap_info) {
 	return (flags);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
+/////////////////////////////////////////////////////////////////////////////////////////////////
+bool add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {
 	bool ok = true;
 
-	mmap_info_t mmap_info = v_mmap_check((void*)l_address, fault_level, fault_rw);
-	ok = mmap_info.valid;
+	ok = confirm_dir_page(l_address);
 	if (ok == true) {
-		ok = dir_page_missing(l_address);
-		if (ok == true) {
-			uint32_t flags = get_page_table_flags(mmap_info);
-			ok = add_page_table_entry(l_address, flags);
-		}
+		ok = set_page_table_entry(l_address, p_address, flags);
 	}
 
 	return (ok);
 }
 
-static bool dir_page_missing(uint32_t l_address) {
+bool confirm_dir_page(uint32_t l_address) {
 	bool	 ok = true;
 	uint32_t page_offset = get_dir_page_offset(l_address);
 
@@ -126,8 +102,8 @@ static bool dir_page_missing(uint32_t l_address) {
 	return (ok);
 }
 
-static bool add_page_table_entry(uint32_t l_address, uint32_t flags) {
-	printk("page table missing \n");
+bool set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {
+	printk("set page table entry \n");
 
 	bool	  ok = true;
 	uint32_t* page_address = get_page_table_address(l_address);
@@ -136,18 +112,30 @@ static bool add_page_table_entry(uint32_t l_address, uint32_t flags) {
 	// printk("page offset is %08x\n", page_offset);
 	uint32_t* entry = page_address + page_offset;
 
-	void* address = k_mmap(PAGE_SIZE);
-	if (address == NULL) {
-		printk("page fault: error: no physical memory available\n");
-		ok = false;
-	} else {
-		// printk("page table missing: virtual address is %08x \n", l_address);
-		// printk("page table missing: physical address is %08x \n", address);
-		*entry = (uint32_t)address | flags;
+	// printk("page table missing: virtual address is %08x \n", l_address);
+	// printk("page table missing: physical address is %08x \n", address);
+	*entry = (uint32_t)p_address | flags;
 
-		flush_tlb();
-		// printk("page table missing: value is %08x \n", *entry);
-	}
+	flush_tlb();
+	// printk("page table missing: value is %08x \n", *entry);
 
 	return (ok);
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void page_testing() {
+	uint32_t offset = 0;
+	char*	 good_string = "hello word\n";
+	char*	 addr = v_mmap(1, SUPERVISOR_LEVEL, READ_WRITE);
+	// char* fake_addr = (char*)0xD09DC300;
+	// char* addr = (char*)0xc0400000;
+	printk("%s\n", good_string);
+	printk("my funny addr %08x has size %u \n", addr, v_size(addr));
+	press_any();
+	// virtual_memory_infos(NULL, 0);
+	// godot();
+	char cacahuete = addr[offset];
+	printk("Got the cacahuete '%c'\n", cacahuete);
+	addr[offset] = 'Z';
+	printk("cacahuete (expect 'Z') %c\n", addr[offset]);
 }

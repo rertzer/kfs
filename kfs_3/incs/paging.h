@@ -29,5 +29,7 @@ bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address,
 bool create_page_table(uint32_t offset);
 bool add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
 uint32_t get_page_table_flags(mmap_info_t mmap_info);
+bool	 confirm_dir_page(uint32_t l_address);
+bool	 set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
 
 #endif

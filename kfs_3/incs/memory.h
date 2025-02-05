@@ -41,4 +41,5 @@ mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw);
 
 // book memory
 void* mbook(uint32_t size, bool level, bool rw);
+void  mbook_test();
 #endif

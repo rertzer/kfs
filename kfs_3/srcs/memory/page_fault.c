@@ -3,10 +3,9 @@
 #include "memory.h"
 #include "paging.h"
 
-static bool		page_missing(uint32_t l_address, bool fault_level, bool fault_rw);
-static bool		dir_page_missing(uint32_t l_address);
-static uint32_t get_page_table_flags(mmap_info_t mmap_info);
-static bool		page_table_missing(uint32_t l_address, uint32_t flags);
+static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw);
+static bool dir_page_missing(uint32_t l_address);
+static bool add_page_table_entry(uint32_t l_address, uint32_t flags);
 
 void page_fault_handler(uint32_t l_address, uint32_t error_code) {
 	bool ok = true;
@@ -37,7 +36,7 @@ static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
 		ok = dir_page_missing(l_address);
 		if (ok == true) {
 			uint32_t flags = get_page_table_flags(mmap_info);
-			ok = page_table_missing(l_address, flags);
+			ok = add_page_table_entry(l_address, flags);
 		}
 	}
 
@@ -61,17 +60,7 @@ static bool dir_page_missing(uint32_t l_address) {
 	return (ok);
 }
 
-static uint32_t get_page_table_flags(mmap_info_t mmap_info) {
-	uint32_t flags = 0;
-
-	flags |= (mmap_info.valid == true) ? PAGE_TABLE_PRESENT : PAGE_TABLE_ABSENT;
-	flags |= (mmap_info.user == true) ? PAGE_TABLE_USER : PAGE_TABLE_SUPERVISOR;
-	flags |= (mmap_info.rw == true) ? PAGE_TABLE_WRITE : PAGE_TABLE_READ;
-
-	return (flags);
-}
-
-static bool page_table_missing(uint32_t l_address, uint32_t flags) {
+static bool add_page_table_entry(uint32_t l_address, uint32_t flags) {
 	printk("page table missing \n");
 
 	bool	  ok = true;

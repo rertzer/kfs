@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "memory.h"
+
 #define PAGE_FAULT_P 1
 #define PAGE_FAULT_W 2
 #define PAGE_FAULT_USER 4
@@ -25,5 +27,7 @@ uint32_t* get_page_table_address(uint32_t l_address);
 uint32_t  get_page_table_offset(uint32_t l_address);
 bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address, uint32_t flags);
 bool create_page_table(uint32_t offset);
+bool add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
+uint32_t get_page_table_flags(mmap_info_t mmap_info);
 
 #endif

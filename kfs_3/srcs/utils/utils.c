@@ -22,21 +22,6 @@ bool is_alnum(uint8_t c) {
 	}
 }
 
-void page_testing() {
-	char* good_string = "hello word\n";
-	char* fake_addr = (char*)0xD09DC300;
-	printk("%s\n", good_string);
-	// printk("my funny addr %s\n", fake_addr);
-	char cacahuete = fake_addr[0];
-	if (cacahuete == 'x') {
-		printk("got the cahuete\n");
-	} else {
-		printk("Got the cacahuete\n");
-	}
-	fake_addr[0] = 'Z';
-	printk("cacahuete (expect 'Z') %c\n", fake_addr[0]);
-}
-
 void ft_memset(uint8_t* address, char c, uint32_t size) {
 	for (uint32_t i = 0; i < size; ++i) {
 		address[i] = c;

@@ -5,13 +5,15 @@
 static inline void*	   get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint32_t get_buddy_offset(uint32_t offset);
 static inline uint32_t get_byte(uint32_t chunk_index);
+static inline uint32_t get_byte_size(uint32_t chunk_size);
 static inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t size);
 static inline uint8_t  get_byte_status(uint8_t byte, uint8_t offset);
 static inline uint32_t get_chunk_index(chunk_t chunk);
 static inline uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len);
 static inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index);
 static inline uint32_t get_offset(uint32_t chunk_index);
-static inline uint32_t get_page_index(void* addr);
+static inline uint32_t get_page_index(void* const addr);
+static inline uint32_t get_page_size(uint32_t chunk_size);
 static inline uint8_t* get_remain_start(uint8_t* memory_start, uint32_t memory_size);
 static inline uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint32_t page_index);
 static inline chunk_t  get_unavailable_chunk();
@@ -228,7 +230,7 @@ uint8_t free_by_address(mmap_t* mmap, void* addr) {
 	uint32_t page_index = get_page_index(addr);
 
 	chunk_t chunk = get_chunk(mmap, page_index);
-	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_WONLY) {
+	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
 		chunk.status = MMAP_FREE;
 		set_chunk_status(mmap, chunk);
 		fuse_chunk(mmap, chunk);
@@ -336,15 +338,35 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 
 /* =============================== get size by address ====================== */
 
-uint32_t get_size_by_address(mmap_t* mmap, void* addr) {
+uint32_t get_size_by_address(mmap_t* mmap, void* const addr) {
 	uint32_t size = 0;
 	chunk_t	 chunk = get_chunk(mmap, get_page_index(addr));
-	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_WONLY) {
-		size = (1 << chunk.size) * PAGE_SIZE;
+	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
+		printk("getsize status %08x %08x %u %u %u\n", mmap, addr, chunk.offset, chunk.byte,
+			   chunk.status);
+		size = get_byte_size(chunk.size);
 	}
 	return (size);
 }
 
+/* =============================== get mmap info ============================ */
+chunk_info_t get_chunk_info(mmap_t* mmap, void* addr) {
+	chunk_info_t chunk_info;
+
+	chunk_t chunk = get_chunk(mmap, get_page_index(addr));
+	printk("get chunk info status %08x %08x %u %u %u\n", mmap, addr, chunk.offset, chunk.byte,
+		   chunk.status);
+	chunk_info.addr = addr;
+	chunk_info.page_nb = get_page_size(chunk.size);
+	chunk_info.size = chunk.size;  // get_byte_size(chunk.size);
+	chunk_info.status = chunk.status;
+	if (chunk.status == MMAP_UNAVAILABLE) {
+		chunk_info.valid = false;
+	} else {
+		chunk_info.valid = true;
+	}
+	return (chunk_info);
+}
 /* =============================== get free chunk =========================== */
 
 chunk_t get_free_chunk(mmap_t* mmap, uint32_t size) {
@@ -446,7 +468,7 @@ static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t 
 				mem_info.used += 1 << size;
 				mem_info.total += 1 << size;
 				break;
-			case MMAP_USED_WONLY:
+			case MMAP_USED_RONLY:
 				mem_info.used += 1 << size;
 				mem_info.total += 1 << size;
 				break;
@@ -505,6 +527,13 @@ static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
 }
 
+static inline uint32_t get_page_size(uint32_t chunk_size) {
+	return (1 << chunk_size);
+}
+
+static inline uint32_t get_byte_size(uint32_t chunk_size) {
+	return ((1 << chunk_size) * PAGE_SIZE);
+}
 static inline uint32_t get_offset(uint32_t chunk_index) {
 	return ((chunk_index % PAGES_PER_BYTE) << 1);
 }
@@ -520,6 +549,6 @@ static inline uint32_t get_chunk_index(chunk_t chunk) {
 	return (chunk.byte * PAGES_PER_BYTE + (chunk.offset >> BITS_PER_PAGE_SHIFT));
 }
 
-static inline uint32_t get_page_index(void* addr) {
+static inline uint32_t get_page_index(void* const addr) {
 	return ((uint32_t)addr >> 12);
 }

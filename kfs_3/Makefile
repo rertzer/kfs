@@ -44,10 +44,10 @@ SOURCES =	boot/boot.s \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
+			memory/mbook.c \
 			memory/paging.c \
 			memory/page_fault.c \
 			memory/memory.c \
-			memory/p_map.c \
 			memory/mmap.c \
 			memory/v_memory.c \
 			terminal/terminal.c \

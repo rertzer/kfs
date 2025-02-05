@@ -16,6 +16,7 @@ void init_memory() {
 	boot_infos_memory_map_freeze(&p_mmap);
 	book_memory(&p_mmap, 0, KERNEL_SIZE, MMAP_USED);
 }
+
 void get_memory_infos(mem_info_t* mem_infos) {
 	get_mmap_infos(&p_mmap, mem_infos);
 }

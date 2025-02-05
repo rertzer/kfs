@@ -69,3 +69,20 @@ bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address,
 
 	return (ok);
 }
+
+void page_testing() {
+	uint32_t offset = 0;
+	char*	 good_string = "hello word\n";
+	// char* fake_addr = (char*)0xD09DC300;
+	char* addr = v_mmap(1, SUPERVISOR_LEVEL, READ_ONLY);
+	// char* addr = (char*)0xc0400000;
+	printk("%s\n", good_string);
+	printk("my funny addr %08x has size %u \n", addr, v_size(addr));
+	press_any();
+	// virtual_memory_infos(NULL, 0);
+	// godot();
+	char cacahuete = addr[offset];
+	printk("Got the cacahuete '%c'\n", cacahuete);
+	addr[offset] = 'Z';
+	printk("cacahuete (expect 'Z') %c\n", addr[offset]);
+}

@@ -8,8 +8,7 @@
 
 #define PAGE_FAULT_P 1
 #define PAGE_FAULT_W 2
-#define PAGE_FAULT_PKR 32
-#define PAGE_FAULT_SS 64
+#define PAGE_FAULT_USER 4
 #define PAGE_TABLE_USER 0
 #define PAGE_TABLE_SUPERVISOR 4
 #define PAGE_TABLE_READ 0

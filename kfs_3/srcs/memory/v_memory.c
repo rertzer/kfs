@@ -13,11 +13,15 @@ mmap_t kernel_virt_mmap;
 static inline uint8_t get_rw_status(bool rw);
 static inline mmap_t* get_v_mmap_by_address(void* addr);
 static inline mmap_t* get_virtual_map(bool level);
+static inline bool	  get_address_level(void* const addr);
+static inline bool	  get_chunk_rw(uint32_t status);
+static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level);
 
 void init_v_memory() {
 	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, 0, USER_VIRTUAL_MEMORY_KIB_SIZE);
 	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start,
 			  (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
+	book_memory(&kernel_virt_mmap, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_SIZE, MMAP_USED);
 }
 
 void* v_mmap(uint32_t size, bool level, bool rw) {
@@ -49,8 +53,16 @@ static inline mmap_t* get_virtual_map(bool level) {
 	return (mmap);
 }
 
+static inline bool get_address_level(void* const addr) {
+	bool level = SUPERVISOR_LEVEL;
+	if (addr < (void*)KERNEL_VIRTUAL_MEMORY_START) {
+		level = USER_LEVEL;
+	}
+	return (level);
+}
+
 static inline uint8_t get_rw_status(bool rw) {
-	uint8_t status = (rw == READ_WRITE) ? MMAP_USED : MMAP_USED_WONLY;
+	uint8_t status = (rw == READ_WRITE) ? MMAP_USED : MMAP_USED_RONLY;
 
 	return (status);
 }
@@ -76,4 +88,42 @@ static inline mmap_t* get_v_mmap_by_address(void* addr) {
 void get_virtual_memory_infos(mem_info_t* mem_infos, bool level) {
 	mmap_t* mmap = get_virtual_map(level);
 	get_mmap_infos(mmap, mem_infos);
+}
+
+mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw) {
+	bool		 address_level = get_address_level(l_address);
+	mmap_t*		 mmap = get_virtual_map(address_level);
+	chunk_info_t chunk_info = get_chunk_info(mmap, l_address);
+
+	mmap_info_t mmap_info;
+	mmap_info.user = get_address_level(l_address);
+	mmap_info.rw = get_chunk_rw(chunk_info.status);
+	mmap_info.valid = get_mmap_info_valid(chunk_info.status, fault_level, mmap_info.user);
+
+	printk("mmap check: address: %08x, size: %u, status: %u\n", chunk_info.addr, chunk_info.size,
+		   chunk_info.status);
+	printk("fault rw %u rw status %u level %u\n", fault_rw, get_rw_status(fault_rw), fault_level);
+
+	return (mmap_info);
+}
+
+static inline bool get_chunk_rw(uint32_t status) {
+	bool rw = READ_WRITE;
+	if (status == MMAP_USED_RONLY) {
+		rw = READ_ONLY;
+		printk("chunk read only\n");
+	} else {
+		printk("chunk read write\n");
+	}
+	return (rw);
+}
+
+static inline bool get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level) {
+	bool valid = false;
+
+	if (((status == MMAP_USED) || (status == MMAP_USED_RONLY && fault_level == READ_ONLY)) &&
+		(mmap_level <= fault_level)) {
+		valid = true;
+	}
+	return (valid);
 }

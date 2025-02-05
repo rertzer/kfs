@@ -3,41 +3,44 @@
 #include "memory.h"
 #include "paging.h"
 
-static bool page_missing(uint32_t l_address);
-static bool dir_page_missing(uint32_t l_address);
-static bool page_table_missing(uint32_t l_address);
+static bool		page_missing(uint32_t l_address, bool fault_level, bool fault_rw);
+static bool		dir_page_missing(uint32_t l_address);
+static uint32_t get_page_table_flags(mmap_info_t mmap_info);
+static bool		page_table_missing(uint32_t l_address, uint32_t flags);
 
 void page_fault_handler(uint32_t l_address, uint32_t error_code) {
 	bool ok = true;
 	printk("page fault!\nerror code is 0x%08x\n", error_code);
-	uint32_t access_error =
-		error_code & (PAGE_FAULT_P | PAGE_FAULT_W | PAGE_FAULT_PKR | PAGE_FAULT_SS);
+	uint32_t access_error = error_code & (PAGE_FAULT_P | PAGE_FAULT_W);
 	printk("access_error: 0x%08x\n", access_error);
 	if (access_error) {
 		printk("Panic\nlinear address is 0x%08x\n", l_address);
 		ok = false;
 	} else {
 		printk("don't panic\nlinear address is 0x%08x\n", l_address);
-		ok = page_missing(l_address);
+		ok = page_missing(l_address, (error_code & PAGE_FAULT_W), (error_code & PAGE_FAULT_USER));
 	}
 	if (ok == false) {
-		printk("Waiting for Godot\n");
+		printk("page fault! invalid address 0x%08x\n", l_address);
 		godot();
 	}
 	flush_tlb();
 	printk("page handling done\n");
-	// if (oups > 2)
-	// 	godot();
-	// tabledump();
 }
 
-static bool page_missing(uint32_t l_address) {
+static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
 	bool ok = true;
 
-	ok = dir_page_missing(l_address);
+	mmap_info_t mmap_info = v_mmap_check((void*)l_address, fault_level, fault_rw);
+	ok = mmap_info.valid;
 	if (ok == true) {
-		ok = page_table_missing(l_address);
+		ok = dir_page_missing(l_address);
+		if (ok == true) {
+			uint32_t flags = get_page_table_flags(mmap_info);
+			ok = page_table_missing(l_address, flags);
+		}
 	}
+
 	return (ok);
 }
 
@@ -58,8 +61,17 @@ static bool dir_page_missing(uint32_t l_address) {
 	return (ok);
 }
 
-static bool page_table_missing(uint32_t l_address) {
-	// static uint32_t count;
+static uint32_t get_page_table_flags(mmap_info_t mmap_info) {
+	uint32_t flags = 0;
+
+	flags |= (mmap_info.valid == true) ? PAGE_TABLE_PRESENT : PAGE_TABLE_ABSENT;
+	flags |= (mmap_info.user == true) ? PAGE_TABLE_USER : PAGE_TABLE_SUPERVISOR;
+	flags |= (mmap_info.rw == true) ? PAGE_TABLE_WRITE : PAGE_TABLE_READ;
+
+	return (flags);
+}
+
+static bool page_table_missing(uint32_t l_address, uint32_t flags) {
 	printk("page table missing \n");
 
 	bool	  ok = true;
@@ -69,9 +81,6 @@ static bool page_table_missing(uint32_t l_address) {
 	// printk("page offset is %08x\n", page_offset);
 	uint32_t* entry = page_address + page_offset;
 
-	// get a physical address 	static uint32_t count;
-	// uint32_t address = 0x00c23000 + PAGE_SIZE * count;	// temporary fake address
-	// ++count;
 	void* address = k_mmap(PAGE_SIZE);
 	if (address == NULL) {
 		printk("page fault: error: no physical memory available\n");
@@ -79,7 +88,7 @@ static bool page_table_missing(uint32_t l_address) {
 	} else {
 		// printk("page table missing: virtual address is %08x \n", l_address);
 		// printk("page table missing: physical address is %08x \n", address);
-		*entry = (uint32_t)address | PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT;
+		*entry = (uint32_t)address | flags;
 
 		flush_tlb();
 		// printk("page table missing: value is %08x \n", *entry);

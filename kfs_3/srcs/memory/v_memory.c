@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "memory.h"
 #include "mmap.h"
+#include "paging.h"
 
 extern uint32_t user_v_mmap_start;
 extern uint32_t user_v_mmap_end;
@@ -22,6 +23,7 @@ void init_v_memory() {
 	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start,
 			  (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
 	book_memory(&kernel_virt_mmap, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_SIZE, MMAP_USED);
+	book_memory(&kernel_virt_mmap, (uint8_t*)PAGE_DIR_BASE, 1024 * PAGE_SIZE, MMAP_USED);
 }
 
 void* v_mmap(uint32_t size, bool level, bool rw) {

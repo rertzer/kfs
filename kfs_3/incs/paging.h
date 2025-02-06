@@ -27,8 +27,11 @@ uint32_t  get_page_table_offset(uint32_t l_address);
 bool add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address, uint32_t flags);
 bool create_page_table(uint32_t offset);
 bool add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
-uint32_t get_page_table_flags(mmap_info_t mmap_info);
-bool	 confirm_dir_page(uint32_t l_address);
-bool	 set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
+uint32_t  get_page_table_flags(mmap_info_t mmap_info);
+void*	  get_physical_address(uint32_t l_address);
+bool	  confirm_dir_page(uint32_t l_address);
+bool	  set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
+uint32_t* get_table_entry_by_l_address(uint32_t l_address);
+void	  free_page_table(void* l_address, uint32_t page_nb);
 
 #endif

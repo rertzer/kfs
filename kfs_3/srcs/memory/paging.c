@@ -3,6 +3,7 @@
 #include "memory.h"
 
 extern uint32_t page_dir;
+static void		free_page(void* l_address);
 
 uint32_t get_dir_page_offset(uint32_t l_address) {
 	printk("get_dir_page_offset ");
@@ -106,20 +107,38 @@ bool set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags
 	printk("set page table entry \n");
 
 	bool	  ok = true;
-	uint32_t* page_address = get_page_table_address(l_address);
-	uint32_t  page_offset = get_page_table_offset(l_address);
-	// printk("page address is %08x\n", page_address);
-	// printk("page offset is %08x\n", page_offset);
-	uint32_t* entry = page_address + page_offset;
+	uint32_t* entry = get_table_entry_by_l_address(l_address);
 
-	// printk("page table missing: virtual address is %08x \n", l_address);
-	// printk("page table missing: physical address is %08x \n", address);
 	*entry = (uint32_t)p_address | flags;
 
 	flush_tlb();
-	// printk("page table missing: value is %08x \n", *entry);
 
 	return (ok);
+}
+
+uint32_t* get_table_entry_by_l_address(uint32_t l_address) {
+	uint32_t* page_address = get_page_table_address(l_address);
+	uint32_t  page_offset = get_page_table_offset(l_address);
+	uint32_t* entry = page_address + page_offset;
+	return (entry);
+}
+
+void* get_physical_address(uint32_t l_address) {
+	uint32_t* entry = get_table_entry_by_l_address(l_address);
+	return ((void*)*entry);
+}
+
+void free_page_table(void* l_address, uint32_t page_nb) {
+	for (uint32_t offset = 0; offset < page_nb; ++offset) {
+		free_page(l_address);
+		l_address += PAGE_SIZE;
+	}
+	flush_tlb();
+}
+
+static void free_page(void* l_address) {
+	uint32_t* entry = get_table_entry_by_l_address((uint32_t)l_address);
+	*entry = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

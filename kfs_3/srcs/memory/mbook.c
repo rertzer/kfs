@@ -43,10 +43,29 @@ void* mbook(uint32_t size, bool level, bool rw) {
 	return (v_addr);
 }
 
+void munbook(void* v_addr) {
+	uint32_t page_nb = v_size(v_addr) / PAGE_SIZE;
+	v_free(v_addr);
+	void* p_addr = get_physical_address((uint32_t)v_addr);
+	k_free(p_addr);
+	free_page_table(v_addr, page_nb);
+}
+
 void mbook_test() {
 	printk("mbook\n");
-	uint8_t* addr = mbook(PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
+	uint8_t* addr = mbook(14 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
 	printk("addr is %08x\n", addr);
-	addr[0] = 'Z';
-	printk("at index 0: %c ('Z' expected)\n", addr[0]);
+	addr[666] = 'Z';
+	printk("at index 0: %c ('Z' expected)\n", addr[666]);
+	uint32_t far_offset = 4096 * 14 + 666;
+	addr[far_offset] = 'A';
+	printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
+	munbook(addr);
+	printk("memory freeeeed\n");
+	// printk("at index 0: %c ('Z' expected)\n", addr[666]);
+	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
+	// far_offset = 4096 * 17 + 9999;
+	// printk("writting in a too far offset\n");
+	// addr[far_offset] = 'A';
+	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
 }

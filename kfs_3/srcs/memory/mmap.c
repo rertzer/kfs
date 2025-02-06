@@ -1,22 +1,21 @@
 #include "mmap.h"
 #include "kernel.h"
 #include "memory.h"
+#include "mmap_inline.h"
 
 static inline void*	   get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint32_t get_buddy_offset(uint32_t offset);
 static inline uint32_t get_byte(uint32_t chunk_index);
 static inline uint32_t get_byte_size(uint32_t chunk_size);
-static inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t size);
-static inline uint8_t  get_byte_status(uint8_t byte, uint8_t offset);
 static inline uint32_t get_chunk_index(chunk_t chunk);
-static inline uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len);
+static uint32_t		   get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len);
 static inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index);
 static inline uint32_t get_offset(uint32_t chunk_index);
 static inline uint32_t get_page_index(void* const addr);
 static inline uint32_t get_page_size(uint32_t chunk_size);
 static inline uint8_t* get_remain_start(uint8_t* memory_start, uint32_t memory_size);
 static inline uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint32_t page_index);
-static inline chunk_t  get_unavailable_chunk();
+static inline void	   get_unavailable_chunk(chunk_t* chunk);
 static inline bool	   memory_overflow(void* addr, uint32_t len);
 static inline uint32_t round_up_memory_size(uint32_t size);
 static inline uint8_t  set_byte_status(uint8_t byte, chunk_t chunk);
@@ -30,8 +29,6 @@ static void			   book_page(mmap_t* mmap, uint32_t page_index, uint32_t size, uin
 static uint32_t		   get_page_range_chunk_size(uint32_t max_size,
 												 uint32_t start_page_index,
 												 uint32_t end_page_index);
-static mem_info_t	   add_mem_infos_by_size(mmap_t* mmap, uint32_t size);
-static mem_info_t	   add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_infos);
 static uint32_t		   get_free_offset(uint8_t byte);
 static chunk_t		   get_free_chunk_by_size(mmap_t* mmap, uint32_t size);
 static chunk_t		   get_parent(chunk_t kid);
@@ -186,7 +183,7 @@ static inline uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint
 	return (max);
 }
 
-static inline uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len) {
+static uint32_t get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len) {
 	uint32_t max = max_size - 1;
 
 	if (len >= ((uint32_t)1 << max_size)) {
@@ -269,11 +266,8 @@ static chunk_t get_buddy(mmap_t* mmap, chunk_t chunk) {
 
 static inline uint32_t get_buddy_offset(uint32_t offset) {
 	if ((offset < 7) && (offset % 2 == 0)) {
-		if (offset % 4 == 0) {
-			offset += BITS_PER_CHUNK;
-		} else {
-			offset -= BITS_PER_CHUNK;
-		}
+		uint32_t toto = offset & (uint32_t)3;
+		offset += toto == 0 ? BITS_PER_CHUNK : -BITS_PER_CHUNK;
 	} else {
 		offset = MMAP_NOT_FOUND_OFFSET;
 	}
@@ -370,10 +364,12 @@ chunk_info_t get_chunk_info(mmap_t* mmap, void* addr) {
 /* =============================== get free chunk =========================== */
 
 chunk_t get_free_chunk(mmap_t* mmap, uint32_t size) {
+	chunk_t chunk;
 	if (size > 15) {
-		return get_unavailable_chunk();
+		get_unavailable_chunk(&chunk);
+		return (chunk);
 	}
-	chunk_t chunk = get_free_chunk_by_size(mmap, size);
+	chunk = get_free_chunk_by_size(mmap, size);
 	if (chunk.status != MMAP_FREE) {
 		chunk = get_free_chunk(mmap, size + 1);
 
@@ -383,13 +379,11 @@ chunk_t get_free_chunk(mmap_t* mmap, uint32_t size) {
 	return (chunk);
 }
 
-static inline chunk_t get_unavailable_chunk() {
-	chunk_t chunk;
-	chunk.size = 0;
-	chunk.byte = 0;
-	chunk.offset = MMAP_NOT_FOUND_OFFSET;
-	chunk.status = MMAP_UNAVAILABLE;
-	return (chunk);
+static inline void get_unavailable_chunk(chunk_t* chunk) {
+	chunk->size = 0;
+	chunk->byte = 0;
+	chunk->offset = MMAP_NOT_FOUND_OFFSET;
+	chunk->status = MMAP_UNAVAILABLE;
 }
 
 static chunk_t get_free_chunk_by_size(mmap_t* mmap, uint32_t size) {
@@ -434,51 +428,6 @@ static inline void* get_address_by_local_page_index(mmap_t* mmap, uint32_t local
 	return ((void*)((local_page_index + mmap->start_index) * PAGE_SIZE));
 }
 
-/* =============================== get mmaps infos ========================== */
-
-void get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos) {
-	for (uint32_t i = 0; i <= MMAP_MAX_SIZE; ++i) {
-		uint32_t size = MMAP_MAX_SIZE - i;
-		mem_infos[size] = add_mem_infos_by_size(mmap, size);
-	}
-}
-
-static mem_info_t add_mem_infos_by_size(mmap_t* mmap, uint32_t size) {
-	uint32_t   len = get_bytes_nb(mmap, size);
-	mem_info_t mem_info = {0, 0, 0};
-	if (size > mmap->max_size) {
-		return (mem_info);
-	}
-	for (uint32_t i = 0; i < len; ++i) {
-		uint8_t byte = mmap->mmap[size][i];
-		mem_info = add_mem_infos_by_byte(byte, size, mem_info);
-	}
-	return (mem_info);
-}
-
-static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t size, mem_info_t mem_info) {
-	for (uint32_t offset = 0; offset < 8; offset += 2) {
-		uint32_t status = get_byte_status(byte, offset);
-		switch (status) {
-			case MMAP_FREE:
-				mem_info.free += 1 << size;
-				mem_info.total += 1 << size;
-				break;
-			case MMAP_USED:
-				mem_info.used += 1 << size;
-				mem_info.total += 1 << size;
-				break;
-			case MMAP_USED_RONLY:
-				mem_info.used += 1 << size;
-				mem_info.total += 1 << size;
-				break;
-			default:
-				break;
-		}
-	}
-	return (mem_info);
-}
-
 /* =============================== split chunk ============================== */
 static void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	if (chunk.size == 0 || chunk.status != MMAP_FREE) {
@@ -507,10 +456,6 @@ static void split_chunk(mmap_t* mmap, chunk_t chunk) {
 
 /* ============================ inline utilities ============================ */
 
-static inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t size) {
-	return (mmap->bytes_nb >> size);
-}
-
 static inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index) {
 	return (page_index - mmap->start_index);
 }
@@ -537,14 +482,6 @@ static inline uint32_t get_byte_size(uint32_t chunk_size) {
 static inline uint32_t get_offset(uint32_t chunk_index) {
 	return ((chunk_index % PAGES_PER_BYTE) << 1);
 }
-
-static inline uint8_t get_byte_status(uint8_t byte, uint8_t offset) {
-	byte >>= offset;
-	byte &= MMAP_PAGE_MASK;
-
-	return (byte);
-}
-
 static inline uint32_t get_chunk_index(chunk_t chunk) {
 	return (chunk.byte * PAGES_PER_BYTE + (chunk.offset >> BITS_PER_PAGE_SHIFT));
 }

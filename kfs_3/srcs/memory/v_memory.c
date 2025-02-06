@@ -110,14 +110,7 @@ mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw) {
 }
 
 static inline bool get_chunk_rw(uint32_t status) {
-	bool rw = READ_WRITE;
-	if (status == MMAP_USED_RONLY) {
-		rw = READ_ONLY;
-		printk("chunk read only\n");
-	} else {
-		printk("chunk read write\n");
-	}
-	return (rw);
+	return (status == MMAP_USED_RONLY) ? READ_ONLY : READ_WRITE;
 }
 
 static inline bool get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level) {

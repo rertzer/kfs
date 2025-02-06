@@ -49,6 +49,7 @@ SOURCES =	boot/boot.s \
 			memory/page_fault.c \
 			memory/memory.c \
 			memory/mmap.c \
+			memory/mmap_info.c \
 			memory/v_memory.c \
 			terminal/terminal.c \
 			terminal/vga.c \
@@ -103,7 +104,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						-std=gnu99 -ffreestanding -Og -Wall -Wextra \
+						-std=gnu99 -ffreestanding -Og -Wall -Wextra -Winline\
 						-c /app/$< \
 						-o /app/$@
 

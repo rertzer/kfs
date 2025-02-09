@@ -31,12 +31,12 @@ static inline uint32_t get_byte(uint32_t chunk_index) {
 	return (chunk_index / PAGES_PER_BYTE);
 }
 
-static inline uint32_t get_page_size(uint32_t chunk_size) {
-	return (1 << chunk_size);
+static inline uint32_t get_page_size(uint32_t chunk_shift) {
+	return (1 << chunk_shift);
 }
 
-static inline uint32_t get_byte_size(uint32_t chunk_size) {
-	return ((1 << chunk_size) * PAGE_SIZE);
+static inline uint32_t get_byte_size(uint32_t chunk_shift) {
+	return ((1 << chunk_shift) * PAGE_SIZE);
 }
 
 static inline uint32_t get_offset(uint32_t chunk_index) {

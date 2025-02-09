@@ -50,6 +50,10 @@ SOURCES =	boot/boot.s \
 			memory/memory.c \
 			memory/mmap.c \
 			memory/mmap_info.c \
+			memory/mmap_init.c \
+			memory/mmap_book.c \
+			memory/mmap_chunk.c \
+			memory/mmap_free.c \
 			memory/v_memory.c \
 			terminal/terminal.c \
 			terminal/vga.c \

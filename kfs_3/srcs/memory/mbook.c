@@ -83,8 +83,8 @@ void mbook_test() {
 	printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
 	// memory_infos(NULL, 0);
 	// press_any();
-	// munbook(addr);
-	// printk("memory freeeeed\n");
+	munbook(addr);
+	printk("memory freeeeed\n");
 	// printk("at index 0: %c ('Z' expected)\n", addr[666]);
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
 	// far_offset = 4096 * 17 + 9999;

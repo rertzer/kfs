@@ -68,5 +68,6 @@ void		 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
 chunk_t		 get_free_chunk(mmap_t* mmap, uint32_t shift);
 void*		 get_chunk_address(mmap_t* mmap, chunk_t chunk);
 uint8_t		 free_by_address(mmap_t* mmap, void* addr);
+void		 split_chunk(mmap_t* mmap, chunk_t chunk);
 
 #endif

@@ -44,6 +44,15 @@ uint32_t round_up_power_two(uint32_t n) {
 	return (offset);
 }
 
+uint32_t index_len(uint32_t start, uint32_t end) {
+	uint32_t len = (start <= end) ? end - start + 1 : 0;
+	return (len);
+}
+
+uint32_t min(uint32_t a, uint32_t b) {
+	return (a < b ? a : b);
+}
+
 void press_any() {
 	keypress_t keypress = init_keypress();
 

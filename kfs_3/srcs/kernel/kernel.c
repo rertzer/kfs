@@ -18,7 +18,7 @@ void kernel_main(void) {
 	init_memory();
 	init_v_memory();
 	// virtual_memory_infos(NULL, 0);
-	memory_map_infos();
+	// memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
@@ -36,7 +36,7 @@ void kernel_main(void) {
 	// }
 	// memory_map_infos();
 	// page_testing();
-	// mbook_test();
+	mbook_test();
 	// godot();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");

@@ -10,7 +10,7 @@ void* mbook(uint32_t size, bool level, bool rw) {
 		return (NULL);
 	}
 	size = v_size(v_addr);
-	if (size / PAGE_SIZE != 0) {
+	if (size % PAGE_SIZE != 0) {
 		printk("mbook: page size error\n");
 		printk("time to PANIC!!!!\n");
 	}
@@ -26,18 +26,18 @@ void* mbook(uint32_t size, bool level, bool rw) {
 	uint32_t	flags = get_page_table_flags(mmap_info);
 	uint32_t	page_v_addr = (uint32_t)v_addr;
 	uint32_t	page_p_addr = (uint32_t)p_addr;
-	while (size != 0) {
+	uint32_t	page_nb = size / PAGE_SIZE;
+	for (uint32_t i = 0; i < page_nb; ++i) {
 		bool ok = add_page_entry(page_v_addr, page_p_addr, flags);
 		if (ok == false) {
 			printk("mbook: page table error\n");
 			k_free(p_addr);
 			v_free(v_addr);
-			// il faut aussi clean les tables
+			free_page_table(v_addr, i);
 			return (NULL);
 		}
 		page_v_addr += PAGE_SIZE;
 		page_p_addr += PAGE_SIZE;
-		size -= PAGE_SIZE;
 	}
 
 	return (v_addr);
@@ -59,12 +59,12 @@ void mbook_test() {
 	printk("at index 0: %c ('Z' expected)\n", addr[666]);
 	uint32_t far_offset = 4096 * 14 + 666;
 	addr[far_offset] = 'A';
-	printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
-	munbook(addr);
-	printk("memory freeeeed\n");
-	// printk("at index 0: %c ('Z' expected)\n", addr[666]);
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
-	// far_offset = 4096 * 17 + 9999;
+	// munbook(addr);
+	printk("memory freeeeed\n");
+	printk("at index 0: %c ('Z' expected)\n", addr[666]);
+	printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
+	far_offset = 4096 * 17 + 9999;
 	// printk("writting in a too far offset\n");
 	// addr[far_offset] = 'A';
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);

@@ -5,21 +5,13 @@
 
 static inline void*	   get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint32_t get_buddy_offset(uint32_t offset);
-static inline uint32_t get_byte(uint32_t chunk_index);
-static inline uint32_t get_byte_size(uint32_t chunk_size);
-static inline uint32_t get_chunk_index(chunk_t chunk);
 static uint32_t		   get_len_max_possible_chunk_size(uint32_t max_size, uint32_t len);
-static inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index);
-static inline uint32_t get_offset(uint32_t chunk_index);
-static inline uint32_t get_page_index(void* const addr);
-static inline uint32_t get_page_size(uint32_t chunk_size);
 static inline uint8_t* get_remain_start(uint8_t* memory_start, uint32_t memory_size);
 static inline uint32_t get_start_max_possible_chunk_size(uint32_t max_size, uint32_t page_index);
 static inline void	   get_unavailable_chunk(chunk_t* chunk);
 static inline bool	   memory_overflow(void* addr, uint32_t len);
 static inline uint32_t round_up_memory_size(uint32_t size);
 static inline uint8_t  set_byte_status(uint8_t byte, chunk_t chunk);
-static inline bool	   valid_page_index(mmap_t* mmap, uint32_t page_index);
 static inline bool	   valid_max_chunk_aligned_page_index(uint32_t page_index);
 static void			   book_pages(mmap_t*  mmap,
 								  uint32_t start_page_index,
@@ -455,37 +447,3 @@ static void split_chunk(mmap_t* mmap, chunk_t chunk) {
 }
 
 /* ============================ inline utilities ============================ */
-
-static inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index) {
-	return (page_index - mmap->start_index);
-}
-
-static inline bool valid_page_index(mmap_t* mmap, uint32_t page_index) {
-	bool valid = true;
-	if (page_index < mmap->start_index || page_index > mmap->end_index) {
-		valid = false;
-	}
-	return (valid);
-}
-
-static inline uint32_t get_byte(uint32_t chunk_index) {
-	return (chunk_index / PAGES_PER_BYTE);
-}
-
-static inline uint32_t get_page_size(uint32_t chunk_size) {
-	return (1 << chunk_size);
-}
-
-static inline uint32_t get_byte_size(uint32_t chunk_size) {
-	return ((1 << chunk_size) * PAGE_SIZE);
-}
-static inline uint32_t get_offset(uint32_t chunk_index) {
-	return ((chunk_index % PAGES_PER_BYTE) << 1);
-}
-static inline uint32_t get_chunk_index(chunk_t chunk) {
-	return (chunk.byte * PAGES_PER_BYTE + (chunk.offset >> BITS_PER_PAGE_SHIFT));
-}
-
-static inline uint32_t get_page_index(void* const addr) {
-	return ((uint32_t)addr >> 12);
-}

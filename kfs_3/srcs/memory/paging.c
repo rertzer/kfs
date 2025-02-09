@@ -15,7 +15,6 @@ uint32_t* get_page_table_address(uint32_t l_address) {
 	uint32_t page_offset = get_dir_page_offset(l_address);
 	page_offset <<= 12;
 	uint32_t addr = PAGE_DIR_BASE + page_offset;
-	printk("%08x + %08x = %08x\n", PAGE_DIR_BASE, page_offset, addr);
 	return ((uint32_t*)addr);
 }
 

@@ -4,8 +4,8 @@
 #include "memory.h"
 #include "mmap.h"
 
-inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t size) {
-	return (mmap->bytes_nb >> size);
+inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t shift) {
+	return (mmap->bytes_nb >> shift);
 }
 
 inline uint8_t get_byte_status(uint8_t byte, uint8_t offset) {

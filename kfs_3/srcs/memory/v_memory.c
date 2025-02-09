@@ -102,7 +102,7 @@ mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw) {
 	mmap_info.rw = get_chunk_rw(chunk_info.status);
 	mmap_info.valid = get_mmap_info_valid(chunk_info.status, fault_level, mmap_info.user);
 
-	printk("mmap check: address: %08x, size: %u, status: %u\n", chunk_info.addr, chunk_info.size,
+	printk("mmap check: address: %08x, shift: %u, status: %u\n", chunk_info.addr, chunk_info.shift,
 		   chunk_info.status);
 	printk("fault rw %u rw status %u level %u\n", fault_rw, get_rw_status(fault_rw), fault_level);
 

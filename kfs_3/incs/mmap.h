@@ -13,7 +13,7 @@
  *
  * */
 
-#define MMAP_MAX_SIZE 15
+#define MMAP_MAX_SHIFT 15
 #define MMAP_UNAVAILABLE 0
 #define MMAP_USED_RONLY 1
 #define MMAP_USED 2
@@ -26,18 +26,17 @@
 #define MMAP_NOT_FOUND_OFFSET 8
 
 #define MMAP_MAX_KBYTE_SIZE 4194304	 // 4 Gb
-#define MAX_SIZE_PAGE_BYTES_NB 8
 
 typedef struct {
 	uint32_t start_index;
 	uint32_t end_index;
-	uint32_t max_size;
+	uint32_t max_shift;
 	uint32_t bytes_nb;
-	uint8_t* mmap[MMAP_MAX_SIZE + 1];
+	uint8_t* mmap[MMAP_MAX_SHIFT + 1];
 } mmap_t;
 
 typedef struct chunk {
-	uint32_t size;
+	uint32_t shift;
 	uint32_t byte;
 	uint32_t offset;
 	uint32_t status;
@@ -52,7 +51,7 @@ typedef struct mem_info {
 typedef struct chunk_info {
 	void*	 addr;
 	bool	 valid;
-	uint32_t size;
+	uint32_t shift;
 	uint32_t page_nb;
 	uint32_t status;
 } chunk_info_t;
@@ -66,7 +65,7 @@ uint32_t	 get_chunk_status(mmap_t* mmap, chunk_t chunk);
 void		 set_chunk_status(mmap_t* mmap, chunk_t chunk);
 void		 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);
 void		 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
-chunk_t		 get_free_chunk(mmap_t* mmap, uint32_t size);
+chunk_t		 get_free_chunk(mmap_t* mmap, uint32_t shift);
 void*		 get_chunk_address(mmap_t* mmap, chunk_t chunk);
 uint8_t		 free_by_address(mmap_t* mmap, void* addr);
 

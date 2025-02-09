@@ -6,12 +6,8 @@ extern uint32_t page_dir;
 static void		free_page(void* l_address);
 
 uint32_t get_dir_page_offset(uint32_t l_address) {
-	printk("get_dir_page_offset ");
 	uint32_t offset = l_address & (0x3FF << 22);
-	printk("%08x ", offset);
 	offset >>= 22;
-
-	printk("%08x \n", offset);
 	return (offset);
 }
 
@@ -24,11 +20,8 @@ uint32_t* get_page_table_address(uint32_t l_address) {
 }
 
 uint32_t get_page_table_offset(uint32_t l_address) {
-	printk("get page table offset ");
 	uint32_t offset = l_address & (0x3FF << 12);
-	printk("%08x ", offset);
 	offset >>= 12;
-	printk("%08x \n", offset);
 	return (offset);
 }
 
@@ -104,15 +97,12 @@ bool confirm_dir_page(uint32_t l_address) {
 }
 
 bool set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {
-	printk("set page table entry \n");
-
 	bool	  ok = true;
 	uint32_t* entry = get_table_entry_by_l_address(l_address);
 
 	*entry = (uint32_t)p_address | flags;
 
 	flush_tlb();
-
 	return (ok);
 }
 

@@ -1,4 +1,6 @@
 #include "kernel.h"
+#include "keyboard.h"
+#include "keycode.h"
 #include "paging.h"
 
 extern uint32_t			stack_top;

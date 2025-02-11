@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "terminal.h"
 
 int print_char(char c, printk_opts_t opts) {
 	int len = 1;

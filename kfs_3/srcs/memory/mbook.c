@@ -1,5 +1,6 @@
 #include "builtin.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "memory.h"
 #include "paging.h"
 

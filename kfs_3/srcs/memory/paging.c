@@ -1,5 +1,6 @@
 #include "paging.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "memory.h"
 
 extern uint32_t page_dir;

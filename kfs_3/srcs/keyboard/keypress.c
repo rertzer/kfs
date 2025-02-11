@@ -1,4 +1,8 @@
 #include "kernel.h"
+#include "keycode.h"
+#include "terminal.h"
+
+extern volatile uint8_t current_code;
 
 bool handle_keypress(keypress_t keypress) {
 	bool getline = false;
@@ -95,3 +99,22 @@ bool handle_default_ascii(uint8_t ascii) {
 }
 
 void term_readline() {}
+
+void press_any() {
+	keypress_t keypress = init_keypress();
+
+	printk("press any key to continue\n");
+
+	while (true) {
+		keypress.keycode = current_code;
+		current_code = 0;
+		if (keypress.keycode != 0) {
+			keypress = update_keypress(keypress);
+
+			if (keypress.pressed == PRESSED) {
+				break;
+			}
+		}
+		sleep();
+	}
+}

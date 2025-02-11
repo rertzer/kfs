@@ -1,5 +1,6 @@
 #include "builtin.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "memory.h"
 
 static void virtual_memory_infos_by_level(bool user);

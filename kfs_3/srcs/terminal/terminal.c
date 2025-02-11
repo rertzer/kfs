@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "kernel.h"
+#include "keycode.h"
 
 terminal_t term;
 terminal_t all_terms[MAX_TERM_NB];
@@ -14,7 +15,6 @@ void all_terms_init() {
 	for (size_t i = 0; i < MAX_TERM_NB; ++i) {
 		term_init(i);
 	}
-	// enable_cursor(0, 25);
 	term.buffer = (uint16_t*)VGA_TEXT_MODE_BUFFER;
 	current_term = 0;
 	load_term(&term, &all_terms[current_term]);
@@ -333,4 +333,13 @@ void term_next_line() {
 		++term.row;
 	}
 	update_cursor(term.column, term.row);
+}
+
+void update_cursor(size_t x, size_t y) {
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(0x0E, (uint16_t)0x3D4);
+	outb((uint8_t)((pos >> 8) & 0xFF), (uint16_t)0x3D5);
+	outb(0x0F, (uint16_t)0x3D4);
+	outb((uint8_t)(pos & 0xFF), (uint16_t)0x3D5);
 }

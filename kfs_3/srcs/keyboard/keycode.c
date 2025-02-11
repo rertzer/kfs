@@ -1,3 +1,4 @@
+#include "keycode.h"
 #include "kernel.h"
 
 static uint8_t	   numlock_converter(keypress_t keypress);

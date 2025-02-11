@@ -1,7 +1,9 @@
 #include "kernel.h"
 #include "boot_infos.h"
 #include "builtin.h"
+#include "keycode.h"
 #include "memory.h"
+#include "terminal.h"
 
 extern volatile uint8_t current_code;
 
@@ -22,19 +24,19 @@ void kernel_main(void) {
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
-
-	for (int i = 0; i < 12; ++i) {
-		printk("---- %u ----\n", i);
-		// memory_infos(NULL, 0);
-		void*	 addr = v_mmap((1 << i) * 4096, SUPERVISOR_LEVEL, READ_WRITE);
-		uint32_t size = v_size(addr);
-		printk("%u, address %08x size %u\n\n", i, addr, size);
-		// memory_infos(NULL, 0);
-		virtual_memory_infos(NULL, 0);
-		v_free(addr);
-		press_any();
-	}
-	memory_map_infos();
+	//
+	// for (int i = 0; i < 12; ++i) {
+	// 	printk("---- %u ----\n", i);
+	// 	// memory_infos(NULL, 0);
+	// 	void*	 addr = v_mmap((1 << i) * 4096, SUPERVISOR_LEVEL, READ_WRITE);
+	// 	uint32_t size = v_size(addr);
+	// 	printk("%u, address %08x size %u\n\n", i, addr, size);
+	// 	// memory_infos(NULL, 0);
+	// 	virtual_memory_infos(NULL, 0);
+	// 	v_free(addr);
+	// 	press_any();
+	// }
+	// memory_map_infos();
 	page_testing();
 	press_any();
 	mbook_test();

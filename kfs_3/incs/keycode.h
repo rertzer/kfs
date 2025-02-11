@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "kernel.h"
 
 #define BACKSPACE 8
 #define PRESSED 0
@@ -174,7 +175,7 @@ typedef enum {
 	[0x6A] = WWW_BACK, [0x6B] = MY_COMPUTER, [0x6C] = EMAIL, [0x6D] = MEDIA_SELECT
 
 #define KEYCODES_TO_QWERTY                                                                         \
-	[ESCAPE] = {0, 0}, [KEY_1] = {'1', '!'}, [KEY_2] = {'2', '@'}, [KEY_3] = {'3', '#'},         \
+	[ESCAPE] = {0, 0}, [KEY_1] = {'1', '!'}, [KEY_2] = {'2', '@'}, [KEY_3] = {'3', '#'},           \
 	[KEY_4] = {'4', '$'}, [KEY_5] = {'5', '%'}, [KEY_6] = {'6', '^'}, [KEY_7] = {'7', '&'},        \
 	[KEY_8] = {'8', '*'}, [KEY_9] = {'9', '('}, [KEY_0] = {'0', ')'}, [MINUS] = {'-', '_'},        \
 	[EQUAL] = {'=', '+'}, [BCKSPC] = {8, 8}, [TAB] = {'\t', '\t'}, [KEY_Q] = {'q', 'Q'},           \
@@ -206,7 +207,7 @@ typedef enum {
 	[PAD_ENTER] = {'\n', '\n'}, [PAD_SLASH] = {'/', '/'},
 
 #define KEYCODES_TO_AZERTY                                                                         \
-	[ESCAPE] = {0, 0}, [KEY_1] = {'&', '1'}, [KEY_2] = {130, '2'}, [KEY_3] = {'"', '3'},         \
+	[ESCAPE] = {0, 0}, [KEY_1] = {'&', '1'}, [KEY_2] = {130, '2'}, [KEY_3] = {'"', '3'},           \
 	[KEY_4] = {'\'', '4'}, [KEY_5] = {'(', '5'}, [KEY_6] = {'-', '6'}, [KEY_7] = {138, '7'},       \
 	[KEY_8] = {'_', '8'}, [KEY_9] = {135, '9'}, [KEY_0] = {133, '0'}, [MINUS] = {')', 248},        \
 	[EQUAL] = {'=', '+'}, [BCKSPC] = {8, 8}, [TAB] = {'\t', '\t'}, [KEY_Q] = {'a', 'A'},           \
@@ -242,5 +243,22 @@ uint8_t handle_scancode_default();
 uint8_t handle_scancode_extended();
 uint8_t handle_scancode_pause();
 unsigned char const (*keyboard_layout(keyboard_layout_t layout))[2];
+
+/* ===================== keycode ======================================= */
+
+keypress_t init_keypress();
+keypress_t update_keypress(keypress_t keypress);
+bool	   handle_keypress(keypress_t keypress);
+void	   handle_control_keypress(keypress_t keypress);
+void	   handle_control_keycode(keycode_t keycode);
+void	   handle_control_ascii(uint8_t ascii);
+bool	   handle_default_keypress(keypress_t keypress);
+void	   handle_default_keycode(keycode_t keycode);
+bool	   handle_default_ascii(uint8_t ascii);
+void	   handle_left(keypress_t* keypress);
+void	   handle_right(keypress_t* keypress);
+void	   handle_delete();
+void	   handle_control_keypress(keypress_t keypress);
+void	   press_any();
 
 #endif

@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "terminal.h"
 
 extern terminal_t term;
 

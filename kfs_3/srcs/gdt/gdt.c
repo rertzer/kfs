@@ -1,4 +1,4 @@
-#include "builtin.h"
+#include "gdt.h"
 #include "kernel.h"
 
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;

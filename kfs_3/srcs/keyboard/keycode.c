@@ -1,5 +1,5 @@
 #include "keycode.h"
-#include "kernel.h"
+#include "vga.h"
 
 static uint8_t	   numlock_converter(keypress_t keypress);
 static inline bool is_alpha_code(uint8_t scancode);

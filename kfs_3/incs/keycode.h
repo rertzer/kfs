@@ -246,6 +246,22 @@ unsigned char const (*keyboard_layout(keyboard_layout_t layout))[2];
 
 /* ===================== keycode ======================================= */
 
+typedef struct {
+	uint8_t pressed : 1;
+	uint8_t control : 1;
+	uint8_t alt : 1;
+	uint8_t shift : 1;
+	uint8_t gui : 1;
+	uint8_t capslock : 1;
+	uint8_t numlock : 1;
+	uint8_t scrolllock : 1;
+	uint8_t scancode;
+	uint8_t ascii;
+	uint8_t keycode;
+} keypress_t;
+
+typedef void (*handle_fun_t)(keypress_t* k);
+
 keypress_t init_keypress();
 keypress_t update_keypress(keypress_t keypress);
 bool	   handle_keypress(keypress_t keypress);

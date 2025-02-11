@@ -7,9 +7,13 @@ terminal_t all_terms[MAX_TERM_NB];
 uint16_t   all_terms_buffers[MAX_TERM_NB][VGA_WIDTH * VGA_HEIGHT];
 size_t	   current_term;
 
-static void term_init_buffer(size_t i);
-static void term_set_header(size_t i);
-static void term_set_prompt(size_t i);
+static void			 term_init_buffer(size_t i);
+static void			 term_set_header(size_t i);
+static void			 term_set_prompt(size_t i);
+static inline size_t term_prompt_line_end();
+static inline void	 load_term_buffer(uint16_t* dest, uint16_t* src);
+static void			 term_init_values(size_t i);
+static void			 term_set_buffer(size_t i, char c);
 
 void all_terms_init() {
 	for (size_t i = 0; i < MAX_TERM_NB; ++i) {
@@ -22,14 +26,18 @@ void all_terms_init() {
 }
 
 void term_init(size_t i) {
+	term_init_values(i);
+	term_init_buffer(i);
+}
+
+static void term_init_values(size_t i) {
 	all_terms[i].row = PRINT_ROW_START;
 	all_terms[i].column = PROMPT_SIZE + 1;
 	all_terms[i].prompt_row = PRINT_ROW_START;
 	all_terms[i].prompt_column = PROMPT_SIZE + 1;
-	all_terms[i].line_len = 0;
+	all_terms[i].line_len = 2;
 	all_terms[i].color = vga_char_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	all_terms[i].buffer = all_terms_buffers[i];
-	term_init_buffer(i);
 }
 
 static void term_init_buffer(size_t i) {
@@ -38,18 +46,15 @@ static void term_init_buffer(size_t i) {
 	term_set_prompt(i);
 }
 
-void term_set_buffer(size_t i, char c) {
+static void term_set_buffer(size_t i, char c) {
 	uint16_t vc = vga_char(c, all_terms[i].color);
 	uint16_t vhc = vga_char(c, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_DARK_GREY));
 
 	for (size_t x = 0; x < VGA_WIDTH; ++x) {
+		size_t index = x;
 		for (size_t y = 0; y < VGA_HEIGHT; ++y) {
-			const size_t index = VGA_WIDTH * y + x;
-			if (y <= JROS_HEADER_HIGH) {
-				all_terms[i].buffer[index] = vhc;
-			} else {
-				all_terms[i].buffer[index] = vc;
-			}
+			all_terms[i].buffer[index] = (y <= JROS_HEADER_HIGH) ? vhc : vc;
+			index += VGA_WIDTH;
 		}
 	}
 }
@@ -86,7 +91,7 @@ void load_term(terminal_t* dest, terminal_t* src) {
 	load_term_buffer(dest->buffer, src->buffer);
 }
 
-void load_term_buffer(uint16_t* dest, uint16_t* src) {
+static inline void load_term_buffer(uint16_t* dest, uint16_t* src) {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; ++i) {
 		dest[i] = src[i];
 	}
@@ -125,12 +130,35 @@ void term_prompt() {
 	term_next();
 }
 
-size_t term_putstr(const char* str) {
-	size_t len = strlen(str);
-	for (size_t i = 0; i < len; ++i) {
-		term_putchar(str[i]);
-	}
+size_t term_prompt_pos() {
+	return (term.prompt_row * VGA_WIDTH + term.prompt_column);
+}
 
+size_t term_cursor_pos() {
+	return (term.row * VGA_WIDTH + term.column);
+}
+
+!!!!!!!!FICHIER SEPARE POUR LES TERM PUT... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	   size_t
+	   term_putstr(const char* str) {
+	size_t len = strlen(str);
+	len = term_putchars(str, len);
+	return (len);
+}
+
+size_t term_putchars(const char* array, size_t len) {
+	for (size_t i = 0; i < len; ++i) {
+		term_putchar(array[i]);
+	}
+	return (len);
+}
+
+size_t term_putchars_ln(const char* array, size_t len) {
+	for (size_t i = 0; i < len; ++i) {
+		term_putchar(array[i]);
+	}
+	term_putchar('\n');
 	return (len);
 }
 
@@ -238,8 +266,8 @@ void term_next_row() {
 
 void term_backspace() {
 	if (term_left()) {
-		size_t current = term.row * VGA_WIDTH + term.column;
-		size_t end = term.prompt_row * VGA_WIDTH + term.line_len;
+		size_t current = term_cursor_pos();
+		size_t end = term_prompt_line_end();
 		if (current == end) {
 			vga_write(' ', term.color, term.column, term.row);
 		} else {
@@ -249,6 +277,10 @@ void term_backspace() {
 		}
 		--term.line_len;
 	}
+}
+
+static inline size_t term_prompt_line_end() {
+	return (term.prompt_row * VGA_WIDTH + term.line_len);
 }
 
 void term_delete() {

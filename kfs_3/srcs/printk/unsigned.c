@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "printk.h"
 
 int print_unsigned(unsigned int n) {
 	int len = 0;

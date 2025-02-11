@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "printk.h"
 
 static int write_hexa(unsigned int nbr, char* base) {
 	int len = 0;
@@ -11,7 +11,7 @@ static int write_hexa(unsigned int nbr, char* base) {
 int print_hexa_maj(unsigned int nbr, printk_opts_t opts) {
 	int len = get_hexa_len(nbr);
 	int final_len = len;
-	
+
 	if (opts.width > get_hexa_len(nbr) && opts.left == 0) {
 		char c = opts.zero ? '0' : ' ';
 
@@ -31,7 +31,7 @@ int print_hexa_maj(unsigned int nbr, printk_opts_t opts) {
 int print_hexa_min(unsigned int nbr, printk_opts_t opts) {
 	int len = get_hexa_len(nbr);
 	int final_len = len;
-	
+
 	if (opts.prefix == 1 && nbr != 0) {
 		final_len = len += 2;
 	}

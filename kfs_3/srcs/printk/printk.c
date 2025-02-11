@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "printk.h"
 
 int printk(const char* format, ...) {
 	va_list l_args;
@@ -7,14 +7,13 @@ int printk(const char* format, ...) {
 	va_start(l_args, format);
 
 	for (int i = 0; format[i]; i++) {
-		if (format[i] == '%')
-		{
+		if (format[i] == '%') {
 			printk_opts_t opts = get_opts(format, i);
 
 			if (opts.error) {
-				while(!is_alpha(format[i]))
+				while (!is_alpha(format[i]))
 					len += print_char(format[i++], (printk_opts_t){0});
-				len += print_char(format[i], (printk_opts_t){0});				
+				len += print_char(format[i], (printk_opts_t){0});
 				continue;
 			}
 

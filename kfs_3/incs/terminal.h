@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "kernel.h"
+#include "vga.h"
 
 #define PROMPT_SIZE 1
 #define PROMPT '>'
@@ -81,7 +82,6 @@ vga_color_t vga_bg_color(uint8_t color);
 void		all_terms_init();
 void		term_init(size_t term_index);
 void		load_term(terminal_t* dest, terminal_t* src);
-void		load_term_buffer(uint16_t* dest, uint16_t* src);
 void		switch_term(size_t next);
 void		switch_next_term();
 void		switch_previous_term();
@@ -102,9 +102,13 @@ void		term_next();
 void		term_scroll();
 void		term_front_color_next();
 void		term_back_color_next();
-void		term_set_buffer(size_t i, char c);
 size_t		term_putstr(const char* str);
+size_t		term_putchars(const char* array, size_t len);
+size_t		term_putchars_ln(const char* array, size_t len);
 size_t		term_putchar(char c);
 void		term_prompt();
+size_t		term_prompt_pos();
+size_t		term_cursor_pos();
 void		write_tab();
 void		update_cursor(size_t x, size_t y);
+void		term_next_line();

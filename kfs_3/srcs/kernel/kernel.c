@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "boot_infos.h"
 #include "builtin.h"
+#include "gdt.h"
 #include "keycode.h"
 #include "memory.h"
 #include "terminal.h"

@@ -1,11 +1,12 @@
-#include "kernel.h"
+#include "printk.h"
 
-size_t	ft_atoi(const char *str) {
+size_t ft_atoi(const char* str) {
 	size_t i = 0;
 	size_t res = 0;
 	size_t sign = 1;
 
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v' || str[i] == '\f' ||
+		   str[i] == '\r')
 		++i;
 	if (str[i] == '-' || str[i] == '+') {
 		++i;
@@ -21,7 +22,7 @@ size_t	ft_atoi(const char *str) {
 
 size_t nbr_len(int nbr) {
 	size_t len = 0;
-	
+
 	if (nbr < 0) {
 		nbr = -nbr;
 		len += 1;
@@ -35,7 +36,7 @@ size_t nbr_len(int nbr) {
 	return (len);
 }
 
-size_t ft_strrchr(const char *str, char c) {
+size_t ft_strrchr(const char* str, char c) {
 	size_t i = 0;
 	size_t res = 0;
 

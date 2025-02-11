@@ -1,4 +1,3 @@
-#include "kernel.h"
 #include "keycode.h"
 
 static bool	   handle_pressed();

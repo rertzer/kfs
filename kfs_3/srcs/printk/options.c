@@ -1,8 +1,8 @@
-#include "kernel.h"
+#include "printk.h"
 
 printk_opts_t get_opts(const char* format, int i) {
 	printk_opts_t opts = {0};
-	int y = i;
+	int			  y = i;
 
 	if (ft_strrchr(CONV, format[y + 1]) != 0) {
 		opts.counter = 0;
@@ -35,18 +35,18 @@ printk_opts_t get_opts(const char* format, int i) {
 				opts.error = 1;
 				y++;
 				break;
-			}
 		}
-		if (format[y + 1] >= '0' && format[y + 1] <= '9') {
-			opts.width = ft_atoi(&format[y + 1]);
-			while (format[y + 1] >= '0' && format[y + 1] <= '9') {
-				y++;
-			}
+	}
+	if (format[y + 1] >= '0' && format[y + 1] <= '9') {
+		opts.width = ft_atoi(&format[y + 1]);
+		while (format[y + 1] >= '0' && format[y + 1] <= '9') {
+			y++;
 		}
+	}
 
-		if (ft_strrchr(CONV, format[y + 1]) == 0) {
-			opts.error = 1;
-		}
+	if (ft_strrchr(CONV, format[y + 1]) == 0) {
+		opts.error = 1;
+	}
 
 	opts.counter = y - i;
 	return (opts);

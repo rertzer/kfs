@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "printk.h"
 
 int print_integer(long long int n) {
 	int len = 0;
@@ -44,7 +44,7 @@ int prep_print_integer(long long int n, printk_opts_t opts) {
 	if (opts.sign == 1 && n >= 0 && opts.zero == 0) {
 		print_char('+', (printk_opts_t){0});
 	}
-	
+
 	print_integer(n);
 
 	if (opts.width > len && opts.left == 1) {

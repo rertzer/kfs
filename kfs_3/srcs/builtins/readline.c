@@ -30,7 +30,7 @@ static void cmdline_init(cmdline_t* cmdline) {
 }
 
 static void cmdline_set(cmdline_t* cmdline) {
-	size_t start = cmdline_word(term.prompt_row * VGA_WIDTH + term.prompt_column, false);
+	size_t start = cmdline_word(term_prompt_pos(), false);
 	size_t end = cmdline_word(start, true);
 	cmdline->cmd_len = end - start;
 	if (cmdline->cmd_len > 255) {
@@ -54,7 +54,7 @@ static void cmdline_set(cmdline_t* cmdline) {
 }
 
 static size_t cmdline_word(size_t pos, bool inside) {
-	while (pos < term.row * VGA_WIDTH + term.column) {
+	while (pos < term_cursor_pos()) {
 		if (is_alnum(term.buffer[pos]) == inside) {
 			++pos;
 		} else {
@@ -98,9 +98,6 @@ static uint8_t cmd_cmp(cmdline_t* cmdline, const char* builtin) {
 
 static uint8_t cmd_error(cmdline_t* cmdline) {
 	printk("Invalid command: ");
-	for (size_t i = 0; i < cmdline->cmd_len; ++i) {
-		term_putchar(cmdline->cmd[i]);
-	}
-	term_putchar('\n');
+	term_putchars_ln(cmdline->cmd, cmdline->cmd_len);
 	return (1);
 }

@@ -8,6 +8,16 @@
 
 #define REGS_NB 17
 
+#define BUILTINS                                                                            \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot",       \
+	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump", \
+	[BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos",
+
+#define BUILTIN_FUNCTIONS                                                                        \
+	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [KREBOOT] = kreboot, [REBOOT] = reboot, \
+	[HALT] = halt, [REGISTERS] = registers, [HEXDUMP] = hexdump, [BOOT_INFOS] = boot_infos,      \
+	[MEMORY_INFOS] = memory_infos
+
 typedef enum {
 	ECHO,
 	QWERTY,
@@ -22,18 +32,16 @@ typedef enum {
 	BUILTINS_NB
 } builtin_t;
 
-#define BUILTINS                                                                            \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [KREBOOT] = "kreboot",       \
-	[REBOOT] = "reboot", [HALT] = "halt", [REGISTERS] = "registers", [HEXDUMP] = "hexdump", \
-	[BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos",
+typedef struct {
+	char   cmd[256];
+	size_t cmd_len;
+	char   arg[256];
+	size_t arg_len;
+} cmdline_t;
 
 typedef uint8_t (*builtin_fun_t)(char* pointer, size_t len);
 
-#define BUILTIN_FUNCTIONS                                                                        \
-	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [KREBOOT] = kreboot, [REBOOT] = reboot, \
-	[HALT] = halt, [REGISTERS] = registers, [HEXDUMP] = hexdump, [BOOT_INFOS] = boot_infos,      \
-	[MEMORY_INFOS] = memory_infos
-
+bool	 readline();
 uint8_t	 echo(char* word, size_t word_len);
 uint8_t	 qwerty(char* pointer, size_t len);
 uint8_t	 azerty(char* pointer, size_t len);

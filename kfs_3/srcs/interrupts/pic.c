@@ -37,7 +37,6 @@ void init_PIC() {
 	PIC_remap(0x20, 0x28);
 	IRQ_set_mask(IRQ_TIMER, UNMASKED);
 	IRQ_set_mask(IRQ_KEYBOARD, UNMASKED);
-	// IRQ_unmask_all();
 }
 
 void IRQ_unmask_all() {

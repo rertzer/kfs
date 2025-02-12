@@ -55,5 +55,7 @@ uint8_t	 virtual_memory_infos(char* pointer, size_t len);
 void	 freboot();
 uint32_t boom();
 uint32_t get_retaddr();
+uint8_t	 hexdump(char* pointer, size_t len);
+void	 tabledump();
 
 #endif

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define GDT_BUFFER 0xc0000800
+#define GDT_BUFFER 0xC0000800
 
 typedef struct {
 	uint32_t base;

@@ -7,6 +7,8 @@ static void virtual_memory_infos_by_level(bool user);
 static void print_mem_infos(mem_info_t* mem_infos);
 
 uint8_t memory_infos(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	mem_info_t mem_infos[MMAP_MAX_SHIFT + 1];
 
 	printk("physical memory\n");
@@ -33,6 +35,8 @@ static void print_mem_infos(mem_info_t* mem_infos) {
 }
 
 uint8_t virtual_memory_infos(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
 	printk("user virtual memory infos\n");
 	virtual_memory_infos_by_level(USER_LEVEL);
 	press_any();

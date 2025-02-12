@@ -1,13 +1,11 @@
 #include "interrupts.h"
 #include "builtin.h"
-#include "kernel.h"
 
 extern volatile uint32_t						  hereafter;
 extern uint32_t									  isr_stub_table[];
 __attribute__((aligned(0x10))) static idt_entry_t idt[256];
 
 static idtr_t idtr;
-static bool	  vectors[IDT_MAX_DESCRIPTORS];
 
 void init_idt() {
 	idtr.base = (uint32_t)&idt[0];
@@ -16,9 +14,7 @@ void init_idt() {
 	for (uint8_t vector = 0; vector < IDT_MAX_DESCRIPTORS; ++vector) {
 		idt_set_descriptor(vector, isr_stub_table[vector],
 						   IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
-		vectors[vector] = true;
 	}
-	vectors[7] = false;
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
 }
@@ -34,6 +30,7 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 }
 
 void general_protection_handler(uint32_t registers[8], uint32_t error_code) {
+	(void)registers;
 	printk("general protection fault\nerror code: %08x", error_code);
 }
 

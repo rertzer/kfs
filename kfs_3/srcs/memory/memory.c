@@ -28,7 +28,6 @@ void* k_mmap(uint32_t size) {
 		printk("k_mmap error: max size allowed is 2^15\n");
 		return (NULL);
 	}
-	// printk("kmmap search chunk of size %u\n", size);
 
 	chunk_t chunk = get_free_chunk(&p_mmap, size);
 	if (chunk.status != MMAP_FREE) {
@@ -37,7 +36,6 @@ void* k_mmap(uint32_t size) {
 	chunk.status = MMAP_USED;
 	set_chunk_status(&p_mmap, chunk);
 	void* address = get_chunk_address(&p_mmap, chunk);
-	// printk("k_mmap found the address %08x\n", address);
 	return (address);
 }
 

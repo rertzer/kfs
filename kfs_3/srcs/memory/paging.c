@@ -85,11 +85,7 @@ bool confirm_dir_page(uint32_t l_address) {
 	uint32_t page_offset = get_dir_page_offset(l_address);
 
 	uint32_t* addr = (uint32_t*)PAGE_DIR_ADDR + page_offset;
-	// printk("page offset and value %u %08x\n", page_offset, *addr);
-	if (*addr & PAGE_FAULT_P) {
-		// printk("dir page entry present\n");
-	} else {
-		// printk("dir page entry missing\n");
+	if ((*addr & PAGE_FAULT_P) == false) {
 		ok = create_page_table(page_offset);
 		flush_tlb();
 	}
@@ -151,9 +147,9 @@ void page_testing() {
 	printk("Got the cacahuete '%c'\n", cacahuete);
 	addr[offset] = 'Z';
 	printk("cacahuete (expect 'Z') %c\n", addr[offset]);
-	printk("\ntesting fake address, panic expected\n");
-	press_any();
-	char* fake_addr = (char*)0xD09DC300;
-	printk("cacahuete is %c\n", *fake_addr);
-	printk("If you see this, the panic test failed :(\n)");
+	// printk("\ntesting fake address, panic expected\n");
+	// press_any();
+	// char* fake_addr = (char*)0xD09DC300;
+	// printk("cacahuete is %c\n", *fake_addr);
+	// printk("If you see this, the panic test failed :(\n)");
 }

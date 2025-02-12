@@ -1,6 +1,5 @@
 #include "terminal.h"
 #include "kernel.h"
-#include "keycode.h"
 
 terminal_t term;
 terminal_t all_terms[MAX_TERM_NB];
@@ -36,6 +35,7 @@ static void term_init_values(size_t i) {
 	all_terms[i].prompt_row = PRINT_ROW_START;
 	all_terms[i].prompt_column = PROMPT_SIZE + 1;
 	all_terms[i].line_len = 2;
+	all_terms[i].left_margin = 0;
 	all_terms[i].color = vga_char_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	all_terms[i].buffer = all_terms_buffers[i];
 }
@@ -88,6 +88,7 @@ void load_term(terminal_t* dest, terminal_t* src) {
 	dest->prompt_column = src->prompt_column;
 	dest->line_len = src->line_len;
 	dest->color = src->color;
+	dest->left_margin = src->left_margin;
 	load_term_buffer(dest->buffer, src->buffer);
 }
 
@@ -314,7 +315,7 @@ void term_back_color_next() {
 }
 
 void term_next_line() {
-	term.column = 0;
+	term.column = term.left_margin;
 	if (term.row == VGA_HEIGHT - 1) {
 		term_scroll();
 	} else {

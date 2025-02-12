@@ -13,8 +13,6 @@
 #define JROS_HEADER_HIGH 5
 #define JROS_HEADER_WIDTH 30
 #define JROS_HEADER_OFFSET 25
-#define PANIC_HEADER_WIDTH 30
-#define PANIC_HEADER_HIGH 7
 
 #define PRINT_ROW_START JROS_HEADER_HIGH + 1
 
@@ -58,12 +56,6 @@
 		"    / / __/ /_/ /\\ \\    / /   ", " __/ /_/  \\____/___/   /_/    ", \
 		"|___/                         ",
 
-#define PANIC_HEADER_0                                                      \
-	"         )        (       ", "`  )   ( /(   (    )\\   (   ",          \
-		"/(/(   )(_))  )\\ )((_)  )\\  ", "((_)_\\ ((_)_  _(_/( (_) ((_) ", \
-		"| '_ \\)/ _` || ' \\))| |/ _|  ", "| .__/ \\__,_||_||_| |_|\\__|  ", "|_|"
-#endif
-
 typedef struct terminal_s {
 	uint16_t* buffer;
 	size_t	  row;
@@ -71,6 +63,7 @@ typedef struct terminal_s {
 	size_t	  prompt_row;
 	size_t	  prompt_column;
 	size_t	  line_len;
+	size_t	  left_margin;
 	uint8_t	  color;
 } terminal_t;
 
@@ -112,3 +105,4 @@ size_t		term_cursor_pos();
 void		write_tab();
 void		update_cursor(size_t x, size_t y);
 void		term_next_line();
+#endif

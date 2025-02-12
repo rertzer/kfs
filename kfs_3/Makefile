@@ -55,6 +55,7 @@ SOURCES =	boot/boot.s \
 			memory/mmap_chunk.c \
 			memory/mmap_free.c \
 			memory/v_memory.c \
+			panic/panic.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \

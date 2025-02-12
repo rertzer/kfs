@@ -43,7 +43,7 @@ uint8_t registers(char* pointer, size_t len) {
 	printk("cs : 0x%04x\t\tss : 0x%04x\n", regs[13], regs[8]);
 	printk("ds : 0x%04x\t\tes : 0x%04x\n", regs[9], regs[10]);
 	printk("fs : 0x%04x\t\tgs : 0x%04x\n", regs[11], regs[12]);
-	printk("cr0: 0x%08x\t\tcr3: 0x%08x\n", regs[14], regs[15]);
+	printk("cr0: 0x%08x\tcr3: 0x%08x\n", regs[14], regs[15]);
 	printk("flags : 0x%08x\n", regs[16]);
 	printk("ret address: 0x%08x\n", get_retaddr());
 	return (0);

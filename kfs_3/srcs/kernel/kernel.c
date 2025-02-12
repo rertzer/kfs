@@ -4,6 +4,7 @@
 #include "gdt.h"
 #include "keycode.h"
 #include "memory.h"
+#include "panic.h"
 #include "terminal.h"
 
 extern volatile uint8_t current_code;
@@ -38,9 +39,10 @@ void kernel_main(void) {
 	// 	press_any();
 	// }
 	// memory_map_infos();
-	page_testing();
+	// page_testing();
 	press_any();
-	mbook_test();
+	// panic("Kernel test\n");
+	// mbook_test();
 	// godot();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");

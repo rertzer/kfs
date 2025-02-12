@@ -7,10 +7,12 @@
  * */
 uint8_t reboot(char* pointer, size_t len) {
 	(void)pointer;
-	(void)len;
-	printk("rebooting ");
 	uint8_t counter = 0;
-	while (counter < 8) {
+	printk("rebooting ");
+	if (len == 0) {
+		len = 8;
+	}
+	while (counter < len) {
 		sleep();
 		uint32_t time = get_timer_counter();
 		if (time % 1000 == 0) {

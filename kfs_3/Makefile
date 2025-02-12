@@ -56,6 +56,7 @@ SOURCES =	boot/boot.s \
 			memory/mmap_free.c \
 			memory/v_memory.c \
 			terminal/terminal.c \
+			terminal/putchar.c \
 			terminal/vga.c \
 			utils/utils.c
 

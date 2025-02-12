@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "memory.h"
 #include "paging.h"
+#include "panic.h"
 
 static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw);
 static bool add_page_table_entry(uint32_t l_address, uint32_t flags);
@@ -12,15 +13,14 @@ void page_fault_handler(uint32_t l_address, uint32_t error_code) {
 	uint32_t access_error = error_code & (PAGE_FAULT_P | PAGE_FAULT_W);
 	printk("access_error: 0x%08x\n", access_error);
 	if (access_error) {
-		printk("Panic\nlinear address is 0x%08x\n", l_address);
+		panic("page fault access error");
 		ok = false;
 	} else {
 		printk("don't panic\nlinear address is 0x%08x\n", l_address);
 		ok = page_missing(l_address, (error_code & PAGE_FAULT_W), (error_code & PAGE_FAULT_USER));
 	}
 	if (ok == false) {
-		printk("page fault! invalid address 0x%08x\n", l_address);
-		godot();
+		panic("page fault error");
 	}
 	flush_tlb();
 	printk("page handling done\n");
@@ -37,6 +37,8 @@ static bool page_missing(uint32_t l_address, bool fault_level, bool fault_rw) {
 			uint32_t flags = get_page_table_flags(mmap_info);
 			ok = add_page_table_entry(l_address, flags);
 		}
+	} else {
+		panic("page fault: invalid address");
 	}
 
 	return (ok);
@@ -48,7 +50,7 @@ static bool add_page_table_entry(uint32_t l_address, uint32_t flags) {
 	bool  ok = true;
 	void* p_address = k_mmap(PAGE_SIZE);
 	if (p_address == NULL) {
-		printk("page fault: error: no physical memory available\n");
+		panic("page fault: error: no physical memory available\n");
 		ok = false;
 	} else {
 		ok = set_page_table_entry(l_address, (uint32_t)p_address, flags);

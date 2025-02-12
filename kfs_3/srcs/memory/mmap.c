@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "memory.h"
 #include "mmap_inline.h"
+#include "panic.h"
 
 static inline void*	  get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint8_t set_byte_status(uint8_t byte, chunk_t chunk);
@@ -47,8 +48,7 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 	chunk_t chunk;
 
 	if (valid_page_index(mmap, page_index) == false) {
-		printk("memory: error: invalid page index %u \n", page_index);
-		printk("It's time to Panic\n");
+		panic("error: invalid page index");
 	}
 	for (uint32_t shift = mmap->max_shift; shift != UINT32_MAX; --shift) {
 		chunk = get_chunk_by_shift(mmap, page_index, shift);

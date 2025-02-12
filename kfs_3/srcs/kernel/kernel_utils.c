@@ -21,6 +21,10 @@ void sleep() {
 	__asm__ volatile("hlt");
 }
 
+void int_allowed() {
+	__asm__ volatile("sti");
+}
+
 uint32_t* to_upper_kernel(uint32_t* low_address) {
 	uint32_t* high_address = low_address + 0xC0000000 / 4;
 	return (high_address);

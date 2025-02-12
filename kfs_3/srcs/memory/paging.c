@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "keycode.h"
 #include "memory.h"
+#include "panic.h"
 
 extern uint32_t page_dir;
 static void		free_page(void* l_address);
@@ -29,7 +30,7 @@ bool create_page_table(uint32_t offset) {
 	bool	  ok = true;
 	uint32_t* address = k_mmap(PAGE_SIZE);
 	if (address == NULL) {
-		printk("panic!\n");
+		panic("error: unable to create page table");
 		ok = false;
 
 	} else {
@@ -136,6 +137,7 @@ void page_testing() {
 	uint32_t offset = 0;
 	char*	 good_string = "hello word\n";
 	char*	 addr = v_mmap(1, SUPERVISOR_LEVEL, READ_WRITE);
+	// char* addr = v_mmap(1, SUPERVISOR_LEVEL, READ_ONLY);
 	// char* fake_addr = (char*)0xD09DC300;
 	// char* addr = (char*)0xc0400000;
 	printk("%s\n", good_string);
@@ -143,8 +145,15 @@ void page_testing() {
 	press_any();
 	// virtual_memory_infos(NULL, 0);
 	// godot();
+	// printk("\ntesting access rights, panic expected\n");
+	// press_any();
 	char cacahuete = addr[offset];
 	printk("Got the cacahuete '%c'\n", cacahuete);
 	addr[offset] = 'Z';
 	printk("cacahuete (expect 'Z') %c\n", addr[offset]);
+	printk("\ntesting fake address, panic expected\n");
+	press_any();
+	char* fake_addr = (char*)0xD09DC300;
+	printk("cacahuete is %c\n", *fake_addr);
+	printk("If you see this, the panic test failed :(\n)");
 }

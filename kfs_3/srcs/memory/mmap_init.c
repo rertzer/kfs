@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "mmap.h"
 #include "mmap_inline.h"
+#include "panic.h"
 
 static void			   set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size);
 static void			   set_mmap_addresses(mmap_t* mmap, uint8_t* start);
@@ -32,9 +33,7 @@ static void set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size) {
 		   mmap->max_shift);
 
 	if (valid_max_chunk_aligned_page_index(mmap->start_index) == false) {
-		printk("memory error: memory start must be 2^15 bytes aligned\n");
-		printk("Panic Now!");
-		godot();
+		panic("memory error: memory start must be 2^15 bytes aligned");
 	}
 }
 

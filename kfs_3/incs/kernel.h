@@ -37,5 +37,6 @@ void		  outw(uint16_t value, uint16_t port);
 void		  io_wait(void);
 void		  sleep();
 uint32_t*	  to_upper_kernel(uint32_t* low_address);
+void		  int_allowed();
 
 #endif

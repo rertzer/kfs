@@ -34,8 +34,7 @@ bool create_page_table(uint32_t offset) {
 		ok = false;
 
 	} else {
-		ok = add_page_to_dir_page(offset, address,
-								  PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT);
+		ok = add_page_to_dir_page(offset, address, PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT);
 		if (ok == true) {
 			uint8_t* memset_address = (uint8_t*)PAGE_DIR_BASE + (offset << 12);
 			ft_memset(memset_address, 0, PAGE_SIZE);
@@ -139,7 +138,7 @@ void page_testing() {
 	printk("%s\n", good_string);
 	printk("my funny addr %08x has size %u \n", addr, v_size(addr));
 	press_any();
-	// virtual_memory_infos(NULL, 0);
+	// virtual_memory_infos();
 	// godot();
 	// printk("\ntesting access rights, panic expected\n");
 	// press_any();

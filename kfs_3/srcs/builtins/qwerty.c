@@ -1,5 +1,4 @@
 #include "builtin.h"
-#include "kernel.h"
 #include "keycode.h"
 
 uint8_t qwerty(char* pointer, size_t len) {

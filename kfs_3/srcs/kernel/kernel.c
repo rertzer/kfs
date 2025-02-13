@@ -21,7 +21,7 @@ void kernel_main(void) {
 	// boom();
 	init_memory();
 	init_v_memory();
-	// virtual_memory_infos(NULL, 0);
+	// virtual_memory_infos();
 	memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();
@@ -34,7 +34,7 @@ void kernel_main(void) {
 	// 	uint32_t size = v_size(addr);
 	// 	printk("%u, address %08x size %u\n\n", i, addr, size);
 	// 	// memory_infos(NULL, 0);
-	// 	virtual_memory_infos(NULL, 0);
+	// 	virtual_memory_infos();
 	// 	v_free(addr);
 	// 	press_any();
 	// }

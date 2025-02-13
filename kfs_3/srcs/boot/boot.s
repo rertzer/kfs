@@ -21,6 +21,7 @@ PAGE_PERM equ 0x00000003			;supervisor read/write present
 PAGE_SIZE equ 4096
 extern kernel_main
 extern godot
+extern get_registers
 extern invalidate_low_kernel
 extern flush_tlb
 extern multiboot_magic
@@ -157,6 +158,20 @@ flush_tlb:
 	mov cr3, eax			;load the page dir register 
 	mov eax, cr0
 	ret
+
+get_registers:
+	push ebp
+	mov ebp, esp
+	mov edi, [ebp+8]
+	mov eax, 42
+	mov [edi], eax
+	pushf
+	pop eax
+	mov [edi + 64], eax 
+	mov esp, ebp
+	pop ebp
+	ret
+
 
 ;section .multiboot.text
 global boom

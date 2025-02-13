@@ -10,7 +10,8 @@
 #define MULTIBOOT_MAGIC_1 0x2BADB002
 #define MULTIBOOT_MAGIC_2 0x36D76289
 
-/* from https://www.gnu.org/software/grub/manual/multiboot/html_node/multiboot_002eh.html */
+/* modified from: https://www.gnu.org/software/grub/manual/multiboot/html_node/multiboot_002eh.html
+ */
 /* multiboot.h - Multiboot header file. */
 /* Copyright (C) 1999,2003,2007,2008,2009,2010  Free Software Foundation, Inc.
  *
@@ -111,6 +112,12 @@ typedef struct multiboot_mmap_entry {
 
 	uint32_t type;
 } __attribute__((packed)) multiboot_memory_map_t;
+
+typedef struct multiboot_addr_s {
+	uint32_t*				mbi;
+	multiboot_info_t*		mbd;
+	multiboot_memory_map_t* mmmp;
+} multiboot_addr_t;
 
 /* ---------------------- functions -----------------------------------------*/
 uint32_t boot_infos_get_mem_size();

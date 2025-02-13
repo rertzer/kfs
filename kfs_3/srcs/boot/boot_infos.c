@@ -6,65 +6,78 @@
 extern uint32_t multiboot_magic;
 extern uint32_t multiboot_tags;
 
-static size_t mmmp_print_entries(multiboot_memory_map_t* mmmp, multiboot_info_t* mbd);
+static multiboot_addr_t get_multiboot_addr();
+static void				mmmp_print_entries(multiboot_memory_map_t* mmmp, multiboot_info_t* mbd);
+static inline size_t	mmmp_entry_end(multiboot_info_t* mbd);
+static uint32_t			mmmp_print_entry(multiboot_memory_map_t* mmmp_entry);
+static void				print_multiboot_magic();
+static uint8_t*			get_upper_string(uint32_t addr);
+static void				print_multiboot_infos(multiboot_addr_t* mba);
+
+void boot_infos_memory_map_freeze(mmap_t* mmap) {
+	multiboot_addr_t mba = get_multiboot_addr();
+
+	for (size_t i = 0; i < mmmp_entry_end(mba.mbd); ++i) {
+		if (mba.mmmp[i].type != MULTIBOOT_MEMORY_AVAILABLE) {
+			book_memory(mmap, (uint8_t*)(uint32_t)mba.mmmp[i].addr, (uint32_t)mba.mmmp[i].len, MMAP_UNAVAILABLE);
+		}
+	}
+}
 
 // value in Kib
 uint32_t boot_infos_get_mem_size() {
-	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
-	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	return (multiboot_infos[1] + multiboot_infos[2]);
+	multiboot_addr_t mba = get_multiboot_addr();
+	return (mba.mbi[1] + mba.mbi[2]);
 }
 
 void memory_map_infos() {
-	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
-	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	multiboot_memory_map_t* mmmp =
-		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
-
-	size_t total_size = mmmp_print_entries(mmmp, mbd);
-	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
+	multiboot_addr_t mba = get_multiboot_addr();
+	mmmp_print_entries(mba.mmmp, mba.mbd);
 }
 
-static size_t mmmp_print_entries(multiboot_memory_map_t* mmmp, multiboot_info_t* mbd) {
-	static char available[] = "available";
-	static char unavailable[] = "unavailable";
+static multiboot_addr_t get_multiboot_addr() {
+	multiboot_addr_t mba;
 
+	uint32_t multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
+	mba.mbi = to_upper_kernel((uint32_t*)multiboot_infos_addr);
+	mba.mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
+	mba.mmmp = (multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mba.mbd->mmap_addr));
+
+	return (mba);
+}
+
+static void mmmp_print_entries(multiboot_memory_map_t* mmmp, multiboot_info_t* mbd) {
 	uint32_t total_size = 0;
-	for (multiboot_memory_map_t* mmmp_entry = mmmp;
-		 mmmp_entry < mmmp + mbd->mmap_length / sizeof(multiboot_memory_map_t); ++mmmp_entry) {
-		total_size += mmmp_entry->len;
-		char* avail = (mmmp_entry->type == MULTIBOOT_MEMORY_AVAILABLE) ? available : unavailable;
-		printk("memory addr: %08x, length %u : %s\n", mmmp_entry->addr, mmmp_entry->len, "toto");
+
+	for (size_t i = 0; i < mmmp_entry_end(mbd); ++i) {
+		total_size += mmmp_print_entry(&mmmp[i]);
 	}
-	return (total_size);
+	printk("total size: %u\n", total_size);
 }
 
-void boot_infos_memory_map_freeze(mmap_t* mmap) {
-	uint32_t		  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
-	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	multiboot_memory_map_t* mmmp =
-		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
-	for (multiboot_memory_map_t* mmmp_entry = mmmp;
-		 mmmp_entry < mmmp + mbd->mmap_length / sizeof(multiboot_memory_map_t); ++mmmp_entry) {
-		uint32_t len = mmmp_entry->len;
-		uint32_t addr = mmmp_entry->addr;
-		uint32_t type = mmmp_entry->type;
-		if (type != MULTIBOOT_MEMORY_AVAILABLE) {
-			book_memory(mmap, (uint8_t*)addr, len, MMAP_UNAVAILABLE);
-		}
-	}
+static inline size_t mmmp_entry_end(multiboot_info_t* mbd) {
+	return (mbd->mmap_length / sizeof(multiboot_memory_map_t));
+}
+
+static uint32_t mmmp_print_entry(multiboot_memory_map_t* mmmp_entry) {
+	char const* is_avail = (mmmp_entry->type == MULTIBOOT_MEMORY_AVAILABLE) ? "available" : "unavailable";
+	printk("memory addr: %08x, length %u:\t%s\n", (uint32_t)mmmp_entry->addr, (uint32_t)mmmp_entry->len, is_avail);
+	return (mmmp_entry->len);
 }
 
 uint8_t boot_infos(char* pointer, size_t len) {
 	(void)pointer;
 	(void)len;
-	uint32_t  magic = *to_upper_kernel(&multiboot_magic);
-	uint32_t  multiboot_infos_addr = *to_upper_kernel(&multiboot_tags);
-	uint32_t* multiboot_infos = to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	uint8_t*  multiboot_cmdline = (uint8_t*)to_upper_kernel((uint32_t*)multiboot_infos[4]);
-	uint8_t*  multiboot_bootloader = (uint8_t*)to_upper_kernel((uint32_t*)multiboot_infos[16]);
-	uint32_t  multiboot_mmap_length = multiboot_infos[11];
-	uint32_t* multiboot_mmap_addr = to_upper_kernel((uint32_t*)multiboot_infos[12]);
+
+	print_multiboot_magic();
+	multiboot_addr_t mba = get_multiboot_addr();
+	print_multiboot_infos(&mba);
+	mmmp_print_entries(mba.mmmp, mba.mbd);
+	return (0);
+}
+
+static void print_multiboot_magic() {
+	uint32_t magic = *to_upper_kernel(&multiboot_magic);
 	printk("multiboot magic: 0x%08x", magic);
 	if (magic == MULTIBOOT_MAGIC_1) {
 		printk(" (multiboot V1)\n");
@@ -73,25 +86,28 @@ uint8_t boot_infos(char* pointer, size_t len) {
 	} else {
 		printk(" (BAD VALUE\n)");
 	}
+}
 
-	printk("flags:  0x%08x\n", multiboot_infos[0]);
-	printk("mem_lower:  %u KiB (max 640)\n", multiboot_infos[1]);
-	printk("mem_upper:  0x%08x\n", multiboot_infos[2]);
-	printk("boot_device:  0x%08x\n", multiboot_infos[3]);
+static void print_multiboot_infos(multiboot_addr_t* mba) {
+	uint8_t*  multiboot_cmdline = get_upper_string(mba->mbi[4]);
+	uint8_t*  multiboot_bootloader = get_upper_string(mba->mbi[16]);
+	uint32_t  multiboot_mmap_length = mba->mbi[11];
+	uint32_t* multiboot_mmap_addr = to_upper_kernel((uint32_t*)mba->mbi[12]);
+
+	printk("flags:  0x%08x\n", mba->mbi[0]);
+	printk("mem_lower:  %u KiB (max 640)\n", mba->mbi[1]);
+	printk("mem_upper:  0x%08x\n", mba->mbi[2]);
+	printk("boot_device:  0x%08x\n", mba->mbi[3]);
 	printk("cmdline:  %s\n", multiboot_cmdline);
-	printk("elf num:  0x%08x, ", multiboot_infos[7]);
-	printk("elf size:  0x%08x, ", multiboot_infos[8]);
-	printk("elf addr:  0x%08x, ", multiboot_infos[9]);
-	printk("elf shndx:  0x%08x\n", multiboot_infos[10]);
+	printk("elf num:  0x%08x, ", mba->mbi[7]);
+	printk("elf size:  0x%08x\n", mba->mbi[8]);
+	printk("elf addr:  0x%08x, ", mba->mbi[9]);
+	printk("elf shndx:  0x%08x\n", mba->mbi[10]);
 	printk("bootloader:  %s\n", multiboot_bootloader);
 	printk("mmap length:  0x%08x, ", multiboot_mmap_length);
 	printk("mmap addr:  0x%08x\n", multiboot_mmap_addr);
+}
 
-	multiboot_info_t* mbd = (multiboot_info_t*)to_upper_kernel((uint32_t*)multiboot_infos_addr);
-	multiboot_memory_map_t* mmmp =
-		(multiboot_memory_map_t*)to_upper_kernel((uint32_t*)(mbd->mmap_addr));
-
-	size_t total_size = mmmp_print_entries(mmmp, mbd);
-	printk("total size %u %u\n", total_size, MULTIBOOT_MEMORY_AVAILABLE);
-	return (0);
+static uint8_t* get_upper_string(uint32_t addr) {
+	return ((uint8_t*)to_upper_kernel((uint32_t*)addr));
 }

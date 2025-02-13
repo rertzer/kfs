@@ -1,9 +1,9 @@
-BasedOnStyle: Chromium 
+BasedOnStyle: Chromium
 IndentWidth: 4
 TabWidth: 4
 UseTab: Always
-ColumnLimit: 100
+ColumnLimit: 120
 AlignConsecutiveDeclarations:
   Enabled: true
-  AcrossEmptyLines: false 
+  AcrossEmptyLines: false
   AcrossComments: false

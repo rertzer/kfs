@@ -1,5 +1,4 @@
 #include "kernel.h"
-#include "keyboard.h"
 #include "keycode.h"
 #include "paging.h"
 

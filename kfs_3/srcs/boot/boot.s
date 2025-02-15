@@ -162,12 +162,12 @@ flush_tlb:
 get_registers:
 	push ebp
 	mov ebp, esp
-	mov edi, [ebp+8]
+	mov ecx, [ebp+8]
 	mov eax, 42
-	mov [edi], eax
+	mov [ecx], eax
 	pushf
 	pop eax
-	mov [edi + 64], eax 
+	mov [ecx + 64], eax 
 	mov esp, ebp
 	pop ebp
 	ret

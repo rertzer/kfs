@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define GDT_BUFFER 0xC0000800
+#define GDT_ENTRIES_NB 7
 
 #define GDT_FLAG_32_BIT_PROTECTED 0x04
 #define GDT_FLAG_4KB_GRANULARITY 0x08

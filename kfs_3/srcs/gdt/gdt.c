@@ -1,5 +1,4 @@
 #include "gdt.h"
-#include "kernel.h"
 
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 
@@ -8,12 +7,12 @@ static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
 void init_gdt() {
 	//                                                 base  limit  access flags
 	gdt_descriptor_t null_desc = (gdt_descriptor_t){0, 0, 0, 0};
-	gdt_descriptor_t kernel_code_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x9A, 0xC};
-	gdt_descriptor_t kernel_data_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x92, 0xC};
-	gdt_descriptor_t kernel_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, 0x96, 0xC};
-	gdt_descriptor_t user_code_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xFA, 0xC};
-	gdt_descriptor_t user_data_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF2, 0xC};
-	gdt_descriptor_t user_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, 0xF6, 0xC};
+	gdt_descriptor_t kernel_code_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_KERNEL_CODE_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t kernel_data_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_KERNEL_DATA_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t kernel_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_KERNEL_STACK_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t user_code_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_CODE_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t user_data_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_DATA_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t user_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_STACK_ACCESS, GDT_FLAGS};
 
 	add_gdt_descriptor(&gdt[0], null_desc);
 	add_gdt_descriptor(&gdt[1], kernel_code_desc);

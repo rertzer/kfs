@@ -22,7 +22,7 @@ void kernel_main(void) {
 	init_memory();
 	init_v_memory();
 	// virtual_memory_infos();
-	memory_map_infos();
+	// memory_map_infos();
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);

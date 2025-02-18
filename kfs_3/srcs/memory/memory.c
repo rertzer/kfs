@@ -3,9 +3,9 @@
 #include "kernel.h"
 #include "mmap.h"
 
-extern uint32_t p_mmap_start;
-extern uint32_t stack_bottom;
-extern uint32_t stack_top;
+extern uint32_t const p_mmap_start;
+extern uint32_t const stack_bottom;
+extern uint32_t const stack_top;
 
 mmap_t p_mmap;
 

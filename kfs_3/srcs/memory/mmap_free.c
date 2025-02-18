@@ -6,7 +6,7 @@ static chunk_t		   get_parent(chunk_t kid);
 static chunk_t		   get_buddy(mmap_t* mmap, chunk_t chunk);
 static inline uint32_t get_buddy_offset(uint32_t offset);
 
-uint8_t free_by_address(mmap_t* mmap, void* addr) {
+uint8_t free_by_address(mmap_t* mmap, void const* const addr) {
 	uint8_t	 ret = 0;
 	uint32_t page_index = get_page_index(addr);
 

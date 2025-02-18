@@ -12,16 +12,16 @@ mmap_t user_virt_mmap;
 mmap_t kernel_virt_mmap;
 
 static inline uint8_t get_rw_status(bool rw);
-static inline mmap_t* get_v_mmap_by_address(void* addr);
+static inline mmap_t* get_v_mmap_by_address(void const* const addr);
 static inline mmap_t* get_virtual_map(bool level);
-static inline bool	  get_address_level(void* const addr);
+static inline bool	  get_address_level(void const* const addr);
 static inline bool	  get_chunk_rw(uint32_t status);
 static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level);
 
 void init_v_memory() {
 	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, 0, USER_VIRTUAL_MEMORY_KIB_SIZE);
-	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start,
-			  (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
+	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START,
+			  KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
 	book_memory(&kernel_virt_mmap, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_SIZE, MMAP_USED);
 	book_memory(&kernel_virt_mmap, (uint8_t*)PAGE_DIR_BASE, 1024 * PAGE_SIZE, MMAP_USED);
 }
@@ -55,7 +55,7 @@ static inline mmap_t* get_virtual_map(bool level) {
 	return (mmap);
 }
 
-static inline bool get_address_level(void* const addr) {
+static inline bool get_address_level(void const* const addr) {
 	bool level = SUPERVISOR_LEVEL;
 	if (addr < (void*)KERNEL_VIRTUAL_MEMORY_START) {
 		level = USER_LEVEL;
@@ -69,17 +69,17 @@ static inline uint8_t get_rw_status(bool rw) {
 	return (status);
 }
 
-uint32_t v_size(void* addr) {
+uint32_t v_size(void const* const addr) {
 	mmap_t* mmap = get_v_mmap_by_address(addr);
 	return (get_size_by_address(mmap, addr));
 }
 
-uint8_t v_free(void* addr) {
+uint8_t v_free(void const* const addr) {
 	mmap_t* mmap = get_v_mmap_by_address(addr);
 	return (free_by_address(mmap, addr));
 }
 
-static inline mmap_t* get_v_mmap_by_address(void* addr) {
+static inline mmap_t* get_v_mmap_by_address(void const* const addr) {
 	mmap_t* mmap = &user_virt_mmap;
 	if (addr >= (void*)((uint32_t)KERNEL_VIRTUAL_MEMORY_KIB_SIZE * 1024)) {
 		mmap = &kernel_virt_mmap;
@@ -92,7 +92,7 @@ void get_virtual_memory_infos(mem_info_t* mem_infos, bool level) {
 	get_mmap_infos(mmap, mem_infos);
 }
 
-mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw) {
+mmap_info_t v_mmap_check(void const* const l_address, bool fault_level, bool fault_rw) {
 	bool		 address_level = get_address_level(l_address);
 	mmap_t*		 mmap = get_virtual_map(address_level);
 	chunk_info_t chunk_info = get_chunk_info(mmap, l_address);
@@ -102,8 +102,7 @@ mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw) {
 	mmap_info.rw = get_chunk_rw(chunk_info.status);
 	mmap_info.valid = get_mmap_info_valid(chunk_info.status, fault_level, mmap_info.user);
 
-	printk("mmap check: address: %08x, shift: %u, status: %u\n", chunk_info.addr, chunk_info.shift,
-		   chunk_info.status);
+	printk("mmap check: address: %08x, shift: %u, status: %u\n", chunk_info.addr, chunk_info.shift, chunk_info.status);
 	printk("fault rw %u rw status %u level %u\n", fault_rw, get_rw_status(fault_rw), fault_level);
 
 	return (mmap_info);

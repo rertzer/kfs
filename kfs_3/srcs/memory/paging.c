@@ -4,35 +4,37 @@
 #include "memory.h"
 #include "panic.h"
 
-extern uint32_t page_dir;
+extern uint32_t const page_dir;
 
-static void				free_page(void* l_address);
-static inline uint32_t	get_dir_page_offset(uint32_t l_address);
-static inline uint32_t* get_page_table_address(uint32_t l_address);
-static inline uint32_t	get_page_table_offset(uint32_t l_address);
-static void				clear_page_table(uint32_t offset);
-static inline uint32_t* get_dir_page_entry(uint32_t offset);
-static void				add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address, uint32_t flags);
-static inline bool		page_present(uint32_t* addr);
+static void				free_page(void const* const l_address);
+static inline uint32_t	get_dir_page_offset(uint32_t const l_address);
+static inline uint32_t* get_page_table_address(uint32_t const l_address);
+static inline uint32_t	get_page_table_offset(uint32_t const l_address);
+static void				clear_page_table(uint32_t const offset);
+static inline uint32_t* get_dir_page_entry(uint32_t const offset);
+static void				add_page_to_dir_page(uint32_t const	 page_offset,
+											 uint32_t* const page_physical_address,
+											 uint32_t const	 flags);
+static inline bool		page_present(uint32_t const* const addr);
 
-static inline uint32_t get_dir_page_offset(uint32_t l_address) {
+static inline uint32_t get_dir_page_offset(uint32_t const l_address) {
 	return ((l_address & (0x3FF << DIR_PAGE_SHIFT)) >> DIR_PAGE_SHIFT);
 }
 
-static inline uint32_t* get_page_table_address(uint32_t l_address) {
+static inline uint32_t* get_page_table_address(uint32_t const l_address) {
 	return ((uint32_t*)(PAGE_DIR_BASE + (get_dir_page_offset(l_address) << PAGE_TABLE_SHIFT)));
 }
 
-static inline uint32_t get_page_table_offset(uint32_t l_address) {
+static inline uint32_t get_page_table_offset(uint32_t const l_address) {
 	return ((l_address & (0x3FF << PAGE_TABLE_SHIFT)) >> PAGE_TABLE_SHIFT);
 }
 
-static inline uint32_t* get_dir_page_entry(uint32_t offset) {
+static inline uint32_t* get_dir_page_entry(uint32_t const offset) {
 	return ((uint32_t*)PAGE_DIR_ADDR + offset);
 }
 
-void create_page_table(uint32_t offset) {
-	uint32_t* address = k_mmap(PAGE_SIZE);
+void create_page_table(uint32_t const offset) {
+	uint32_t* const address = k_mmap(PAGE_SIZE);
 	if (address == NULL) {
 		panic("unable to create page table: no physical memory available");
 	}
@@ -41,17 +43,19 @@ void create_page_table(uint32_t offset) {
 	clear_page_table(offset);
 }
 
-static void clear_page_table(uint32_t offset) {
-	uint8_t* memset_address = (uint8_t*)PAGE_DIR_BASE + (offset << PAGE_TABLE_SHIFT);
+static void clear_page_table(uint32_t const offset) {
+	uint8_t* const memset_address = (uint8_t*)PAGE_DIR_BASE + (offset << PAGE_TABLE_SHIFT);
 	ft_memset(memset_address, 0, PAGE_SIZE);
 }
 
-static void add_page_to_dir_page(uint32_t page_offset, uint32_t* page_physical_address, uint32_t flags) {
-	uint32_t* entry = get_dir_page_entry(page_offset);
+static void add_page_to_dir_page(uint32_t const	 page_offset,
+								 uint32_t* const page_physical_address,
+								 uint32_t const	 flags) {
+	uint32_t* const entry = get_dir_page_entry(page_offset);
 	*entry = (uint32_t)page_physical_address | flags;
 }
 
-uint32_t get_page_table_flags(mmap_info_t mmap_info) {
+uint32_t get_page_table_flags(mmap_info_t const mmap_info) {
 	uint32_t flags = 0;
 
 	flags |= (mmap_info.valid == true) ? PAGE_TABLE_PRESENT : PAGE_TABLE_ABSENT;
@@ -61,38 +65,38 @@ uint32_t get_page_table_flags(mmap_info_t mmap_info) {
 	return (flags);
 }
 
-void add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {
+void add_page_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags) {
 	confirm_dir_page(l_address);
 	set_page_table_entry(l_address, p_address, flags);
 }
 
-void confirm_dir_page(uint32_t l_address) {
-	uint32_t page_offset = get_dir_page_offset(l_address);
+void confirm_dir_page(uint32_t const l_address) {
+	uint32_t const page_offset = get_dir_page_offset(l_address);
 
-	uint32_t* addr = get_dir_page_entry(page_offset);
+	uint32_t const* const addr = get_dir_page_entry(page_offset);
 	if (page_present(addr) == false) {
 		create_page_table(page_offset);
 	}
 }
 
-static inline bool page_present(uint32_t* addr) {
+static inline bool page_present(uint32_t const* const addr) {
 	return (*addr & PAGE_FAULT_P);
 }
 
-void set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags) {
-	uint32_t* entry = get_table_entry_by_l_address(l_address);
+void set_page_table_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags) {
+	uint32_t* const entry = get_table_entry_by_l_address(l_address);
 	*entry = p_address | flags;
 }
 
-uint32_t* get_table_entry_by_l_address(uint32_t l_address) {
+uint32_t* get_table_entry_by_l_address(uint32_t const l_address) {
 	return (get_page_table_address(l_address) + get_page_table_offset(l_address));
 }
 
-void* get_physical_address(uint32_t l_address) {
+void* get_physical_address(uint32_t const l_address) {
 	return ((void*)*get_table_entry_by_l_address(l_address));
 }
 
-void free_page_table(void* l_address, uint32_t page_nb) {
+void free_page_table(void const* l_address, uint32_t const page_nb) {
 	for (uint32_t offset = 0; offset < page_nb; ++offset) {
 		free_page(l_address);
 		l_address += PAGE_SIZE;
@@ -100,8 +104,8 @@ void free_page_table(void* l_address, uint32_t page_nb) {
 	flush_tlb();
 }
 
-static void free_page(void* l_address) {
-	uint32_t* entry = get_table_entry_by_l_address((uint32_t)l_address);
+static void free_page(void const* const l_address) {
+	uint32_t* const entry = get_table_entry_by_l_address((uint32_t)l_address);
 	*entry = 0;
 }
 

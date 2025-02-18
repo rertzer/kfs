@@ -35,13 +35,13 @@ uint8_t	 k_free(void* addr);
 // virtual memory
 void		init_v_memory();
 void		get_virtual_memory_infos(mem_info_t* mem_infos, bool level);
-void*		v_mmap(uint32_t size, bool level, bool rw);
-uint32_t	v_size(void* addr);
-uint8_t		v_free(void* addr);
-mmap_info_t v_mmap_check(void* l_address, bool fault_level, bool fault_rw);
+void*		v_mmap(uint32_t size, bool const level, bool const rw);
+uint32_t	v_size(void const* const addr);
+uint8_t		v_free(void const* const addr);
+mmap_info_t v_mmap_check(void const* const l_address, bool const fault_level, bool const fault_rw);
 
 // book memory
-void* mbook(uint32_t size, bool level, bool rw);
-void  munbook(void* addr);
+void* mbook(uint32_t const size, bool const level, bool const rw);
+void  munbook(void const* const addr);
 void  mbook_test();
 #endif

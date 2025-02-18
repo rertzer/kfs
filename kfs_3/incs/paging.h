@@ -24,13 +24,13 @@
 #define DIR_PAGE_SHIFT 22
 #define PAGE_TABLE_SHIFT 12
 
-void	  create_page_table(uint32_t offset);
-void	  add_page_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
-uint32_t  get_page_table_flags(mmap_info_t mmap_info);
-void*	  get_physical_address(uint32_t l_address);
-void	  confirm_dir_page(uint32_t l_address);
-void	  set_page_table_entry(uint32_t l_address, uint32_t p_address, uint32_t flags);
-uint32_t* get_table_entry_by_l_address(uint32_t l_address);
-void	  free_page_table(void* l_address, uint32_t page_nb);
+void	  create_page_table(uint32_t const offset);
+void	  add_page_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags);
+uint32_t  get_page_table_flags(mmap_info_t const mmap_info);
+void*	  get_physical_address(uint32_t const l_address);
+void	  confirm_dir_page(uint32_t const l_address);
+void	  set_page_table_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags);
+uint32_t* get_table_entry_by_l_address(uint32_t const l_address);
+void	  free_page_table(void const* l_address, uint32_t const page_nb);
 
 #endif

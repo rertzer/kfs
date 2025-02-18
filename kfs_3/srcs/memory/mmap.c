@@ -1,5 +1,4 @@
 #include "mmap.h"
-#include "kernel.h"
 #include "memory.h"
 #include "mmap_inline.h"
 #include "panic.h"
@@ -72,7 +71,7 @@ static chunk_t get_chunk_by_shift(mmap_t* mmap, uint32_t page_index, uint32_t sh
 
 /* =============================== get size by address ====================== */
 
-uint32_t get_size_by_address(mmap_t* mmap, void* const addr) {
+uint32_t get_size_by_address(mmap_t* mmap, void const* const addr) {
 	uint32_t size = 0;
 	chunk_t	 chunk = get_chunk(mmap, get_page_index(addr));
 
@@ -84,7 +83,7 @@ uint32_t get_size_by_address(mmap_t* mmap, void* const addr) {
 
 /* =============================== get mmap info ============================ */
 
-chunk_info_t get_chunk_info(mmap_t* mmap, void* addr) {
+chunk_info_t get_chunk_info(mmap_t* mmap, void const* const addr) {
 	chunk_info_t chunk_info;
 	chunk_t		 chunk = get_chunk(mmap, get_page_index(addr));
 

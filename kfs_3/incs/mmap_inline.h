@@ -47,7 +47,7 @@ inline uint32_t get_chunk_index(chunk_t chunk) {
 	return (chunk.byte * PAGES_PER_BYTE + (chunk.offset >> BITS_PER_PAGE_SHIFT));
 }
 
-inline uint32_t get_page_index(void* const addr) {
+inline uint32_t get_page_index(void const* const addr) {
 	return ((uint32_t)addr >> 12);
 }
 #endif

@@ -49,17 +49,17 @@ typedef struct mem_info {
 } mem_info_t;
 
 typedef struct chunk_info {
-	void*	 addr;
-	bool	 valid;
-	uint32_t shift;
-	uint32_t page_nb;
-	uint32_t status;
+	void const* addr;
+	bool		valid;
+	uint32_t	shift;
+	uint32_t	page_nb;
+	uint32_t	status;
 } chunk_info_t;
 
 void		 init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size);
 void		 set_all_memory_free(mmap_t* mmap);
-uint32_t	 get_size_by_address(mmap_t* mmap, void* const addr);
-chunk_info_t get_chunk_info(mmap_t* mmap, void* addr);
+uint32_t	 get_size_by_address(mmap_t* mmap, void const* const addr);
+chunk_info_t get_chunk_info(mmap_t* mmap, void const* const addr);
 chunk_t		 get_chunk(mmap_t* mmap, uint32_t page_index);
 uint32_t	 get_chunk_status(mmap_t* mmap, chunk_t chunk);
 void		 set_chunk_status(mmap_t* mmap, chunk_t chunk);
@@ -67,7 +67,7 @@ void		 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);
 void		 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
 chunk_t		 get_free_chunk(mmap_t* mmap, uint32_t shift);
 void*		 get_chunk_address(mmap_t* mmap, chunk_t chunk);
-uint8_t		 free_by_address(mmap_t* mmap, void* addr);
+uint8_t		 free_by_address(mmap_t* mmap, void const* const addr);
 void		 split_chunk(mmap_t* mmap, chunk_t chunk);
 
 #endif

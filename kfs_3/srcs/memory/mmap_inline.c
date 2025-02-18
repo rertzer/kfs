@@ -10,4 +10,4 @@ extern inline uint32_t get_byte_size(uint32_t chunk_shift);
 extern inline uint32_t get_page_size(uint32_t chunk_shift);
 extern inline uint32_t get_offset(uint32_t chunk_index);
 extern inline uint32_t get_chunk_index(chunk_t chunk);
-extern inline uint32_t get_page_index(void* const addr);
+extern inline uint32_t get_page_index(void const* const addr);

@@ -1,5 +1,4 @@
 #include "builtin.h"
-#include "kernel.h"
 #include "keycode.h"
 #include "memory.h"
 #include "paging.h"
@@ -23,8 +22,8 @@ void* mbook(uint32_t size, bool level, bool rw) {
 		return (NULL);
 	}
 	uint32_t flags = mbook_get_flags(level, rw);
+
 	if (mbook_write_page_table(v_addr, p_addr, size, flags) != 0) {
-		printk("mbook: page table error\n");
 		k_free(p_addr);
 		v_free(v_addr);
 		return (NULL);
@@ -45,12 +44,7 @@ static uint8_t mbook_write_page_table(void* v_addr, void* p_addr, uint32_t size,
 	uint32_t page_nb = size / PAGE_SIZE;
 
 	for (uint32_t i = 0; i < page_nb; ++i) {
-		bool ok = add_page_entry(page_v_addr, page_p_addr, flags);
-		if (ok == false) {
-			free_page_table(v_addr, i);
-			error = 1;
-			break;
-		}
+		add_page_entry(page_v_addr, page_p_addr, flags);
 		page_v_addr += PAGE_SIZE;
 		page_p_addr += PAGE_SIZE;
 	}
@@ -68,9 +62,7 @@ void munbook(void* v_addr) {
 void mbook_test() {
 	// memory_infos(NULL, 0);
 	// press_any();
-	printk("mbook\n");
 	uint8_t* addr = mbook(14 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
-	printk("addr is %08x\n", addr);
 	if (addr == NULL) {
 		printk("address is NULL. Lets see what's going on...\n");
 		press_any();

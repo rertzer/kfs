@@ -39,10 +39,10 @@ void kernel_main(void) {
 	// 	press_any();
 	// }
 	// memory_map_infos();
-	// page_testing();
-	// press_any();
+	page_testing();
+	press_any();
 	// panic("Kernel test");
-	// mbook_test();
+	mbook_test();
 	// godot();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");

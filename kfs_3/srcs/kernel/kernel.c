@@ -23,6 +23,7 @@ void kernel_main(void) {
 	init_v_memory();
 	// virtual_memory_infos();
 	// memory_map_infos();
+	press_any();
 
 	// uint32_t mem_size = get_mem_size();
 	// printk("memory size: %u\n", mem_size);
@@ -33,17 +34,19 @@ void kernel_main(void) {
 	// 	void*	 addr = v_mmap((1 << i) * 4096, SUPERVISOR_LEVEL, READ_WRITE);
 	// 	uint32_t size = v_size(addr);
 	// 	printk("%u, address %08x size %u\n\n", i, addr, size);
-	// 	// memory_infos(NULL, 0);
+	memory_infos(NULL, 0);
 	// 	virtual_memory_infos();
 	// 	v_free(addr);
-	// 	press_any();
+	// press_any();
 	// }
 	// memory_map_infos();
-	page_testing();
+	// page_testing();
 	press_any();
 	// panic("Kernel test");
-	mbook_test();
+	// mbook_test();
 	// godot();
+	// memory_test_k_mmap();
+	memory_test_vmbook();
 	term_putstr("echo 42\n");
 	// term_putstr("memoryinfos\n");
 	readline();

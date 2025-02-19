@@ -1,4 +1,6 @@
+#include "builtin.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "memory.h"
 #include "mmap.h"
 #include "paging.h"
@@ -19,11 +21,13 @@ static inline bool	  get_chunk_rw(uint32_t status);
 static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level);
 
 void init_v_memory() {
-	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, 0, USER_VIRTUAL_MEMORY_KIB_SIZE);
+	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, (uint8_t*)USER_VIRTUAL_MEMORY_START,
+			  USER_VIRTUAL_MEMORY_KIB_SIZE);
 	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START,
 			  KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
 	book_memory(&kernel_virt_mmap, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_SIZE, MMAP_USED);
 	book_memory(&kernel_virt_mmap, (uint8_t*)PAGE_DIR_BASE, 1024 * PAGE_SIZE, MMAP_USED);
+	book_memory(&user_virt_mmap, (uint8_t*)USER_VIRTUAL_MEMORY_START, PAGE_SIZE, MMAP_UNAVAILABLE);
 }
 
 void* v_mmap(uint32_t size, bool level, bool rw) {
@@ -74,9 +78,10 @@ uint32_t v_size(void const* const addr) {
 	return (get_size_by_address(mmap, addr));
 }
 
-uint8_t v_free(void const* const addr) {
-	mmap_t* mmap = get_v_mmap_by_address(addr);
-	return (free_by_address(mmap, addr));
+uint8_t v_free(void const* const v_addr) {
+	mmap_t* mmap = get_v_mmap_by_address(v_addr);
+	printk("mmap is %08x %08x\n", mmap, &user_virt_mmap);
+	return (free_by_address(mmap, v_addr));
 }
 
 static inline mmap_t* get_v_mmap_by_address(void const* const addr) {

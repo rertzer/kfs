@@ -69,6 +69,11 @@ void add_page_entry(uint32_t const l_address, uint32_t const p_address, uint32_t
 	confirm_dir_page(l_address);
 	set_page_table_entry(l_address, p_address, flags);
 }
+bool page_table_exist(void* const l_address) {
+	uint32_t const		  page_offset = get_dir_page_offset((uint32_t)l_address);
+	uint32_t const* const addr = get_dir_page_entry(page_offset);
+	return (page_present(addr));
+}
 
 void confirm_dir_page(uint32_t const l_address) {
 	uint32_t const page_offset = get_dir_page_offset(l_address);
@@ -113,7 +118,7 @@ static void free_page(void const* const l_address) {
 void page_testing() {
 	uint32_t offset = 0;
 	char*	 good_string = "hello word\n";
-	char*	 addr = v_mmap(1, SUPERVISOR_LEVEL, READ_WRITE);
+	char*	 addr = v_mmap(PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
 	// char* addr = v_mmap(1, SUPERVISOR_LEVEL, READ_ONLY);
 	printk("%s\n", good_string);
 	printk("my funny addr %08x has size %u \n", addr, v_size(addr));

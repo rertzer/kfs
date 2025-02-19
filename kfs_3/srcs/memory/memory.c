@@ -1,6 +1,8 @@
 #include "memory.h"
 #include "boot_infos.h"
+#include "builtin.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "mmap.h"
 
 extern uint32_t const p_mmap_start;
@@ -44,5 +46,37 @@ uint32_t k_size(void* addr) {
 }
 
 uint8_t k_free(void* addr) {
+	if (addr == 0) {
+		return (0);
+	}
 	return (free_by_address(&p_mmap, addr));
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void memory_test() {
+	size_t block_nb = 250;
+	size_t block_size = 7;
+	void*  addrs[1000];
+
+	for (size_t i = 0; i < block_nb; ++i) {
+		addrs[i] = k_mmap(PAGE_SIZE << block_size);
+		printk("k_mmap addrs is %08x\n", addrs[i]);
+		if (addrs[i] == 0) {
+			press_any();
+		}
+	}
+	press_any();
+	memory_infos(NULL, 0);
+	press_any();
+
+	for (size_t i = 0; i < block_nb; ++i) {
+		if (addrs[i] != 0) {
+			k_free(addrs[i]);
+		}
+		printk("free addrs is %08x\n", addrs[i]);
+	}
+
+	press_any();
+	memory_infos(NULL, 0);
+	press_any();
 }

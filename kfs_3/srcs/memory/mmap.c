@@ -1,7 +1,9 @@
 #include "mmap.h"
+#include "keycode.h"
 #include "memory.h"
 #include "mmap_inline.h"
 #include "panic.h"
+#include "printk.h"
 
 static inline void*	  get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint8_t set_byte_status(uint8_t byte, chunk_t chunk);
@@ -61,7 +63,6 @@ chunk_t get_chunk(mmap_t* mmap, uint32_t page_index) {
 static chunk_t get_chunk_by_shift(mmap_t* mmap, uint32_t page_index, uint32_t shift) {
 	chunk_t	 chunk;
 	uint32_t chunk_index = get_local_page_index(mmap, page_index) >> shift;
-
 	chunk.shift = shift;
 	chunk.byte = get_byte(chunk_index);
 	chunk.offset = get_offset(chunk_index);
@@ -73,8 +74,10 @@ static chunk_t get_chunk_by_shift(mmap_t* mmap, uint32_t page_index, uint32_t sh
 
 uint32_t get_size_by_address(mmap_t* mmap, void const* const addr) {
 	uint32_t size = 0;
-	chunk_t	 chunk = get_chunk(mmap, get_page_index(addr));
+	printk("getting size\n");
+	chunk_t chunk = get_chunk(mmap, get_page_index(addr));
 
+	printk("chunk status is %u", chunk.status);
 	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
 		size = get_byte_size(chunk.shift);
 	}
@@ -116,8 +119,7 @@ void split_chunk(mmap_t* mmap, chunk_t chunk) {
 	split_chunk_set_parent(mmap, chunk);
 	split_chunk_set_left_kid(mmap, &chunk);
 	split_chunk_set_right_kid(mmap, chunk);
-}
-
+};
 static void split_chunk_set_parent(mmap_t* mmap, chunk_t chunk) {
 	chunk.status = MMAP_UNAVAILABLE;
 	set_chunk_status(mmap, chunk);

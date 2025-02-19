@@ -50,6 +50,10 @@ static void mbook_write_page_table(void const* const v_addr,
 	}
 }
 
+void* vmbook(uint32_t size, bool const level, bool const rw) {
+	return (v_mmap(size, level, rw));
+}
+
 void munbook(void const* const v_addr) {
 	v_free(v_addr);
 	k_free(get_physical_address((uint32_t const)v_addr));
@@ -57,9 +61,29 @@ void munbook(void const* const v_addr) {
 }
 
 static inline uint32_t get_v_page_nb(void const* const v_addr) {
+	printk("getting size\n");
 	return (v_size(v_addr) / PAGE_SIZE);
 }
 
+void vmunbook(void const* const v_addr) {
+	printk("vfree\n");
+	uint32_t v_page_nb = get_v_page_nb(v_addr);
+	v_free(v_addr);
+	printk("back to vmunbook\n");
+	press_any();
+	if (page_table_exist(v_addr)) {
+		void* p_addr = get_physical_address((uint32_t const)v_addr);
+		printk("p addr is %08x\n", p_addr);
+		if (p_addr != NULL) {
+			printk("kfree\n");
+			press_any();
+			k_free(p_addr);
+			printk("page free\n");
+			free_page_table(v_addr, v_page_nb);
+		}
+	}
+	printk("unbook done\n");
+}
 //////////////////////////////////////////////////////////////////////////
 void mbook_test() {
 	uint8_t* addr = mbook(14 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
@@ -97,4 +121,44 @@ void mbook_test() {
 	// printk("writting in a too far offset\n");
 	// addr[far_offset] = 'A';
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void memory_test_vmbook() {
+	size_t block_nb = 5;
+	size_t block_size = 9;
+	void*  addrs[1000];
+
+	for (size_t i = 0; i < block_nb; ++i) {
+		addrs[i] = vmbook(PAGE_SIZE << block_size, USER_LEVEL, READ_WRITE);
+		printk("v_mmap addrs is %08x\n", addrs[i]);
+		if (addrs[i] == 0) {
+			press_any();
+		}
+	}
+	volatile uint8_t* ft = addrs[2];
+
+	printk("writing %08x\n", ft);
+	ft[0] = '4';
+	ft[1] = '2';
+	ft[2] = '\0';
+	press_any();
+	printk("42 == %s\n", ft);
+	press_any();
+	memory_infos(NULL, 0);
+	press_any();
+
+	for (size_t i = 0; i < block_nb; ++i) {
+		printk("%u free addrs is %08x\n", i, addrs[i]);
+		if (addrs[i] != 0) {
+			printk("unbooking %08x\n", addrs[i]);
+			vmunbook(addrs[i]);
+		}
+	}
+	// printk("trying to read a freed address (panic expected)\n");
+	// press_any();
+	// printk("42 == %s\n", ft);
+	press_any();
+	memory_infos(NULL, 0);
+	press_any();
 }

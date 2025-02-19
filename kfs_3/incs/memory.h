@@ -12,6 +12,7 @@
 #define USER_VIRTUAL_MEMORY_KIB_SIZE 3145728
 #define KERNEL_VIRTUAL_MEMORY_KIB_SIZE 1048576
 #define KERNEL_VIRTUAL_MEMORY_START 3221225472
+#define USER_VIRTUAL_MEMORY_START 0
 #define PAGE_TABLE_ADDRESS_START
 #define KERNEL_CODE_SIZE 4194304
 #define USER_LEVEL 1
@@ -43,5 +44,11 @@ mmap_info_t v_mmap_check(void const* const l_address, bool const fault_level, bo
 // book memory
 void* mbook(uint32_t const size, bool const level, bool const rw);
 void  munbook(void const* const addr);
-void  mbook_test();
+void* vmbook(uint32_t const size, bool const level, bool const rw);
+void  vmunbook(void const* const addr);
+
+// tests
+void memory_test_k_mmap();
+void memory_test_vmbook();
+void mbook_test();
 #endif

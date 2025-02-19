@@ -1,5 +1,7 @@
+#include "keycode.h"
 #include "mmap.h"
 #include "mmap_inline.h"
+#include "printk.h"
 
 static void			   fuse_chunk(mmap_t* mmap, chunk_t chunk);
 static chunk_t		   get_parent(chunk_t kid);
@@ -10,11 +12,18 @@ uint8_t free_by_address(mmap_t* mmap, void const* const addr) {
 	uint8_t	 ret = 0;
 	uint32_t page_index = get_page_index(addr);
 
+	printk("page index %u\n", page_index);
+	press_any();
 	chunk_t chunk = get_chunk(mmap, page_index);
+	printk("chunk found\n");
+	press_any();
 	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
+		printk("free chunk found\n");
 		chunk.status = MMAP_FREE;
 		set_chunk_status(mmap, chunk);
+		printk("status set\n");
 		fuse_chunk(mmap, chunk);
+		printk("fuse done\n");
 	} else {
 		ret = 1;
 	}

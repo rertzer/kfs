@@ -2,6 +2,7 @@
 #include "keycode.h"
 #include "memory.h"
 #include "paging.h"
+#include "printk.h"
 
 static uint32_t		   mbook_get_flags(bool const level, bool const rw);
 static void			   mbook_write_page_table(void const* const v_addr,
@@ -9,6 +10,8 @@ static void			   mbook_write_page_table(void const* const v_addr,
 											  uint32_t const	size,
 											  uint32_t const	flags);
 static inline uint32_t get_v_page_nb(void const* const v_addr);
+static void			   free_all_p_pages(void const* const v_addr, uint32_t const v_page_nb);
+static void			   free_p_page(uint8_t const* const v_addr);
 
 void* mbook(uint32_t size, bool const level, bool const rw) {
 	void* const v_addr = v_mmap(size, level, rw);
@@ -61,29 +64,33 @@ void munbook(void const* const v_addr) {
 }
 
 static inline uint32_t get_v_page_nb(void const* const v_addr) {
-	printk("getting size\n");
 	return (v_size(v_addr) / PAGE_SIZE);
 }
 
 void vmunbook(void const* const v_addr) {
-	printk("vfree\n");
 	uint32_t v_page_nb = get_v_page_nb(v_addr);
 	v_free(v_addr);
-	printk("back to vmunbook\n");
-	press_any();
+	free_all_p_pages(v_addr, v_page_nb);
+}
+
+static void free_all_p_pages(void const* const v_addr, uint32_t const v_page_nb) {
+	uint8_t* addr = (uint8_t*)v_addr;
+	for (size_t i = 0; i < v_page_nb; ++i) {
+		free_p_page(addr);
+		addr += PAGE_SIZE;
+	}
+}
+
+static void free_p_page(uint8_t const* const v_addr) {
 	if (page_table_exist(v_addr)) {
 		void* p_addr = get_physical_address((uint32_t const)v_addr);
-		printk("p addr is %08x\n", p_addr);
 		if (p_addr != NULL) {
-			printk("kfree\n");
-			press_any();
 			k_free(p_addr);
-			printk("page free\n");
-			free_page_table(v_addr, v_page_nb);
+			free_page_table(v_addr, 1);
 		}
 	}
-	printk("unbook done\n");
 }
+
 //////////////////////////////////////////////////////////////////////////
 void mbook_test() {
 	uint8_t* addr = mbook(14 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
@@ -125,8 +132,8 @@ void mbook_test() {
 
 //////////////////////////////////////////////////////////////////////////////////
 void memory_test_vmbook() {
-	size_t block_nb = 5;
-	size_t block_size = 9;
+	size_t block_nb = 300;
+	size_t block_size = 7;
 	void*  addrs[1000];
 
 	for (size_t i = 0; i < block_nb; ++i) {
@@ -136,14 +143,20 @@ void memory_test_vmbook() {
 			press_any();
 		}
 	}
-	volatile uint8_t* ft = addrs[2];
 
-	printk("writing %08x\n", ft);
-	ft[0] = '4';
-	ft[1] = '2';
-	ft[2] = '\0';
-	press_any();
-	printk("42 == %s\n", ft);
+	uint8_t* ft = addrs[0];
+	for (size_t i = 0; i < block_nb; ++i) {
+		ft = addrs[i];
+		ft[0] = '4';
+		ft[1] = '2';
+		ft[2] = '\0';
+		printk("42 == %s\n", ft);
+		ft += PAGE_SIZE;
+		ft[0] = '4';
+		ft[1] = '2';
+		ft[2] = '\0';
+		printk("42 == %s\n", ft);
+	}
 	press_any();
 	memory_infos(NULL, 0);
 	press_any();

@@ -5,6 +5,8 @@ extern exception_handler
 extern keyboard_handler
 extern pit_total_ms
 extern timer_counter
+	extern hello
+	extern flush_tlb
 
 
 section .data
@@ -67,11 +69,15 @@ isr_stub_13:
 ; page fault exception 
 isr_stub_14:
 	cli
+	pushad
+	push dword [esp+32]
 	mov eax, cr2
 	push eax
 	call page_fault_handler
-	add esp, 8	
+	add esp, 8
+	popad
 	sti
+	add esp, 4	
 	iret
 
 ; timer interrupt

@@ -38,7 +38,6 @@ void create_page_table(uint32_t const offset) {
 	if (address == NULL) {
 		panic("unable to create page table: no physical memory available");
 	}
-
 	add_page_to_dir_page(offset, address, PAGE_TABLE_SUPERVISOR | PAGE_TABLE_WRITE | PAGE_TABLE_PRESENT);
 	clear_page_table(offset);
 }
@@ -69,7 +68,7 @@ void add_page_entry(uint32_t const l_address, uint32_t const p_address, uint32_t
 	confirm_dir_page(l_address);
 	set_page_table_entry(l_address, p_address, flags);
 }
-bool page_table_exist(void* const l_address) {
+bool page_table_exist(void const* const l_address) {
 	uint32_t const		  page_offset = get_dir_page_offset((uint32_t)l_address);
 	uint32_t const* const addr = get_dir_page_entry(page_offset);
 	return (page_present(addr));

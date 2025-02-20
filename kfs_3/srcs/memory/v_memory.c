@@ -1,6 +1,4 @@
-#include "builtin.h"
 #include "kernel.h"
-#include "keycode.h"
 #include "memory.h"
 #include "mmap.h"
 #include "paging.h"
@@ -18,7 +16,7 @@ static inline mmap_t* get_v_mmap_by_address(void const* const addr);
 static inline mmap_t* get_virtual_map(bool level);
 static inline bool	  get_address_level(void const* const addr);
 static inline bool	  get_chunk_rw(uint32_t status);
-static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level);
+static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_rw, bool fault_level, bool mmap_level);
 
 void init_v_memory() {
 	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, (uint8_t*)USER_VIRTUAL_MEMORY_START,
@@ -39,7 +37,6 @@ void* v_mmap(uint32_t size, bool level, bool rw) {
 		printk("v_mmap error: max size allowed is 2^15\n");
 		return (NULL);
 	}
-	// printk("kmmap search chunk of size %u\n", size);
 	chunk_t chunk = get_free_chunk(mmap, size);
 	if (chunk.status != MMAP_FREE) {
 		return (NULL);
@@ -47,7 +44,6 @@ void* v_mmap(uint32_t size, bool level, bool rw) {
 	chunk.status = status;
 	set_chunk_status(mmap, chunk);
 	void* address = get_chunk_address(mmap, chunk);
-	printk("v_mmap found the address %08x\n", address);
 	return (address);
 }
 
@@ -80,7 +76,6 @@ uint32_t v_size(void const* const addr) {
 
 uint8_t v_free(void const* const v_addr) {
 	mmap_t* mmap = get_v_mmap_by_address(v_addr);
-	printk("mmap is %08x %08x\n", mmap, &user_virt_mmap);
 	return (free_by_address(mmap, v_addr));
 }
 
@@ -105,10 +100,7 @@ mmap_info_t v_mmap_check(void const* const l_address, bool fault_level, bool fau
 	mmap_info_t mmap_info;
 	mmap_info.user = get_address_level(l_address);
 	mmap_info.rw = get_chunk_rw(chunk_info.status);
-	mmap_info.valid = get_mmap_info_valid(chunk_info.status, fault_level, mmap_info.user);
-
-	printk("mmap check: address: %08x, shift: %u, status: %u\n", chunk_info.addr, chunk_info.shift, chunk_info.status);
-	printk("fault rw %u rw status %u level %u\n", fault_rw, get_rw_status(fault_rw), fault_level);
+	mmap_info.valid = get_mmap_info_valid(chunk_info.status, fault_rw, fault_level, mmap_info.user);
 
 	return (mmap_info);
 }
@@ -117,11 +109,11 @@ static inline bool get_chunk_rw(uint32_t status) {
 	return (status == MMAP_USED_RONLY) ? READ_ONLY : READ_WRITE;
 }
 
-static inline bool get_mmap_info_valid(uint32_t status, bool fault_level, bool mmap_level) {
+static inline bool get_mmap_info_valid(uint32_t status, bool fault_rw, bool fault_level, bool mmap_level) {
 	bool valid = false;
 
-	if (((status == MMAP_USED) || (status == MMAP_USED_RONLY && fault_level == READ_ONLY)) &&
-		(mmap_level <= fault_level)) {
+	if (((status == MMAP_USED) || (status == MMAP_USED_RONLY && fault_rw == READ_ONLY)) &&
+		(mmap_level >= fault_level)) {
 		valid = true;
 	}
 	return (valid);

@@ -1,12 +1,12 @@
 #include "printk.h"
+#include "terminal.h"
 
 size_t ft_atoi(const char* str) {
 	size_t i = 0;
 	size_t res = 0;
 	size_t sign = 1;
 
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v' || str[i] == '\f' ||
-		   str[i] == '\r')
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
 		++i;
 	if (str[i] == '-' || str[i] == '+') {
 		++i;

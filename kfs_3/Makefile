@@ -139,6 +139,10 @@ start_bin: $(PROJECT).bin
 	@echo "Starting BIN..."
 	@qemu-system-i386 -kernel $(PROJECT).bin
 
+debug: $(PROJECT).bin
+	@echo "starting in debug mode\nTo start gdb: gdb jros.bin then (gdb) target remote localhost:1234\n"
+	@qemu-system-i386 -s -S -kernel $(PROJECT).bin
+
 -include $(DEPS)
 
 .PHONY: all clean fclean re build_docker start_iso start_bin

@@ -1,9 +1,7 @@
 #include "mmap.h"
-#include "keycode.h"
 #include "memory.h"
 #include "mmap_inline.h"
 #include "panic.h"
-#include "printk.h"
 
 static inline void*	  get_address_by_local_page_index(mmap_t* mmap, uint32_t local_page_index);
 static inline uint8_t set_byte_status(uint8_t byte, chunk_t chunk);
@@ -74,10 +72,8 @@ static chunk_t get_chunk_by_shift(mmap_t* mmap, uint32_t page_index, uint32_t sh
 
 uint32_t get_size_by_address(mmap_t* mmap, void const* const addr) {
 	uint32_t size = 0;
-	printk("getting size\n");
-	chunk_t chunk = get_chunk(mmap, get_page_index(addr));
+	chunk_t	 chunk = get_chunk(mmap, get_page_index(addr));
 
-	printk("chunk status is %u", chunk.status);
 	if (chunk.status == MMAP_FREE || chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
 		size = get_byte_size(chunk.shift);
 	}

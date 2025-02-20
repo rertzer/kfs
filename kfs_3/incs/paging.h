@@ -28,7 +28,7 @@ void	  create_page_table(uint32_t const offset);
 void	  add_page_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags);
 uint32_t  get_page_table_flags(mmap_info_t const mmap_info);
 void*	  get_physical_address(uint32_t const l_address);
-bool	  page_table_exist(void* const l_address);
+bool	  page_table_exist(void const* const l_address);
 void	  confirm_dir_page(uint32_t const l_address);
 void	  set_page_table_entry(uint32_t const l_address, uint32_t const p_address, uint32_t const flags);
 uint32_t* get_table_entry_by_l_address(uint32_t const l_address);

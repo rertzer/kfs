@@ -93,7 +93,6 @@ static inline bool bit_is_set(uint32_t const map, uint32_t const offset) {
 
 static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t shift, uint32_t status) {
 	if (valid_page_index(mmap, page_index) == false) {
-		printk("%u : invalid page index\n", page_index);
 		return;
 	}
 	chunk_t chunk = get_chunk(mmap, page_index);

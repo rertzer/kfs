@@ -6,6 +6,8 @@
 #include "panic.h"
 #include "terminal.h"
 
+#include "malloc.h"
+
 extern volatile uint8_t current_code;
 
 static void process_keyboard(keypress_t* keypress);
@@ -29,12 +31,27 @@ void kernel_main(void) {
 	// page_testing();
 	// panic("Kernel test");
 	// mbook_test();
-	press_any();
+	//press_any();
 	// memory_test_k_mmap();
-	memory_test_vmbook();
+	//memory_test_vmbook();
 	// term_prompt();
 	// term_putstr("echo 42\n");
 	// readline();
+	uint8_t* toto = vmalloc(256);
+	if (toto == NULL){
+		printk("c'est nul!\n");
+	}
+	else {
+		toto[0] = 'y';
+		toto[1] = 'o';
+		toto[2] = 'u';
+		toto[3] = 'p';
+		toto[4] = 'y';
+		toto[5] = '\0';
+			printk("toto = %s\n", toto);
+
+		vfree(toto);
+	}
 	term_prompt();
 	while (true) {
 		sleep();

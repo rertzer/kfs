@@ -44,6 +44,11 @@ SOURCES =	boot/boot.s \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
+			malloc/malloc_bins.c \
+			malloc/malloc_block.c \
+			malloc/malloc.c \
+			malloc/malloc_page.c \
+			malloc/malloc_show.c \
 			memory/mbook.c \
 			memory/paging.c \
 			memory/page_fault.c \

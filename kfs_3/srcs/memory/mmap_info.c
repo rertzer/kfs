@@ -4,11 +4,8 @@
 static mem_info_t add_mem_infos_by_shift(mmap_t* mmap, uint32_t shift);
 static mem_info_t add_mem_infos_by_byte(uint8_t byte, uint32_t shift, mem_info_t mem_infos);
 
-/* =============================== get mmaps infos ========================== */
-
 void get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos) {
-	for (uint32_t i = 0; i <= MMAP_MAX_SHIFT; ++i) {
-		uint32_t shift = MMAP_MAX_SHIFT - i;
+	for (uint32_t shift = 0; shift <= MMAP_MAX_SHIFT; ++shift) {
 		mem_infos[shift] = add_mem_infos_by_shift(mmap, shift);
 	}
 }
@@ -19,8 +16,8 @@ static mem_info_t add_mem_infos_by_shift(mmap_t* mmap, uint32_t shift) {
 	if (shift > mmap->max_shift) {
 		return (mem_info);
 	}
-	for (uint32_t i = 0; i < len; ++i) {
-		uint8_t byte = mmap->mmap[shift][i];
+	for (uint32_t byte_index = 0; byte_index < len; ++byte_index) {
+		uint8_t byte = mmap->mmap[shift][byte_index];
 		mem_info = add_mem_infos_by_byte(byte, shift, mem_info);
 	}
 	return (mem_info);

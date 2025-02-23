@@ -7,14 +7,13 @@ static uint32_t	   get_free_offset(uint8_t byte);
 
 chunk_t get_free_chunk(mmap_t* mmap, uint32_t shift) {
 	chunk_t chunk;
-	if (shift > 15) {
+	if (shift > MMAP_MAX_SHIFT) {
 		get_unavailable_chunk(&chunk);
 		return (chunk);
 	}
 	chunk = get_free_chunk_by_shift(mmap, shift);
 	if (chunk.status != MMAP_FREE) {
 		chunk = get_free_chunk(mmap, shift + 1);
-
 		split_chunk(mmap, chunk);
 		chunk = get_free_chunk_by_shift(mmap, shift);
 	}
@@ -51,7 +50,7 @@ static chunk_t get_free_chunk_by_shift(mmap_t* mmap, uint32_t shift) {
 static uint32_t get_free_offset(uint8_t byte) {
 	uint32_t offset;
 
-	for (offset = 0; offset < 8; offset += 2) {
+	for (offset = 0; offset < 8; offset += BITS_PER_CHUNK) {
 		uint32_t status = get_byte_status(byte, offset);
 		if (status == MMAP_FREE) {
 			break;

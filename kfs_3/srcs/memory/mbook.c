@@ -135,6 +135,8 @@ void memory_test_vmbook() {
 	size_t block_size = 7;
 	void*  addrs[1000];
 
+	memory_infos(NULL, 0);
+	press_any();
 	for (size_t i = 0; i < block_nb; ++i) {
 		addrs[i] = vmbook(PAGE_SIZE << block_size, USER_LEVEL, READ_WRITE);
 		printk("v_mmap addrs is %08x\n", addrs[i]);

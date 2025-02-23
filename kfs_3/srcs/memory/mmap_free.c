@@ -2,13 +2,13 @@
 #include "mmap_inline.h"
 
 static void			   fuse_chunk(mmap_t* mmap, chunk_t chunk);
-static chunk_t		   get_parent(chunk_t kid);
+static chunk_t		   create_parent(chunk_t kid);
 static chunk_t		   get_buddy(mmap_t* mmap, chunk_t chunk);
 static inline uint32_t get_buddy_offset(uint32_t offset);
 
 uint8_t free_by_address(mmap_t* mmap, void const* const addr) {
-	uint8_t	 ret = 0;
-	uint32_t page_index = get_page_index(addr);
+	uint8_t		   ret = 0;
+	uint32_t const page_index = get_page_index(addr);
 
 	chunk_t chunk = get_chunk(mmap, page_index);
 	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
@@ -29,12 +29,13 @@ static void fuse_chunk(mmap_t* mmap, chunk_t chunk) {
 	if (buddy.status != MMAP_FREE) {
 		return;
 	}
+
 	chunk.status = MMAP_UNAVAILABLE;
 	buddy.status = MMAP_UNAVAILABLE;
 	set_chunk_status(mmap, chunk);
 	set_chunk_status(mmap, buddy);
-	chunk = get_parent(chunk);
 
+	chunk = create_parent(chunk);
 	set_chunk_status(mmap, chunk);
 	fuse_chunk(mmap, chunk);
 }
@@ -58,11 +59,10 @@ static inline uint32_t get_buddy_offset(uint32_t offset) {
 	return (offset);
 }
 
-static chunk_t get_parent(chunk_t kid) {
-	uint32_t index = get_chunk_index(kid);
-	// twice less entries one higher level
-	index >>= 1;
-	chunk_t parent;
+static chunk_t create_parent(chunk_t kid) {
+	// twice less entries one level higher
+	uint32_t index = get_chunk_index(kid) >> 1;
+	chunk_t	 parent;
 	parent.shift = kid.shift + 1;
 	parent.byte = get_byte(index);
 	parent.offset = get_offset(index);

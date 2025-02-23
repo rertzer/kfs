@@ -34,8 +34,9 @@ uint32_t* to_upper_kernel(uint32_t* low_address) {
 
 uint8_t kbrd_reboot() {
 	uint8_t flags = KBRD_UDATA;
-	while (flags & KBRD_UDATA)
+	while (flags & KBRD_UDATA) {
 		flags = inb(KBRD_INTRFC);
+	}
 	outb(KBRD_RESET, KBRD_INTRFC);
 	sleep();
 	return (1);

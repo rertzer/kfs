@@ -3,35 +3,41 @@
 #include "mmap_inline.h"
 #include "panic.h"
 
-static void			   set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size);
+static void			   set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size_kb);
 static void			   set_mmap_addresses(mmap_t* mmap, uint8_t* start);
 static inline uint8_t* get_remain_start(uint8_t* memory_start, uint32_t memory_size);
 static uint32_t		   get_remain_len(uint32_t size);
 static inline uint32_t round_up_memory_size(uint32_t size);
 static inline bool	   valid_max_chunk_aligned_page_index(uint32_t page_index);
+static uint32_t		   compute_max_shift(uint32_t bytes_nb);
 
-void init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size) {
-	set_memory_size(mmap, memory_start, memory_size);
+void init_mmap(mmap_t* mmap, uint8_t* start, uint8_t* memory_start, uint32_t memory_size_kb) {
+	set_memory_size(mmap, memory_start, memory_size_kb);
 	set_mmap_addresses(mmap, start);
 	set_all_memory_free(mmap);
-	book_memory(mmap, get_remain_start(memory_start, memory_size), get_remain_len(memory_size), MMAP_UNAVAILABLE);
+	book_memory(mmap, get_remain_start(memory_start, memory_size_kb), get_remain_len(memory_size_kb), MMAP_UNAVAILABLE);
 }
-// size in kib
-static void set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size) {
-	mmap->start_index = get_page_index(start_addr);
-	uint32_t page_nb = round_up_memory_size(size) >> 2;
-	// 4 Kib per page
-	mmap->end_index = mmap->start_index + page_nb - 1;
-	mmap->bytes_nb = page_nb >> PAGES_PER_BYTE_SHIFT;
-	mmap->max_shift = round_up_power_two(mmap->bytes_nb);
-	if (mmap->max_shift > 15) {
-		mmap->max_shift = 15;
-	}
-	printk("pages from %u to %u\n", mmap->start_index, mmap->end_index);
 
+static void set_memory_size(mmap_t* mmap, uint8_t* start_addr, uint32_t size_kb) {
+	mmap->start_index = get_page_index(start_addr);
 	if (valid_max_chunk_aligned_page_index(mmap->start_index) == false) {
 		panic("memory error: memory start must be 2^15 bytes aligned");
 	}
+
+	// 4 Kib per page
+	uint32_t page_nb = round_up_memory_size(size_kb) >> 2;
+	mmap->end_index = mmap->start_index + page_nb - 1;
+	mmap->bytes_nb = page_nb >> PAGES_PER_BYTE_SHIFT;
+	mmap->max_shift = compute_max_shift(mmap->bytes_nb);
+	printk("pages from %u to %u\n", mmap->start_index, mmap->end_index);
+}
+
+static uint32_t compute_max_shift(uint32_t bytes_nb) {
+	uint32_t max_shift = round_up_power_two(bytes_nb);
+	if (max_shift > MMAP_MAX_SHIFT) {
+		max_shift = MMAP_MAX_SHIFT;
+	}
+	return (max_shift);
 }
 
 static inline uint32_t round_up_memory_size(uint32_t size) {
@@ -44,11 +50,7 @@ static inline uint32_t round_up_memory_size(uint32_t size) {
 }
 
 static inline bool valid_max_chunk_aligned_page_index(uint32_t page_index) {
-	bool valid = true;
-	if (page_index % (1 << MMAP_MAX_SHIFT) != 0) {
-		valid = false;
-	}
-	return (valid);
+	return ((page_index % (1 << MMAP_MAX_SHIFT) == 0) ? true : false);
 }
 
 static void set_mmap_addresses(mmap_t* mmap, uint8_t* start) {

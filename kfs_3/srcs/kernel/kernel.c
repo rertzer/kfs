@@ -23,18 +23,15 @@ void kernel_main(void) {
 	init_memory();
 	init_v_memory();
 	printk("- memory OK\n");
-	printk("jrOS ready, enjoy\n");
-
-	// uint32_t mem_size = get_mem_size();
-	// printk("memory size: %u\n", mem_size);
+	printk("jrOS ready. Enjoy!\n");
 
 	// memory_map_infos();
 	// page_testing();
 	// panic("Kernel test");
 	// mbook_test();
-	// press_any();
+	press_any();
 	// memory_test_k_mmap();
-	// memory_test_vmbook();
+	memory_test_vmbook();
 	// term_prompt();
 	// term_putstr("echo 42\n");
 	// readline();

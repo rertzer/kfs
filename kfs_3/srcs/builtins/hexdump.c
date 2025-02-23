@@ -89,7 +89,7 @@ static bool read_keyboard(keypress_t* kp) {
 	kp->keycode = current_code;
 	current_code = 0;
 	if (kp->keycode != 0) {
-		*kp = update_keypress(*kp);
+		update_keypress(kp);
 		if (kp->pressed == PRESSED) {
 			update = true;
 		}

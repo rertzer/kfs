@@ -109,7 +109,7 @@ void press_any() {
 		keypress.keycode = current_code;
 		current_code = 0;
 		if (keypress.keycode != 0) {
-			keypress = update_keypress(keypress);
+			update_keypress(&keypress);
 
 			if (keypress.pressed == PRESSED) {
 				break;

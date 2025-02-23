@@ -10,7 +10,7 @@ static void			   mbook_write_page_table(void const* const v_addr,
 											  uint32_t const	size,
 											  uint32_t const	flags);
 static inline uint32_t get_v_page_nb(void const* const v_addr);
-static void			   free_all_p_pages(void const* const v_addr, uint32_t const v_page_nb);
+static void			   free_all_p_pages(uint8_t const* v_addr, uint32_t const v_page_nb);
 static void			   free_p_page(uint8_t const* const v_addr);
 
 void* mbook(uint32_t size, bool const level, bool const rw) {
@@ -73,11 +73,10 @@ void vmunbook(void const* const v_addr) {
 	free_all_p_pages(v_addr, v_page_nb);
 }
 
-static void free_all_p_pages(void const* const v_addr, uint32_t const v_page_nb) {
-	uint8_t* addr = (uint8_t*)v_addr;
+static void free_all_p_pages(uint8_t const* v_addr, uint32_t const v_page_nb) {
 	for (size_t i = 0; i < v_page_nb; ++i) {
-		free_p_page(addr);
-		addr += PAGE_SIZE;
+		free_p_page(v_addr);
+		v_addr += PAGE_SIZE;
 	}
 }
 

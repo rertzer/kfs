@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "printk.h"
 
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 
@@ -23,6 +24,7 @@ void init_gdt() {
 	add_gdt_descriptor(&gdt[6], user_stack_desc);
 
 	set_gdt(get_gdt_limit(), GDT_BUFFER);
+	printk("- Global Descriptor Table OK\n");
 }
 
 static inline uint32_t get_gdt_limit() {

@@ -19,8 +19,10 @@ static inline bool	  get_chunk_rw(uint32_t status);
 static inline bool	  get_mmap_info_valid(uint32_t status, bool fault_rw, bool fault_level, bool mmap_level);
 
 void init_v_memory() {
+	printk("- virtual kernel memory size is 1 Gb\t");
 	init_mmap(&user_virt_mmap, (uint8_t*)&user_v_mmap_start, (uint8_t*)USER_VIRTUAL_MEMORY_START,
 			  USER_VIRTUAL_MEMORY_KIB_SIZE);
+	printk("- virtual user memory size is 3 Gb\t");
 	init_mmap(&kernel_virt_mmap, (uint8_t*)&kernel_v_mmap_start, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START,
 			  KERNEL_VIRTUAL_MEMORY_KIB_SIZE);
 	book_memory(&kernel_virt_mmap, (uint8_t*)KERNEL_VIRTUAL_MEMORY_START, KERNEL_SIZE, MMAP_USED);

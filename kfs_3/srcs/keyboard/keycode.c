@@ -32,13 +32,12 @@ keypress_t init_keypress() {
 	return (keypress);
 }
 
-keypress_t update_keypress(keypress_t keypress) {
-	keypress.pressed = keypress.keycode >> 7;
-	keypress.keycode = keypress.keycode & 0x7F;
-	keypress.keycode = numlock_converter(keypress);
-	keypress.ascii = handle_ascii(keypress);
-	keypress = handle_switches(keypress);
-	return (keypress);
+void update_keypress(keypress_t* keypress) {
+	keypress->pressed = keypress->keycode >> 7;
+	keypress->keycode = keypress->keycode & 0x7F;
+	keypress->keycode = numlock_converter(*keypress);
+	keypress->ascii = handle_ascii(*keypress);
+	*keypress = handle_switches(*keypress);
 }
 
 static uint8_t numlock_converter(keypress_t keypress) {

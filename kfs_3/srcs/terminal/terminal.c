@@ -22,6 +22,8 @@ void all_terms_init() {
 	current_term = 0;
 	load_term(&term, &all_terms[current_term]);
 	update_cursor(term.column, term.row);
+	printk("Welcome to jrOS!\n");
+	printk("- terminal init OK\n");
 }
 
 void term_init(size_t i) {
@@ -61,15 +63,14 @@ static void term_set_buffer(size_t i, char c) {
 
 static void term_set_header(size_t i) {
 	uint16_t vc;
-	uint8_t	 jros_header[8][JROS_HEADER_HIGH][JROS_HEADER_WIDTH] = {
-		 {JROS_HEADER_0}, {JROS_HEADER_1}, {JROS_HEADER_2}, {JROS_HEADER_3},
-		 {JROS_HEADER_4}, {JROS_HEADER_5}, {JROS_HEADER_6}, {JROS_HEADER_7}};
+	uint8_t	 jros_header[8][JROS_HEADER_HIGH][JROS_HEADER_WIDTH] = {{JROS_HEADER_0}, {JROS_HEADER_1}, {JROS_HEADER_2},
+																	{JROS_HEADER_3}, {JROS_HEADER_4}, {JROS_HEADER_5},
+																	{JROS_HEADER_6}, {JROS_HEADER_7}};
 
 	for (size_t y = 0; y < JROS_HEADER_HIGH; ++y) {
 		for (size_t x = 0; x < JROS_HEADER_WIDTH; ++x) {
 			const size_t index = VGA_WIDTH * y + x + JROS_HEADER_OFFSET;
-			vc = vga_char(jros_header[i][y][x],
-						  vga_char_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_DARK_GREY));
+			vc = vga_char(jros_header[i][y][x], vga_char_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_DARK_GREY));
 			all_terms[i].buffer[index] = vc;
 		}
 	}

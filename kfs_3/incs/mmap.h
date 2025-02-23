@@ -20,6 +20,7 @@
 #define MMAP_FREE 3
 
 #define PAGES_PER_BYTE 4
+#define PAGES_PER_BYTE_SHIFT 2
 #define BITS_PER_CHUNK 2
 #define BITS_PER_PAGE_SHIFT 1
 #define MMAP_PAGE_MASK 3

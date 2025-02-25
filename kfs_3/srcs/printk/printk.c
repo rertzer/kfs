@@ -8,7 +8,7 @@ int printk(const char* format, ...) {
 
 	for (int i = 0; format[i]; i++) {
 		if (format[i] == '%') {
-			printk_opts_t opts = get_opts(format, i);
+			printk_opts_t opts = get_opts(&l_args, format, i);
 
 			if (opts.error) {
 				while (!is_alpha(format[i]))
@@ -45,6 +45,9 @@ int printk(const char* format, ...) {
 					break;
 				case 'X':
 					len += print_hexa_maj(va_arg(l_args, unsigned int), opts);
+					break;
+				case 'n':
+					*(va_arg(l_args, unsigned int*)) = len;
 					break;
 			}
 

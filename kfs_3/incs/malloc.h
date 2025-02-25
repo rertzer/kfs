@@ -2,6 +2,7 @@
 #define MALLOC_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include "kernel.h"
 #include "memory.h"
 
@@ -56,8 +57,6 @@ t_block* fragment_block(t_block* block, size_t size);
 void    release_page(t_page* page, t_fp_munbook mmap);
 
 
-
-
 /* Utils */
 t_block *request_block(size_t size, t_alloc *alloc, t_fp_mbook mmap);
 void    release_block(t_block* block, t_alloc *alloc, t_fp_munbook unmmap);
@@ -82,8 +81,7 @@ void    pfree(void* addr);
 void*   vmalloc(size_t size);
 void    vfree(void* addr);
 
-
-
-
+// Test
+void    test_malloc(void);
 
 #endif //MALLOC_H

@@ -28,7 +28,7 @@ int print_string(char* str, printk_opts_t opts) {
 	}
 
 	while (*str)
-		print_char(*str++, opts);
+		print_char(*str++, (printk_opts_t){});
 
 	if (opts.width > len && opts.left == 1) {
 		for (int i = 0; i < opts.width - len; i++)

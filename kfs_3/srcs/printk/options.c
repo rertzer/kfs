@@ -1,6 +1,10 @@
 #include "printk.h"
 
-printk_opts_t get_opts(const char* format, int i) {
+int	is_num(int c) {
+	return (c >= '0' && c <= '9');
+}
+
+printk_opts_t get_opts(va_list *l_args, const char* format, int i) {
 	printk_opts_t opts = {0};
 	int			  y = i;
 
@@ -9,7 +13,7 @@ printk_opts_t get_opts(const char* format, int i) {
 		return (opts);
 	}
 
-	while ((format[y + 1] < '1' || format[y + 1] > '9')) {
+	while (ft_strrchr(CONV, format[y + 1]) == 0 && (format[y + 1] < '1' || format[y + 1] > '9')) {
 		switch (format[y + 1]) {
 			case '+':
 				opts.sign = 1;
@@ -31,15 +35,19 @@ printk_opts_t get_opts(const char* format, int i) {
 				opts.prefix = 1;
 				y++;
 				break;
+			case '*':
+				opts.width = va_arg(*l_args, int);
+				y++;
+				break;
 			default:
 				opts.error = 1;
 				y++;
 				break;
 		}
 	}
-	if (format[y + 1] >= '0' && format[y + 1] <= '9') {
+	if (is_num(format[y + 1])) {
 		opts.width = ft_atoi(&format[y + 1]);
-		while (format[y + 1] >= '0' && format[y + 1] <= '9') {
+		while (is_num(format[y + 1])) {
 			y++;
 		}
 	}

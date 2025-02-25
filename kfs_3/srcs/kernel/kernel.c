@@ -37,27 +37,10 @@ void kernel_main(void) {
 	// term_prompt();
 	// term_putstr("echo 42\n");
 	// readline();
-	memory_infos(NULL, 0);
-	press_any();
-	uint8_t* toto = vmalloc(256);
-	memory_infos(NULL, 0);
-	
-	if (toto == NULL){
-		printk("c'est nul!\n");
-	}
-	else {
-		toto[0] = 'y';
-		toto[1] = 'o';
-		toto[2] = 'u';
-		toto[3] = 'p';
-		toto[4] = 'y';
-		toto[5] = '\0';
-			printk("toto = %s\n", toto);
 
-		vfree(toto);
-	}
-	press_any();
-	memory_infos(NULL, 0);
+	// memory_infos(NULL, 0);
+	// press_any();
+	test_malloc();
 
 	term_prompt();
 	while (true) {

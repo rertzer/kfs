@@ -10,6 +10,8 @@ DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = debian-kfs1
 DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
+FLAG_DEBUG = -g -ggdb3
+
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
@@ -46,9 +48,10 @@ SOURCES =	boot/boot.s \
 			keyboard/scancode.c \
 			malloc/malloc_bins.c \
 			malloc/malloc_block.c \
-			malloc/malloc.c \
 			malloc/malloc_page.c \
 			malloc/malloc_show.c \
+			malloc/malloc_test.c \
+			malloc/malloc.c \
 			memory/mbook.c \
 			memory/paging.c \
 			memory/page_fault.c \
@@ -101,7 +104,11 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -Og -nostdlib /app/$(OBJS) -lgcc
+	@$(DOCKER_EXEC) i386-elf-gcc \
+		$(INCS) \
+		-T $(KFS_CONFIG_DIR)/linker.ld \
+		-o $(PROJECT).bin \
+		-ffreestanding -Og $(FLAG_DEBUG) -nostdlib /app/$(OBJS) -lgcc
 
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
@@ -115,7 +122,8 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						-std=gnu99 -ffreestanding -Og -Wall -Wextra -Winline\
+						$(FLAG_DEBUG) \
+						-std=gnu99 -ffreestanding -Og -g -Wall -Wextra -Winline\
 						-c /app/$< \
 						-o /app/$@
 

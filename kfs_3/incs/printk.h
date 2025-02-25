@@ -6,8 +6,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "character_set.h"
+
 #define FLAG "0-+ #"
-#define CONV "%cspdiuxX"
+#define CONV "%cspdiuxXn"
 
 typedef struct {
 	uint8_t zero : 1;
@@ -38,7 +40,7 @@ int print_pointer(unsigned long int ptr, printk_opts_t opts);
 int prep_print_unsigned(unsigned int n, printk_opts_t opts);
 
 //=============== options =================
-printk_opts_t get_opts(const char* format, int i);
+printk_opts_t get_opts(va_list *l_args, const char* format, int i);
 
 //=============== printk =================
 int printk(const char* format, ...);

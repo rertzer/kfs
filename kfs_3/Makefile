@@ -10,7 +10,8 @@ DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = debian-kfs1
 DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
-FLAG_DEBUG = -g -ggdb3
+FLAG_DEBUG		= -g -ggdb3
+FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
 
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
@@ -110,7 +111,6 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 		-o $(PROJECT).bin \
 		-ffreestanding -Og $(FLAG_DEBUG) -nostdlib /app/$(OBJS) -lgcc
 
-
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
@@ -123,7 +123,8 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
 						$(FLAG_DEBUG) \
-						-std=gnu99 -ffreestanding -Og -g -Wall -Wextra -Winline\
+						$(FLAG_WARNING) \
+						-std=gnu99 -ffreestanding -Og \
 						-c /app/$< \
 						-o /app/$@
 

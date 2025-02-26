@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include "character_set.h"
+#include "kernel.h"
 
 #define FLAG "0-+ #"
 #define CONV "%cspdiuxXn"
@@ -27,8 +28,6 @@ size_t ft_atoi(const char* str);
 size_t nbr_len(int nbr);
 int	   get_hexa_len(unsigned int nbr);
 size_t ft_strrchr(const char* str, char c);
-bool   is_alpha(char c);
-bool   is_digit(char c);
 
 //=============== conv =================
 int print_char(char c, printk_opts_t opts);

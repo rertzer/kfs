@@ -12,6 +12,12 @@ extern volatile uint8_t current_code;
 
 static void process_keyboard(keypress_t* keypress);
 
+void    set_simple_test(t_test_suite *tests) {
+	SET_TEST(tests, 0).alloc(42);
+	// SET_TEST(tests, 0).write(0, "hello");
+	// SET_TEST(tests, 0).free();
+}
+
 void kernel_main(void) {
 	all_terms_init();
 	init_gdt();
@@ -40,7 +46,7 @@ void kernel_main(void) {
 
 	// memory_infos(NULL, 0);
 	// press_any();
-	test_malloc();
+	test_malloc(NULL, set_simple_test, NULL);
 
 	term_prompt();
 	while (true) {

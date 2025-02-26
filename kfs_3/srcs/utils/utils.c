@@ -12,18 +12,49 @@ size_t strlen(const char* str) {
 	return (len);
 }
 
+bool is_digit(uint8_t c) {
+	return (c >= '0' && c <= '9');
+}
+
+bool is_upper(uint8_t c) {
+	return (c >= 'A' && c <= 'Z');
+}
+
+bool is_lower(uint8_t c) {
+	return (c >= 'a' && c <= 'z');
+}
+
+bool is_alpha(uint8_t c) {
+	return (is_lower(c) || is_upper(c));
+}
+
 bool is_alnum(uint8_t c) {
-	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-		return (true);
-	} else {
-		return (false);
+	return (is_digit(c) || is_alpha(c));
+}
+
+int	ft_memcmp(void* s1, void* s2, size_t n) {
+	uint8_t	*a = s1;
+	uint8_t *b = s2;
+	int	diff = 0;
+	for (size_t i = 0; diff == 0 && i < n; i++) {
+		diff = a[i] - b[i];
 	}
+	return (diff);
 }
 
 void ft_memset(uint8_t* address, char c, uint32_t size) {
 	for (uint32_t i = 0; i < size; ++i) {
 		address[i] = c;
 	}
+}
+
+void*	ft_memcpy(void* dest, const void* src, size_t n) {
+	uint8_t	*d = dest;
+	uint8_t	*s = (uint8_t*)src;
+	for (uint32_t i = 0; i < n; ++i) {
+		d[i] = s[i];
+	}
+	return (dest);
 }
 
 uint32_t round_up_power_two(uint32_t n) {

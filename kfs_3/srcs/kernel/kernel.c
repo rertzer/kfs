@@ -14,8 +14,17 @@ static void process_keyboard(keypress_t* keypress);
 
 void    set_simple_test(t_test_suite *tests) {
 	SET_TEST(tests, 0).alloc(42);
-	// SET_TEST(tests, 0).write(0, "hello");
-	// SET_TEST(tests, 0).free();
+	SET_TEST(tests, 0).write(0, "hello");
+	SET_TEST(tests, 0).free();
+}
+
+void    set_complex_test(t_test_suite *tests) {
+	SET_TEST(tests, 0).alloc(42);
+	SET_TEST(tests, 1).alloc(4295);
+	SET_TEST(tests, 1).write(23, "hello");
+	SET_TEST(tests, 1).write(4196, "hello2");
+	SET_TEST(tests, 0).free();
+	SET_TEST(tests, 1).free();
 }
 
 void kernel_main(void) {
@@ -46,7 +55,7 @@ void kernel_main(void) {
 
 	// memory_infos(NULL, 0);
 	// press_any();
-	test_malloc(NULL, set_simple_test, NULL);
+	test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 
 	term_prompt();
 	while (true) {

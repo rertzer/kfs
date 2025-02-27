@@ -99,37 +99,12 @@ typedef struct s_debug_where {
 #ifndef MAX_TEST_SUITE
 # define MAX_TEST_SUITE 128
 #endif
-/*
-typedef enum e_test_kind {
-    ALLOC, DEALLOC, WRITE_IN_MEMORY,
-    MAX_TEST_KIND
-} t_test_kind;
-
-typedef struct s_test {
-    t_test_kind kind;
-    union u_data {
-        size_t  alloc_size;
-        void    **addr;
-        struct {
-            size_t      at;
-            char  *data;
-        } write;
-    } data;
-    t_debug_where where;
-} t_test;
-
-typedef struct s_test_suite {
-    void*   addrs[MAX_TEST_SUITE];
-    t_test  tests[MAX_TEST_SUITE];
-    size_t  count;
-} t_test_suite;
-*/
 
 typedef struct s_test_suite t_test_suite;
 typedef void    (*t_fp_test_suite)(t_test_suite *);
 
 typedef struct s_expectation t_expectation;
-typedef void (*t_ft_report)(bool, t_expectation*);
+typedef void (*t_ft_report)(bool expected, bool current_diff, t_expectation*);
 
 typedef struct s_set_test {
     void (*alloc)(size_t alloc_size);

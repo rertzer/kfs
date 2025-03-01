@@ -5,6 +5,8 @@ RM = /bin/rm
 KFS_BUILD_DIR = isodir
 KFS_CONFIG_DIR = config
 
+OPT_FLAG = -g3 -Og 
+
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = debian-kfs1
@@ -96,7 +98,7 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -Og -nostdlib /app/$(OBJS) -lgcc
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding $(OPT_FLAG) -nostdlib /app/$(OBJS) -lgcc
 
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
@@ -110,7 +112,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						-std=gnu99 -ffreestanding -Og -Wall -Wextra -Winline\
+						-std=gnu99 -ffreestanding $(OPT_FLAG) -Wall -Wextra -Winline\
 						-c /app/$< \
 						-o /app/$@
 

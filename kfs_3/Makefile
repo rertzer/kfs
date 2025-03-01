@@ -91,7 +91,7 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@mkdir -p $(KFS_BUILD_DIR)/boot/grub
 	@cp $(PROJECT).bin $(KFS_BUILD_DIR)/boot/$(PROJECT).bin
 	@cp $(KFS_CONFIG_DIR)/grub.cfg $(KFS_BUILD_DIR)/boot/grub/grub.cfg	
-	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso $(KFS_BUILD_DIR) -quiet
+	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso --compress=gz $(KFS_BUILD_DIR) -quiet
 	@echo "Done."
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
@@ -140,8 +140,10 @@ start_bin: $(PROJECT).bin
 	@qemu-system-i386 -kernel $(PROJECT).bin
 
 debug: $(PROJECT).bin
-	@echo "starting in debug mode\nTo start gdb: gdb jros.bin then (gdb) target remote localhost:1234\n"
+	@echo "starting in debug mode\n(gdb) target remote localhost:1234\n"
+	@gnome-terminal sleep 2 && gdb jros.bin
 	@qemu-system-i386 -s -S -kernel $(PROJECT).bin
+	# -ex 'remote localhost:1234'
 
 -include $(DEPS)
 

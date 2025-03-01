@@ -1,5 +1,8 @@
 #include "malloc.h"
 
+#include "utils.h" //for getting ft_memset
+
+
 t_block*  get_next_block(t_block* block)
 {
     size_t  size;

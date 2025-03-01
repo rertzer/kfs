@@ -36,23 +36,19 @@ size_t  get_alloc_size(void* addr)
     return (block->size);
 }
 
-static  void    *virtual_user_page(size_t size)
-{
+static  void    *virtual_user_page(size_t size) {
     return (vmbook(size, USER_LEVEL, READ_WRITE));
 }
 
-static  void    *physical_user_page(size_t size)
-{
+static  void    *physical_user_page(size_t size) {
     return (mbook(size, USER_LEVEL, READ_WRITE));
 }
 
-static  void    *virtual_kernel_page(size_t size)
-{
+static  void    *virtual_kernel_page(size_t size) {
     return (vmbook(size, SUPERVISOR_LEVEL, READ_WRITE));
 }
 
-static  void    *physical_kernel_page(size_t size)
-{
+static  void    *physical_kernel_page(size_t size) {
     return (mbook(size, SUPERVISOR_LEVEL, READ_WRITE));
 }
 

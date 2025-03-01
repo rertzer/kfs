@@ -26,24 +26,10 @@ uint8_t	 qemu_shutdown();
 void	 get_registers(uint32_t* registers);
 
 /* ======================== utils ==================================== */
-size_t	 strlen(const char* str);
-
-int     ft_memcmp(void* s1, void* s2, size_t n);
-void    ft_memset(uint8_t* address, char c, uint32_t size);
-void*	ft_memcpy(void* dest, const void* src, size_t n);
-
-
 uint32_t round_up_power_two(uint32_t n);
 void	 page_testing();
 
-bool    is_digit(uint8_t c);
-bool    is_upper(uint8_t c);
-bool    is_lower(uint8_t c);
-bool    is_alpha(uint8_t c);
-bool    is_alnum(uint8_t c);
-
 uint32_t index_len(uint32_t start, uint32_t end);
-uint32_t min(uint32_t a, uint32_t b);
 
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);

@@ -1,5 +1,8 @@
 #include "malloc.h"
 
+#include "utils.h" //for getting ft_memset
+
+
 t_page  *insert_after_page(t_page *pages, t_page *page)
 {
     page->prev = pages;

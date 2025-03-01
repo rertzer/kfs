@@ -3,6 +3,9 @@
 #include "keycode.h"
 #include "memory.h"
 
+#include "utils.h" //for getting ft_memset
+
+
 /* User and Memory kind */
 typedef struct s_ctx {
     enum { USER, ROOT, MAX_USER_TYPE }          user;

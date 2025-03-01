@@ -55,7 +55,7 @@ void kernel_main(void) {
 
 	// memory_infos(NULL, 0);
 	// press_any();
-	test_malloc(NULL, set_simple_test, set_complex_test, NULL);
+	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 
 	term_prompt();
 	while (true) {

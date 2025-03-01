@@ -4,6 +4,8 @@
 #include "memory.h"
 #include "panic.h"
 
+#include "utils.h" //for getting ft_memset
+
 extern uint32_t const page_dir;
 
 static void				free_page(void const* const l_address);

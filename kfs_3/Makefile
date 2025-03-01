@@ -18,14 +18,35 @@ OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
 
-PRINTK_SOURCE = printk/printk.c \
-				printk/hexa.c \
-				printk/integer.c \
-				printk/string.c \
-				printk/pointer.c \
-				printk/unsigned.c \
-				printk/utils.c \
-				printk/options.c
+SOURCE_MALLOC = $(addprefix malloc/,	\
+				malloc_bins.c			\
+				malloc_block.c			\
+				malloc_page.c			\
+				malloc_show.c			\
+				malloc_test.c			\
+				malloc.c)
+
+SOURCE_STDLIB = $(addprefix stdlib/,	\
+				$(SOURCE_MALLOC)		\
+				itoa.c					\
+				atoi.c)
+
+
+SOURCE_STDIO = $(addprefix stdio/,		\
+				printf.c				\
+				printk.c)
+
+SOURCE_UNISTD = $(addprefix unistd/,	\
+				write.c)
+
+SOURCES_LIBS = $(addprefix libs/, 		\
+				$(SOURCE_STDLIB)		\
+				$(SOURCE_STDIO)			\
+				$(SOURCE_UNISTD)		\
+				ctype.c					\
+				math.c					\
+				string.c				\
+				utils.c)
 
 SOURCES =	boot/boot.s \
 			boot/boot_infos.c \
@@ -47,12 +68,6 @@ SOURCES =	boot/boot.s \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
-			malloc/malloc_bins.c \
-			malloc/malloc_block.c \
-			malloc/malloc_page.c \
-			malloc/malloc_show.c \
-			malloc/malloc_test.c \
-			malloc/malloc.c \
 			memory/mbook.c \
 			memory/paging.c \
 			memory/page_fault.c \
@@ -68,9 +83,7 @@ SOURCES =	boot/boot.s \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \
-			utils/utils.c
-
-SOURCES += $(PRINTK_SOURCE)
+			$(SOURCES_LIBS)
 
 HEADER_FILES = builtin.h \
 			   interrupts.h \

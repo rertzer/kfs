@@ -141,9 +141,9 @@ start_bin: $(PROJECT).bin
 
 debug: $(PROJECT).bin
 	@echo "starting in debug mode\n(gdb) target remote localhost:1234\n"
-	@gnome-terminal sleep 2 && gdb jros.bin
-	@qemu-system-i386 -s -S -kernel $(PROJECT).bin
-	# -ex 'remote localhost:1234'
+	ls -al ./config
+	@gnome-terminal -- $(shell pwd)/config/debug.sh 
+	@qemu-system-i386 -s -S -kernel $(PROJECT).bin 
 
 -include $(DEPS)
 

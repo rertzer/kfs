@@ -139,7 +139,7 @@ start_iso: $(PROJECT).iso
 
 start_bin: $(PROJECT).bin
 	@echo "Starting BIN..."
-	@qemu-system-i386 -kernel $(PROJECT).bin
+	@qemu-system-i386 -m 32M -kernel $(PROJECT).bin
 
 debug: $(PROJECT).bin
 	@echo "starting in debug mode\n(gdb) target remote localhost:1234\n"

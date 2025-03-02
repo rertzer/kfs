@@ -5,7 +5,7 @@ RM = /bin/rm
 KFS_BUILD_DIR = isodir
 KFS_CONFIG_DIR = config
 
-OPT_FLAG = -g3 -Og 
+OPT_FLAG = -g3 -Og  
 
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
@@ -53,6 +53,7 @@ SOURCES =	boot/boot.s \
 			memory/mmap.c \
 			memory/mmap_info.c \
 			memory/mmap_init.c \
+			memory/mmap_inline.c \
 			memory/mmap_book.c \
 			memory/mmap_chunk.c \
 			memory/mmap_free.c \

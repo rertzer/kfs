@@ -1,13 +1,15 @@
 #include "utils.h"
 
 bool is_space(uint8_t c) {
-	return (0
-		|| c == ' '
-		|| c == '\t'
-		|| c == '\n'
-		|| c == '\v'
-		|| c == '\f'
-		|| c == '\r');
+	switch (c) {
+		case ' ':
+		case '\t':
+		case '\n':
+		case '\v':
+		case '\f':
+		case '\r': return (true);
+	}
+	return (false);
 }
 
 bool is_digit(uint8_t c) {

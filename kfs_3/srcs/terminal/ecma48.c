@@ -1,9 +1,8 @@
-#include "utils.h"
+// #include "utils.h"
+
+#include "unistd.h"
 
 #define STD_IO_BUFFER_SIZE  128
-int read(int fd, uint8_t* buffer, size_t buffer_size);
-
-
 #define ESCAPE_SEQUENCE             '\e'
 #define CONTROL_SEQUENCE_INTRODUCER 0x5B
 
@@ -44,7 +43,7 @@ int parse_input_parameter(char* input, int* output[16])
             continue;
         }
         if (is_digit(input[index])) {
-            index += string::basic_atoi(&output[output_index], &input[index]);
+            index += atoi(&output[output_index], &input[index]);
             continue;
         }
         return index;
@@ -89,9 +88,18 @@ int dispatch(t_ecma48_handlers *this, Type* ref, char* input)
                         this->on_cursor_mouvement(ref, Vec2{params[1], params[0]});
                     }
                     break;
-                case 'S': if (this.on_scroll_up)            this.on_scroll_up(ref, params[0]);          break;
-                case 'T': if (this.on_scroll_down)          this.on_scroll_down(ref, params[0]);        break;
-                case 'm': if (this.on_graphic_rendition)    this.on_graphic_rendition(ref, params[0]);  break;
+                case 'S':
+                    if (this->on_scroll_up) {
+                        this->on_scroll_up(ref, params[0]);
+                    } break;
+                case 'T':
+                    if (this->on_scroll_down) {
+                        this->on_scroll_down(ref, params[0]);
+                    } break;
+                case 'm':
+                    if (this->on_graphic_rendition) {
+                        this->on_graphic_rendition(ref, params[0]);
+                    } break;
                 case 'J':
                     if (params[0] == 2 && this->on_clear_screen) {
                         this->on_clear_screen(ref);
@@ -136,58 +144,3 @@ void hooks_fd(t_ecma48_handlers* this, Type* ref, int fd) {
         hooks(this, ref, &read_buffer, read_size);
     }
 }
-
-module ecma48::handler;
-
-import utils::string;
-import utils::vector;
-import keyboard::scancode;
-import keyboard::codepage347;
-
-void move_cursor(int fd, Vec2 mouvement) {
-    int x = mouvement[0];
-    int y = mouvement[1];
-    
-    if (y) {
-        string::dprintf(fd, "\e[%d%c", abs(y), (y < 0) ? 'A' : 'B');
-    }
-    if (x) {
-        string::dprintf(fd, "\e[%d%c", abs(x), (x < 0) ? 'D' : 'C');
-    }
-}
-
-import utils::collections;
-
-fn int dispatch(Scancode key_scancode, int fd)
-{
-    Scancode[] keys = {Scancode.KEY_UP, Scancode.KEY_DOWN, Scancode.KEY_RIGHT, Scancode.KEY_LEFT};
-	static Vec2[] ops = {
-	    [Scancode.KEY_UP]    = { 0, -1},
-	    [Scancode.KEY_DOWN]  = { 0, +1},
-	    [Scancode.KEY_RIGHT] = {+1,  0},
-	    [Scancode.KEY_LEFT]  = {-1,  0},
-	};
-
-    // utils::string::printf(" %d, (%x) [%s] ", key_scancode, keyboard::codepage347::TABLE[key_scancode], Scancode.names[(int)key_scancode]);
-    // utils::string::printf(" [%s] ", Scancode.names[(int)key_scancode]);
-
-    if (try i = collections::one_of(<Scancode>)(keys, key_scancode)) {
-		ecma48::handler::move_cursor(fd, ops[keys[i]]);
-    }
-    else {
-        char c = keyboard::codepage347::TABLE[key_scancode];
-        if (string::dprintf(fd, "%c", c) < 0) return -1;
-	}
-	return 0;
-}
-
-import keyboard;
-import std_io;
-
-fn int dispatch_on_key_pressed(int fd)
-{
-    Key_State key;
-    if (keyboard::io::get_key_state(&key) && key.state == PRESSED) return dispatch(key.code, std_io::STD_IN);
-    return 0;
-}
-

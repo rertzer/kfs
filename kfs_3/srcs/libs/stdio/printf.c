@@ -223,7 +223,6 @@ static t_fp_dump print_map(char c) {
 		case 'X': return(_print_upper_hexadecimal_case);
 		case '%': return(_print_percentage);
 		case 'n': return(_print_current_len);
-		default: return (NULL);
 	}
 	return (NULL);
 }
@@ -244,10 +243,12 @@ static bool parse_format(t_state *old) {
 		next_flag = flags_map(new.format[0]);
 	}
 	
+	// TODO: change it to strtol
 	if (new.format[0] != '0' && is_digit(new.format[0])) {
 		new.options.width = ft_atoi(new.format);
 		while (new.format[0] && is_digit(new.format[0])) new.format += 1;
 	}
+	// TODO: check if the char after the '*' is okay before consuming with va_arg
 	if (new.format[0] == '*') {
 		new.options.width = va_arg(*new.l_args, int);
 		new.format += 1;

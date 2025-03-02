@@ -18,8 +18,8 @@ struct s_block {
 };
 
 struct s_page {
-    t_page*          next;
-    t_page*          prev;
+    t_page          *next;
+    t_page          *prev;
     size_t          block_count;
     struct s_block  free;
 };
@@ -103,6 +103,15 @@ typedef struct s_debug_where {
 typedef struct s_test_suite t_test_suite;
 typedef void    (*t_fp_test_suite)(t_test_suite *);
 
+typedef enum e_memory_type  {
+    PHYSICAL, VIRTUAL,
+    MAX_MEMORY_TYPE
+} t_memory_type;
+ 
+typedef struct s_test_expectation {
+    int diff[MAX_MEMORY_TYPE];
+} t_test_expectation;
+
 typedef struct s_expectation t_expectation;
 typedef void (*t_ft_report)(bool expected, bool current_diff, t_expectation*);
 
@@ -112,9 +121,17 @@ typedef struct s_set_test {
     void (*write)(size_t index, const char* str);
 } t_set_test;
 
-t_set_test test(t_debug_where where, t_test_suite* test_suite, size_t ptr_index);
+t_set_test test(
+    t_debug_where       where,
+    t_test_suite        *test_suite,
+    size_t              ptr_index,
+    t_test_expectation  expt);
 
-#define SET_TEST(test_suite, ptr_index) test(DEBUG_WHERE, test_suite, ptr_index)
+#define SET_TEST(test_suite, ptr_index, ...) test( \
+    DEBUG_WHERE, \
+    test_suite, \
+    ptr_index, \
+    (t_test_expectation){.diff = {__VA_ARGS__}})
 
 __attribute__ ((sentinel))
 void test_malloc(t_ft_report report, ...);

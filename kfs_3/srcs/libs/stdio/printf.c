@@ -114,7 +114,7 @@ static void _print_integer(t_state *state) {
 	int number = va_arg(*state->l_args, int);
 
 	char	tmp[20] = {};
-	itoa(number > 0 ? number : -number, tmp, 16);
+	itoa(number > 0 ? number : -number, tmp, 10);
 	int len = strlen(tmp);
 
 

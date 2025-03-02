@@ -9,7 +9,7 @@
 /* User and Memory kind */
 typedef struct s_ctx {
     enum { USER, ROOT, MAX_USER_TYPE }          user;
-    enum { PHYSICAL, VIRTUAL, MAX_MEMORY_TYPE } memory;
+    t_memory_type   memory;
 } t_ctx;
 static const char   *user_type_names[MAX_USER_TYPE] = {"USER", "ROOT"};
 static const char   *memory_type_names[MAX_MEMORY_TYPE] = {"PHYSICAL", "VIRTUAL"};
@@ -101,11 +101,11 @@ struct s_test {
             char  *data;
         } write;
     } data;
-    size_t          addr_index;
-    t_test_suite    *ref;
-    t_debug_where   where;
+    size_t              addr_index;
+    t_test_suite        *ref;
+    t_test_expectation  expt;
+    t_debug_where       where;
 };
-// static const char   *test_kind_name[MAX_TEST_KIND] = {"ALLOC", "DEALLOC", "WRITE_IN_MEMORY"};
 
 struct s_test_suite {
     void*   addrs[MAX_TEST_SUITE];
@@ -117,8 +117,7 @@ static void test_suite_append_test(t_test_suite *test_suite, t_test new_test) {
     if (!test_suite || test_suite->count == MAX_TEST_SUITE) {
         return;
     }
-    // TODO: roll back the following line
-    ft_memcpy(&test_suite->tests[test_suite->count], &new_test, sizeof(t_test));
+    test_suite->tests[test_suite->count] = new_test;
     test_suite->count += 1;
 }
 
@@ -143,11 +142,11 @@ static void test_write(size_t write_at, const char *str) {
     test_suite_append_test(current_test_suite, test_to_set);
 }
 
-typedef struct s_test_expectation {
-    int diff[MAX_USER_TYPE][MAX_MEMORY_TYPE];
-} t_test_expectation;
-
-t_set_test test(t_debug_where where, t_test_suite* test_suite, size_t ptr_index) {
+t_set_test test(
+    t_debug_where       where,
+    t_test_suite        *test_suite,
+    size_t              ptr_index,
+    t_test_expectation  expt) {
     static const t_set_test set_test = {
         .alloc  = test_alloc,
         .free   = test_free,
@@ -156,6 +155,7 @@ t_set_test test(t_debug_where where, t_test_suite* test_suite, size_t ptr_index)
     current_test_suite = test_suite;
     test_to_set.ref = current_test_suite;
     test_to_set.addr_index = ptr_index;
+    test_to_set.expt = expt;
     test_to_set.where = where;
     return (set_test);
 }

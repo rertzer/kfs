@@ -45,8 +45,22 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				$(SOURCE_UNISTD)		\
 				ctype.c					\
 				math.c					\
-				string.c				\
-				utils.c)
+				string.c)
+
+SOURCES_MEMORY	= $(addprefix memory/, 		\
+					mbook.c					\
+					paging.c				\
+					page_fault.c			\
+					memory.c				\
+					mmap.c					\
+					mmap_info.c				\
+					mmap_init.c				\
+					mmap_book.c				\
+					mmap_chunk.c			\
+					mmap_free.c				\
+					v_memory.c				\
+					utils.c)					
+
 
 SOURCES =	boot/boot.s \
 			boot/boot_infos.c \
@@ -68,17 +82,7 @@ SOURCES =	boot/boot.s \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
-			memory/mbook.c \
-			memory/paging.c \
-			memory/page_fault.c \
-			memory/memory.c \
-			memory/mmap.c \
-			memory/mmap_info.c \
-			memory/mmap_init.c \
-			memory/mmap_book.c \
-			memory/mmap_chunk.c \
-			memory/mmap_free.c \
-			memory/v_memory.c \
+			$(SOURCES_MEMORY) \
 			panic/panic.c \
 			terminal/terminal.c \
 			terminal/putchar.c \

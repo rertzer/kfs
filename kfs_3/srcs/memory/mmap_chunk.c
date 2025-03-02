@@ -1,9 +1,9 @@
 #include "mmap.h"
 #include "mmap_inline.h"
 
-static inline void get_unavailable_chunk(chunk_t* chunk);
-static chunk_t	   get_free_chunk_by_shift(mmap_t* mmap, uint32_t shift);
-static uint32_t	   get_free_offset(uint8_t byte);
+static inline void get_unavailable_chunk(chunk_t* const chunk);
+static chunk_t	   get_free_chunk_by_shift(mmap_t* mmap, uint32_t const shift);
+static uint32_t	   get_free_offset(uint8_t const byte);
 
 chunk_t get_free_chunk(mmap_t* mmap, uint32_t shift) {
 	chunk_t chunk;
@@ -20,14 +20,14 @@ chunk_t get_free_chunk(mmap_t* mmap, uint32_t shift) {
 	return (chunk);
 }
 
-static inline void get_unavailable_chunk(chunk_t* chunk) {
+static inline void get_unavailable_chunk(chunk_t* const chunk) {
 	chunk->shift = 0;
 	chunk->byte = 0;
 	chunk->offset = MMAP_NOT_FOUND_OFFSET;
 	chunk->status = MMAP_UNAVAILABLE;
 }
 
-static chunk_t get_free_chunk_by_shift(mmap_t* mmap, uint32_t shift) {
+static chunk_t get_free_chunk_by_shift(mmap_t* mmap, uint32_t const shift) {
 	uint32_t len = get_bytes_nb(mmap, shift);
 
 	chunk_t chunk;
@@ -47,11 +47,11 @@ static chunk_t get_free_chunk_by_shift(mmap_t* mmap, uint32_t shift) {
 	return (chunk);
 }
 
-static uint32_t get_free_offset(uint8_t byte) {
+static uint32_t get_free_offset(uint8_t const byte) {
 	uint32_t offset;
 
 	for (offset = 0; offset < 8; offset += BITS_PER_CHUNK) {
-		uint32_t status = get_byte_status(byte, offset);
+		uint32_t const status = get_byte_status(byte, offset);
 		if (status == MMAP_FREE) {
 			break;
 		}

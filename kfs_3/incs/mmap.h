@@ -68,7 +68,7 @@ void		 book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status);
 void		 get_mmap_infos(mmap_t* mmap, mem_info_t* mem_infos);
 chunk_t		 get_free_chunk(mmap_t* mmap, uint32_t shift);
 void*		 get_chunk_address(mmap_t* mmap, chunk_t chunk);
-uint8_t		 free_by_address(mmap_t* mmap, void const* const addr);
+uint8_t		 free_by_address(mmap_t* const mmap, void const* const addr);
 void		 split_chunk(mmap_t* mmap, chunk_t chunk);
 
 #endif

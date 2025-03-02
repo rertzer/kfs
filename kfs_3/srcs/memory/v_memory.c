@@ -79,6 +79,9 @@ uint32_t v_size(void const* const addr) {
 }
 
 uint8_t v_free(void const* const v_addr) {
+	if (v_addr == NULL) {
+		return (0);
+	}
 	mmap_t* const mmap = get_v_mmap_by_address(v_addr);
 	return (free_by_address(mmap, v_addr));
 }

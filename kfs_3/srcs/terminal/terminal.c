@@ -175,10 +175,7 @@ bool term_left() {
 static inline bool term_at_prompt_left_border() {
 	return (term.row == term.prompt_row && term.column <= term.prompt_column);
 }
-// static inline bool term_at_prompt_left_border() {
-// 	return ((term.row == term.prompt_row && term.column > term.prompt_column) ||
-// 			(term.row > term.prompt_row && term.column != 0));
-// }
+
 static inline bool term_at_lower_line_left_border() {
 	return (term.row > term.prompt_row && term.column == 0);
 }

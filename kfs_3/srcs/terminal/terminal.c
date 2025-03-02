@@ -6,13 +6,16 @@ terminal_t all_terms[MAX_TERM_NB];
 uint16_t   all_terms_buffers[MAX_TERM_NB][VGA_WIDTH * VGA_HEIGHT];
 size_t	   current_term;
 
-static void			 term_init_buffer(size_t i);
-static void			 term_set_header(size_t i);
-static void			 term_set_prompt(size_t i);
+static void			 term_init(size_t const term_index);
+static void			 term_init_buffer(size_t const i);
+static void			 term_set_header(size_t const i);
+static void			 term_set_prompt(size_t const i);
 static inline size_t term_prompt_line_end();
-static inline void	 load_term_buffer(uint16_t* dest, uint16_t* src);
+static inline void	 load_term_buffer(uint16_t* const dest, uint16_t const* const src);
 static void			 term_init_values(size_t i);
 static void			 term_set_buffer(size_t i, char c);
+static inline bool	 term_at_prompt_left_border();
+static inline bool	 term_at_lower_line_left_border();
 
 void all_terms_init() {
 	for (size_t i = 0; i < MAX_TERM_NB; ++i) {
@@ -26,7 +29,7 @@ void all_terms_init() {
 	printk("- terminal init OK\n");
 }
 
-void term_init(size_t i) {
+void term_init(size_t const i) {
 	term_init_values(i);
 	term_init_buffer(i);
 }
@@ -42,15 +45,15 @@ static void term_init_values(size_t i) {
 	all_terms[i].buffer = all_terms_buffers[i];
 }
 
-static void term_init_buffer(size_t i) {
+static void term_init_buffer(size_t const i) {
 	term_set_buffer(i, ' ');
 	term_set_header(i);
 	term_set_prompt(i);
 }
 
 static void term_set_buffer(size_t i, char c) {
-	uint16_t vc = vga_char(c, all_terms[i].color);
-	uint16_t vhc = vga_char(c, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_DARK_GREY));
+	uint16_t const vc = vga_char(c, all_terms[i].color);
+	uint16_t const vhc = vga_char(c, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_DARK_GREY));
 
 	for (size_t x = 0; x < VGA_WIDTH; ++x) {
 		size_t index = x;
@@ -61,28 +64,26 @@ static void term_set_buffer(size_t i, char c) {
 	}
 }
 
-static void term_set_header(size_t i) {
-	uint16_t vc;
-	uint8_t	 jros_header[8][JROS_HEADER_HIGH][JROS_HEADER_WIDTH] = {{JROS_HEADER_0}, {JROS_HEADER_1}, {JROS_HEADER_2},
-																	{JROS_HEADER_3}, {JROS_HEADER_4}, {JROS_HEADER_5},
-																	{JROS_HEADER_6}, {JROS_HEADER_7}};
+static void term_set_header(size_t const i) {
+	uint8_t const jros_header[8][JROS_HEADER_HIGH][JROS_HEADER_WIDTH] = {
+		{JROS_HEADER_0}, {JROS_HEADER_1}, {JROS_HEADER_2}, {JROS_HEADER_3},
+		{JROS_HEADER_4}, {JROS_HEADER_5}, {JROS_HEADER_6}, {JROS_HEADER_7}};
 
 	for (size_t y = 0; y < JROS_HEADER_HIGH; ++y) {
 		for (size_t x = 0; x < JROS_HEADER_WIDTH; ++x) {
 			const size_t index = VGA_WIDTH * y + x + JROS_HEADER_OFFSET;
-			vc = vga_char(jros_header[i][y][x], vga_char_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_DARK_GREY));
-			all_terms[i].buffer[index] = vc;
+			all_terms[i].buffer[index] =
+				vga_char(jros_header[i][y][x], vga_char_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_DARK_GREY));
 		}
 	}
 }
 
-static void term_set_prompt(size_t i) {
-	uint16_t vc = vga_char(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK));
-	size_t	 index = all_terms[i].row * VGA_WIDTH;
-	all_terms[i].buffer[index] = vc;
+static void term_set_prompt(size_t const i) {
+	size_t const index = all_terms[i].row * VGA_WIDTH;
+	all_terms[i].buffer[index] = vga_char(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK));
 }
 
-void load_term(terminal_t* dest, terminal_t* src) {
+void load_term(terminal_t* const dest, terminal_t const* const src) {
 	dest->row = src->row;
 	dest->column = src->column;
 	dest->prompt_row = src->prompt_row;
@@ -93,13 +94,13 @@ void load_term(terminal_t* dest, terminal_t* src) {
 	load_term_buffer(dest->buffer, src->buffer);
 }
 
-static inline void load_term_buffer(uint16_t* dest, uint16_t* src) {
+static inline void load_term_buffer(uint16_t* const dest, uint16_t const* const src) {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; ++i) {
 		dest[i] = src[i];
 	}
 }
 
-void switch_term(size_t next) {
+void switch_term(size_t const next) {
 	load_term(&all_terms[current_term], &term);
 	load_term(&term, &all_terms[next]);
 	current_term = next;
@@ -108,6 +109,7 @@ void switch_term(size_t next) {
 
 void switch_next_term() {
 	size_t next = current_term + 1;
+
 	if (next == MAX_TERM_NB) {
 		next = 0;
 	}
@@ -157,18 +159,28 @@ void term_down() {
 
 bool term_left() {
 	bool moved = false;
-	if ((term.row == term.prompt_row && term.column > term.prompt_column) ||
-		(term.row > term.prompt_row && term.column != 0)) {
+	if (!term_at_prompt_left_border() && !term_at_lower_line_left_border()) {
 		--term.column;
 		moved = true;
 		update_cursor(term.column, term.row);
-	} else if (term.row > term.prompt_row && term.column == 0) {
+	} else if (term_at_lower_line_left_border()) {
 		--term.row;
 		term.column = VGA_WIDTH - 1;
 		moved = true;
 		update_cursor(term.column, term.row);
 	}
 	return (moved);
+}
+
+static inline bool term_at_prompt_left_border() {
+	return (term.row == term.prompt_row && term.column <= term.prompt_column);
+}
+// static inline bool term_at_prompt_left_border() {
+// 	return ((term.row == term.prompt_row && term.column > term.prompt_column) ||
+// 			(term.row > term.prompt_row && term.column != 0));
+// }
+static inline bool term_at_lower_line_left_border() {
+	return (term.row > term.prompt_row && term.column == 0);
 }
 
 bool term_right() {

@@ -12,8 +12,7 @@ uint8_t free_by_address(mmap_t* const mmap, void const* const addr) {
 
 	chunk_t chunk = get_chunk(mmap, page_index);
 	if (chunk.status == MMAP_USED || chunk.status == MMAP_USED_RONLY) {
-		chunk.status = MMAP_FREE;
-		set_chunk_status(mmap, chunk);
+		set_chunk_status(mmap, &chunk, MMAP_FREE);
 		fuse_chunk(mmap, chunk);
 	} else {
 		ret = 1;
@@ -30,13 +29,11 @@ static void fuse_chunk(mmap_t* const mmap, chunk_t chunk) {
 		return;
 	}
 
-	chunk.status = MMAP_UNAVAILABLE;
-	buddy.status = MMAP_UNAVAILABLE;
-	set_chunk_status(mmap, chunk);
-	set_chunk_status(mmap, buddy);
+	set_chunk_status(mmap, &chunk, MMAP_UNAVAILABLE);
+	set_chunk_status(mmap, &buddy, MMAP_UNAVAILABLE);
 
 	chunk = create_parent(chunk);
-	set_chunk_status(mmap, chunk);
+	set_chunk_status(mmap, &chunk, chunk.status);
 	fuse_chunk(mmap, chunk);
 }
 

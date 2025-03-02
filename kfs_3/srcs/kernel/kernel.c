@@ -25,11 +25,11 @@ void kernel_main(void) {
 	printk("- memory OK\n");
 	printk("jrOS ready. Enjoy!\n");
 
+	press_any();
 	// memory_map_infos();
 	// page_testing();
 	// panic("Kernel test");
 	// mbook_test();
-	press_any();
 	// memory_test_k_mmap();
 	memory_test_vmbook();
 	// term_prompt();

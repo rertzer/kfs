@@ -5,11 +5,11 @@
 
 extern terminal_t term;
 
-static void panic_set_term_background();
-static void panic_set_header();
-static void panic_set_cursor(size_t r, size_t c);
-static void panic_set_left_margin(size_t m);
-static void panic_init_values();
+static void		   panic_set_term_background();
+static void		   panic_set_header();
+static void		   panic_set_cursor(size_t const r, size_t const c);
+static inline void panic_set_left_margin(size_t const m);
+static void		   panic_init_values();
 
 void panic(char* msg) {
 	panic_set_term_background();
@@ -17,7 +17,7 @@ void panic(char* msg) {
 	panic_init_values();
 	term_putstr("Ooops!\n");
 	panic_set_cursor(9, 28);
-	term_putstr("Something bad happened :)\n");
+	term_putstr("Something bad happened :(\n");
 	panic_set_cursor(10, 12);
 	term_putstr(msg);
 	panic_set_left_margin(22);
@@ -30,7 +30,7 @@ void panic(char* msg) {
 }
 
 static void panic_set_term_background() {
-	uint16_t vc = vga_char(' ', vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_RED));
+	uint16_t const vc = vga_char(' ', vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_RED));
 
 	for (size_t x = 0; x < VGA_WIDTH; ++x) {
 		size_t index = x;
@@ -42,24 +42,22 @@ static void panic_set_term_background() {
 }
 
 static void panic_set_header() {
-	uint16_t vc;
-	uint8_t	 panic_header[PANIC_HEADER_HIGH][PANIC_HEADER_WIDTH] = {PANIC_HEADER};
+	uint8_t const panic_header[PANIC_HEADER_HIGH][PANIC_HEADER_WIDTH] = {PANIC_HEADER};
 
 	for (size_t y = 0; y < PANIC_HEADER_HIGH; ++y) {
 		for (size_t x = 0; x < PANIC_HEADER_WIDTH; ++x) {
 			const size_t index = VGA_WIDTH * y + x + PANIC_HEADER_OFFSET;
-			vc = vga_char(panic_header[y][x], vga_char_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_RED));
-			term.buffer[index] = vc;
+			term.buffer[index] = vga_char(panic_header[y][x], vga_char_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_RED));
 		}
 	}
 }
 
-static void panic_set_cursor(size_t r, size_t c) {
+static void panic_set_cursor(size_t const r, size_t const c) {
 	term.row = r;
 	term.column = c;
 }
 
-static void panic_set_left_margin(size_t m) {
+static inline void panic_set_left_margin(size_t const m) {
 	term.left_margin = m;
 }
 

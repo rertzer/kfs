@@ -35,7 +35,7 @@ uint8_t	 k_free(void* addr);
 
 // virtual memory
 void		init_v_memory();
-void		get_virtual_memory_infos(mem_info_t* mem_infos, bool level);
+void		get_virtual_memory_infos(mem_info_t* const mem_infos, bool const level);
 void*		v_mmap(uint32_t size, bool const level, bool const rw);
 uint32_t	v_size(void const* const addr);
 uint8_t		v_free(void const* const addr);

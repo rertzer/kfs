@@ -16,45 +16,37 @@
 
 #define PRINT_ROW_START JROS_HEADER_HIGH + 1
 
-#define JROS_HEADER_0                                                           \
-	"      _     ____  ____  ___   ", "     (_)___/ __ \\/ __/ / _ \\  ",       \
-		"    / / __/ /_/ /\\ \\  / // /  ", " __/ /_/  \\____/___/  \\___/   ", \
-		"|___/                         "
+#define JROS_HEADER_0                                                                                         \
+	"      _     ____  ____  ___   ", "     (_)___/ __ \\/ __/ / _ \\  ", "    / / __/ /_/ /\\ \\  / // /  ", \
+		" __/ /_/  \\____/___/  \\___/   ", "|___/                         "
 
-#define JROS_HEADER_1                                                          \
-	"      _     ____  ____  ___   ", "     (_)___/ __ \\/ __/ <  /   ",       \
-		"    / / __/ /_/ /\\ \\   / /    ", " __/ /_/  \\____/___/  /_/     ", \
-		"|___/                         "
+#define JROS_HEADER_1                                                                                        \
+	"      _     ____  ____  ___   ", "     (_)___/ __ \\/ __/ <  /   ", "    / / __/ /_/ /\\ \\   / /    ", \
+		" __/ /_/  \\____/___/  /_/     ", "|___/                         "
 
-#define JROS_HEADER_2                                                          \
-	"      _     ____  ____  ___ ", "     (_)___/ __ \\/ __/ |_  | ",          \
-		"    / / __/ /_/ /\\ \\  / __/   ", " __/ /_/  \\____/___/ /____/   ", \
-		"|___/                         ",
+#define JROS_HEADER_2                                                                                     \
+	"      _     ____  ____  ___ ", "     (_)___/ __ \\/ __/ |_  | ", "    / / __/ /_/ /\\ \\  / __/   ", \
+		" __/ /_/  \\____/___/ /____/   ", "|___/                         ",
 
-#define JROS_HEADER_3                                                          \
-	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ |_  /  ",       \
-		"    / / __/ /_/ /\\ \\  _/_ <   ", " __/ /_/  \\____/___/ /____/   ", \
-		"|___/                         ",
+#define JROS_HEADER_3                                                                                        \
+	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ |_  /  ", "    / / __/ /_/ /\\ \\  _/_ <   ", \
+		" __/ /_/  \\____/___/ /____/   ", "|___/                         ",
 
-#define JROS_HEADER_4                                                          \
-	"      _     ____  ____   ____ ", "     (_)___/ __ \\/ __/  / / /",        \
-		"    / / __/ /_/ /\\ \\  /_  _/  ", " __/ /_/  \\____/___/   /_/    ", \
-		"|___/                         ",
+#define JROS_HEADER_4                                                                                       \
+	"      _     ____  ____   ____ ", "     (_)___/ __ \\/ __/  / / /", "    / / __/ /_/ /\\ \\  /_  _/  ", \
+		" __/ /_/  \\____/___/   /_/    ", "|___/                         ",
 
-#define JROS_HEADER_5                                                           \
-	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ / __/  ",        \
-		"    / / __/ /_/ /\\ \\  /__ \\   ", " __/ /_/  \\____/___/ /____/   ", \
-		"|___/                         ",
+#define JROS_HEADER_5                                                                                         \
+	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ / __/  ", "    / / __/ /_/ /\\ \\  /__ \\   ", \
+		" __/ /_/  \\____/___/ /____/   ", "|___/                         ",
 
-#define JROS_HEADER_6                                                            \
-	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ / __/  ",         \
-		"    / / __/ /_/ /\\ \\  / _ \\   ", " __/ /_/  \\____/___/  \\___/   ", \
-		"|___/                         ",
+#define JROS_HEADER_6                                                                                         \
+	"      _     ____  ____  ____  ", "     (_)___/ __ \\/ __/ / __/  ", "    / / __/ /_/ /\\ \\  / _ \\   ", \
+		" __/ /_/  \\____/___/  \\___/   ", "|___/                         ",
 
-#define JROS_HEADER_7                                                          \
-	"      _     ____  ____  ____ ", "     (_)___/ __ \\/ __/ /_  /  ",        \
-		"    / / __/ /_/ /\\ \\    / /   ", " __/ /_/  \\____/___/   /_/    ", \
-		"|___/                         ",
+#define JROS_HEADER_7                                                                                       \
+	"      _     ____  ____  ____ ", "     (_)___/ __ \\/ __/ /_  /  ", "    / / __/ /_/ /\\ \\    / /   ", \
+		" __/ /_/  \\____/___/   /_/    ", "|___/                         ",
 
 typedef struct terminal_s {
 	uint16_t* buffer;
@@ -73,9 +65,8 @@ uint16_t	vga_char(unsigned char uc, uint8_t color);
 vga_color_t vga_fg_color(uint8_t color);
 vga_color_t vga_bg_color(uint8_t color);
 void		all_terms_init();
-void		term_init(size_t term_index);
-void		load_term(terminal_t* dest, terminal_t* src);
-void		switch_term(size_t next);
+void		load_term(terminal_t* const dest, terminal_t const* const src);
+void		switch_term(size_t const next);
 void		switch_next_term();
 void		switch_previous_term();
 void		term_backspace();
@@ -95,10 +86,10 @@ void		term_next();
 void		term_scroll();
 void		term_front_color_next();
 void		term_back_color_next();
-size_t		term_putstr(const char* str);
-size_t		term_putchars(const char* array, size_t len);
-size_t		term_putchars_ln(const char* array, size_t len);
-size_t		term_putchar(char c);
+size_t		term_putstr(const char* const str);
+size_t		term_putchars(const char* const array, size_t const len);
+size_t		term_putchars_ln(const char* const array, size_t const len);
+size_t		term_putchar(char const c);
 void		term_prompt();
 size_t		term_prompt_pos();
 size_t		term_cursor_pos();

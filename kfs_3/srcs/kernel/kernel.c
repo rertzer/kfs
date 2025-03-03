@@ -12,49 +12,6 @@ extern volatile uint8_t current_code;
 
 static void process_keyboard(keypress_t* keypress);
 
-void    set_simple_test(t_test_suite *tests) {
-	SET_TEST(tests, 0,
-		[PHYSICAL] = +1,
-		[VIRTUAL] = +1	).alloc(42);
-
-	SET_TEST(tests, 0,
-		[PHYSICAL] = 0,
-		[VIRTUAL] = 0	).write(0, "hello");
-
-	SET_TEST(tests, 0,
-		[PHYSICAL] = -1,
-		[VIRTUAL] = -1	).free();
-}
-
-void    set_complex_test(t_test_suite *tests) {
-	SET_TEST(tests, 0,
-		[PHYSICAL] = +1,
-		[VIRTUAL] = +1
-	).alloc(42);
-	SET_TEST(tests, 1,
-		[PHYSICAL] = +1,
-		[VIRTUAL] = +1
-	).alloc(4295);
-
-	SET_TEST(tests, 1,
-		[PHYSICAL] = 0,
-		[VIRTUAL] = 0
-	).write(23, "hello");
-	SET_TEST(tests, 1,
-		[PHYSICAL] = +1,
-		[VIRTUAL] = 0
-	).write(4196, "hello2");
-
-	SET_TEST(tests, 0,
-		[PHYSICAL] = -1,
-		[VIRTUAL] = -1
-	).free();
-	SET_TEST(tests, 1,
-		[PHYSICAL] = -1,
-		[VIRTUAL] = -1
-	).free();
-}
-
 void kernel_main(void) {
 	all_terms_init();
 	init_gdt();
@@ -82,6 +39,7 @@ void kernel_main(void) {
 	// readline();
 
 	// memory_infos(NULL, 0);
+
 	// press_any();
 	test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 

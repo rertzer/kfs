@@ -250,6 +250,7 @@ static void show_expectation(t_ctx ctx, t_expectation *expt, int expected, int c
 
 void    test_malloc(t_ft_report report, ...)
 {
+    printf("test_malloc start\n");
 	va_list         l_args;
     t_fp_test_suite current_test;
     t_test_suite    tests;
@@ -264,6 +265,7 @@ void    test_malloc(t_ft_report report, ...)
         current_test = va_arg(l_args, t_fp_test_suite);
     }
 	va_end(l_args);
+    printf("test_malloc end\n");
 }
 
 
@@ -377,7 +379,7 @@ static void show_expectation(t_ctx ctx, t_expectation *expt, int expected, int c
         ok = (current_use == 0);
         expected = 0;
     }
-    // if (ok) return;
+    if (ok) return;
 
     for (int i = 0; i < 25; i++) {
         printk("\n");
@@ -398,4 +400,51 @@ static void show_expectation(t_ctx ctx, t_expectation *expt, int expected, int c
     printk("\n-> ");
     print_test_context(ctx, expt);
   	press_any();
+}
+
+/*
+ * Example tests suite
+*/
+
+void    set_simple_test(t_test_suite *tests) {
+	SET_TEST(tests, 0,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = +1	).alloc(42);
+
+	SET_TEST(tests, 0,
+		[PHYSICAL] = 0,
+		[VIRTUAL] = 0	).write(0, "hello");
+
+	SET_TEST(tests, 0,
+		[PHYSICAL] = -1,
+		[VIRTUAL] = -1	).free();
+}
+
+void    set_complex_test(t_test_suite *tests) {
+	SET_TEST(tests, 0,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = +1
+	).alloc(42);
+	SET_TEST(tests, 1,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = +1
+	).alloc(4295);
+
+	SET_TEST(tests, 1,
+		[PHYSICAL] = 0,
+		[VIRTUAL] = 0
+	).write(23, "hello");
+	SET_TEST(tests, 1,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = 0
+	).write(4196, "hello2");
+
+	SET_TEST(tests, 0,
+		[PHYSICAL] = -1,
+		[VIRTUAL] = -1
+	).free();
+	SET_TEST(tests, 1,
+		[PHYSICAL] = -1,
+		[VIRTUAL] = -1
+	).free();
 }

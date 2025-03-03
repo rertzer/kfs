@@ -7,10 +7,7 @@
 
 
 /* User and Memory kind */
-typedef struct s_ctx {
-    enum { USER, ROOT, MAX_USER_TYPE }          user;
-    t_memory_type   memory;
-} t_ctx;
+
 static const char   *user_type_names[MAX_USER_TYPE] = {"USER", "ROOT"};
 static const char   *memory_type_names[MAX_MEMORY_TYPE] = {"PHYSICAL", "VIRTUAL"};
 
@@ -66,6 +63,7 @@ static t_allocator_callbacks    allocator(t_ctx ctx) {
 
 typedef struct s_memory_report {
     mem_info_t  report[MMAP_MAX_SHIFT + 1];
+    mem_info_t  total;
 } t_memory_report;
 
 typedef struct s_full_memory_report {
@@ -80,8 +78,6 @@ typedef struct s_full_historic_memory_report {
 struct s_expectation {
     t_full_historic_memory_report memory_report;
     t_ctx   ctx;
-    t_ctx   ctx_report;
-    int     diff[MAX_USER_TYPE][MAX_MEMORY_TYPE];
     t_test  *current_test;
 };
 
@@ -97,8 +93,8 @@ struct s_test {
     union u_data {
         size_t  alloc_size;
         struct {
-            size_t      at;
-            char  *data;
+            size_t  at;
+            char    *data;
         } write;
     } data;
     size_t              addr_index;
@@ -196,19 +192,33 @@ static void call_get_memory_info(t_ctx ctx, void* data) {
     allocator(ctx).get_memory_info((mem_info_t*)&report->full[ctx.user][ctx.memory].report);
 }
 
+static mem_info_t memory_report_total(t_memory_report *report) {
+    ft_memset(&report->total, 0, sizeof(mem_info_t));
+    for (uint32_t i = 0; i <= MMAP_MAX_SHIFT; ++i) {
+		report->total.used += report->report[i].used;
+		report->total.free += report->report[i].free;
+		report->total.total += report->report[i].total;
+	}
+    return (report->total);
+}
+
+static mem_info_t full_historic_memory_report_diff(t_full_historic_memory_report *full_report, t_ctx ctx) {
+    mem_info_t before = memory_report_total(&full_report->before.full[ctx.user][ctx.memory]);
+    mem_info_t after = memory_report_total(&full_report->after.full[ctx.user][ctx.memory]);
+    return ((mem_info_t){
+        .free = after.free - before.free,
+        .used = after.used - before.used,
+        .total = after.total - before.total,
+    });
+}
+
+
 static t_ft_report report_expectation_callback = NULL;
 static void report_memory_diff(t_ctx ctx, void* data) {
-    int             expected_diff;
-    int             current_diff;
     t_expectation   *expt = data;
-
-    expt->ctx_report = ctx;
-    expected_diff = expt->diff[ctx.user][ctx.memory];
-    current_diff = ft_memcmp(
-        &expt->memory_report.before.full[ctx.user][ctx.memory].report,
-        &expt->memory_report.after.full[ctx.user][ctx.memory].report,
-        sizeof(mem_info_t) * (MMAP_MAX_SHIFT + 1));
-    report_expectation_callback(expected_diff, current_diff, expt);
+    report_expectation_callback(ctx, expt,
+        expt->current_test->expt.diff[ctx.memory],
+        full_historic_memory_report_diff(&expt->memory_report, ctx).used);
 }
 
 ///////////
@@ -226,26 +236,17 @@ static void check(t_expectation *expt) {
     for_all_case(report_memory_diff, expt);
 }
 
-static void set_expectation(t_expectation *expt) {
-    expt->diff[USER][PHYSICAL] = 1;
-    expt->diff[ROOT][PHYSICAL] = 1;
-    if (expt->ctx.memory == VIRTUAL) {
-        expt->diff[expt->ctx.user][VIRTUAL] = 1;
-    }
-}
-
 static void test_allocator(t_ctx ctx, void* data) {
     t_expectation expt = {.ctx = ctx};
     t_test_suite  *tests = data;
 
-    set_expectation(&expt);
     for (size_t i = 0; i < tests->count; i++) {
         expt.current_test = &tests->tests[i];
         check(&expt);       
     }
 }
 
-static void show_expectation(bool expect_a_diff, bool current_diff, t_expectation *expt);
+static void show_expectation(t_ctx ctx, t_expectation *expt, int expected, int current_use);
 
 void    test_malloc(t_ft_report report, ...)
 {
@@ -319,17 +320,6 @@ static void print_row_mem_infos(int *column_size, uint32_t index, t_ctx ctx, t_f
     printk("%c\n", VERTICAL_LINE);
 }
 
-static void print_expectation_report(bool expect_a_diff, bool current_diff, t_expectation *expt) {
-    printk("%s: %s expected in %s %s memory: %s\n",
-        (expect_a_diff == current_diff) ? "OK" : "NOK",
-        expect_a_diff ? "diff": "no diff",
-        memory_type_names[expt->ctx_report.memory],
-        user_type_names[expt->ctx_report.user],
-        (1
-        && (expect_a_diff != current_diff)
-        && (expt->ctx.user != expt->ctx_report.user)) ? "WARNING! mismatch user!!!" : ""
-    );  
-}
 
 static void print_full_historic_memory_report(t_ctx ctx, t_full_historic_memory_report* report) {
 	int			column_size[4] = {0};
@@ -347,7 +337,7 @@ static void print_debug(t_debug_where where) {
         where.line_number);
 };
 
-static void print_test_context(t_expectation *expt) {
+static void print_test_context(t_ctx ctx, t_expectation *expt) {
     switch (expt->current_test->kind) {
     case ALLOC:
         printk("`ptr[%d] = alloc(%d)`",
@@ -366,25 +356,46 @@ static void print_test_context(t_expectation *expt) {
     break;
     default: break;
     }
+    
     printk("\nWith %s %s memory checking %s %s memory\n",
         memory_type_names[expt->ctx.memory],
         user_type_names[expt->ctx.user],
-        memory_type_names[expt->ctx_report.memory],
-        user_type_names[expt->ctx_report.user]
-    );
+        memory_type_names[ctx.memory],
+        user_type_names[ctx.user]);
 }
 
-static void show_expectation(bool expect_a_diff, bool current_diff, t_expectation *expt) {
+static void show_expectation(t_ctx ctx, t_expectation *expt, int expected, int current_use) {
+    if (ctx.memory == PHYSICAL && ctx.user == USER) return ;
+    if (expt->ctx.memory == PHYSICAL && expt->ctx.user == USER) return ;
+    if (ctx.memory == PHYSICAL && expt->ctx.memory == PHYSICAL) return ;
+
+    bool ok = false;
+    if      (expected == 0) { ok = (expected == current_use); }
+    else if (expected <  0) { ok = (current_use <= expected); }
+    else if (expected >  0) { ok = (current_use >= expected); }
+    if (ctx.memory == VIRTUAL && ctx.user != expt->ctx.user) {
+        ok = (current_use == 0);
+        expected = 0;
+    }
+    // if (ok) return;
+
     for (int i = 0; i < 25; i++) {
         printk("\n");
     }
-    print_expectation_report(expect_a_diff, current_diff, expt);
-    if (current_diff) {
-        print_full_historic_memory_report(expt->ctx_report, &expt->memory_report);
-    }
+    printf("%d %d\n", expected, current_use);
+    printk("%s: %s expected in %s %s memory: %s\n",
+        ok ? "OK" : "NOK",
+        expected ? "diff": "no diff",
+        memory_type_names[ctx.memory],
+        user_type_names[ctx.user],
+        (!ok && (expt->ctx.user != ctx.user)) ? "WARNING! mismatch user!!!" : ""
+    );  
+
+    if (current_use)
+        print_full_historic_memory_report(ctx, &expt->memory_report);
     printk("\n");
     print_debug(expt->current_test->where);
     printk("\n-> ");
-    print_test_context(expt);
+    print_test_context(ctx, expt);
   	press_any();
 }

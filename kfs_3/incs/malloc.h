@@ -103,17 +103,17 @@ typedef struct s_debug_where {
 typedef struct s_test_suite t_test_suite;
 typedef void    (*t_fp_test_suite)(t_test_suite *);
 
-typedef enum e_memory_type  {
-    PHYSICAL, VIRTUAL,
-    MAX_MEMORY_TYPE
-} t_memory_type;
- 
+typedef struct s_ctx {
+    enum { USER, ROOT, MAX_USER_TYPE }          user;
+    enum { PHYSICAL, VIRTUAL, MAX_MEMORY_TYPE } memory;
+} t_ctx;
+
 typedef struct s_test_expectation {
     int diff[MAX_MEMORY_TYPE];
 } t_test_expectation;
 
 typedef struct s_expectation t_expectation;
-typedef void (*t_ft_report)(bool expected, bool current_diff, t_expectation*);
+typedef void (*t_ft_report)(t_ctx, t_expectation*, int expected, int current_use);
 
 typedef struct s_set_test {
     void (*alloc)(size_t alloc_size);

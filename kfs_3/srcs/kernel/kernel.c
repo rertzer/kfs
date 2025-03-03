@@ -27,12 +27,32 @@ void    set_simple_test(t_test_suite *tests) {
 }
 
 void    set_complex_test(t_test_suite *tests) {
-	SET_TEST(tests, 0).alloc(42);
-	SET_TEST(tests, 1).alloc(4295);
-	SET_TEST(tests, 1).write(23, "hello");
-	SET_TEST(tests, 1).write(4196, "hello2");
-	SET_TEST(tests, 0).free();
-	SET_TEST(tests, 1).free();
+	SET_TEST(tests, 0,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = +1
+	).alloc(42);
+	SET_TEST(tests, 1,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = +1
+	).alloc(4295);
+
+	SET_TEST(tests, 1,
+		[PHYSICAL] = 0,
+		[VIRTUAL] = 0
+	).write(23, "hello");
+	SET_TEST(tests, 1,
+		[PHYSICAL] = +1,
+		[VIRTUAL] = 0
+	).write(4196, "hello2");
+
+	SET_TEST(tests, 0,
+		[PHYSICAL] = -1,
+		[VIRTUAL] = -1
+	).free();
+	SET_TEST(tests, 1,
+		[PHYSICAL] = -1,
+		[VIRTUAL] = -1
+	).free();
 }
 
 void kernel_main(void) {

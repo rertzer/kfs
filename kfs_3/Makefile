@@ -5,6 +5,8 @@ RM = /bin/rm
 KFS_BUILD_DIR = isodir
 KFS_CONFIG_DIR = config
 
+OPT_FLAG = -g3 -Og  
+
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = debian-kfs1
@@ -12,6 +14,7 @@ DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_N
 
 FLAG_DEBUG		= -g -ggdb3
 FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
+FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG)
 
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
@@ -117,7 +120,7 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 	@mkdir -p $(KFS_BUILD_DIR)/boot/grub
 	@cp $(PROJECT).bin $(KFS_BUILD_DIR)/boot/$(PROJECT).bin
 	@cp $(KFS_CONFIG_DIR)/grub.cfg $(KFS_BUILD_DIR)/boot/grub/grub.cfg	
-	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso $(KFS_BUILD_DIR) -quiet
+	@$(DOCKER_EXEC) grub-mkrescue -o $(PROJECT).iso --compress=gz $(KFS_BUILD_DIR) -quiet
 	@echo "Done."
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
@@ -126,7 +129,7 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 		$(INCS) \
 		-T $(KFS_CONFIG_DIR)/linker.ld \
 		-o $(PROJECT).bin \
-		-ffreestanding -Og $(FLAG_DEBUG) -nostdlib /app/$(OBJS) -lgcc
+		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) -lgcc
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
@@ -139,8 +142,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						$(FLAG_DEBUG) \
-						$(FLAG_WARNING) \
+						$(FLAG) \
 						-std=gnu99 -ffreestanding -Og \
 						-c /app/$< \
 						-o /app/$@
@@ -171,8 +173,10 @@ start_bin: $(PROJECT).bin
 	@qemu-system-i386 -kernel $(PROJECT).bin
 
 debug: $(PROJECT).bin
-	@echo "starting in debug mode\nTo start gdb: gdb jros.bin then (gdb) target remote localhost:1234\n"
-	@qemu-system-i386 -s -S -kernel $(PROJECT).bin
+	@echo "starting in debug mode\n(gdb) target remote localhost:1234\n"
+	ls -al ./config
+	@gnome-terminal -- $(shell pwd)/config/debug.sh 
+	@qemu-system-i386 -s -S -kernel $(PROJECT).bin 
 
 -include $(DEPS)
 

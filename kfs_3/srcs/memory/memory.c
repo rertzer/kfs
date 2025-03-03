@@ -35,8 +35,7 @@ void* k_mmap(uint32_t size) {
 	if (chunk.status != MMAP_FREE) {
 		return (NULL);
 	}
-	chunk.status = MMAP_USED;
-	set_chunk_status(&p_mmap, chunk);
+	set_chunk_status(&p_mmap, &chunk, MMAP_USED);
 	void* address = get_chunk_address(&p_mmap, chunk);
 	return (address);
 }

@@ -2,6 +2,7 @@
 #include "keycode.h"
 #include "memory.h"
 #include "paging.h"
+#include "panic.h"
 #include "printk.h"
 
 static uint32_t		   mbook_get_flags(bool const level, bool const rw);
@@ -58,8 +59,10 @@ void* vmbook(uint32_t size, bool const level, bool const rw) {
 }
 
 void munbook(void const* const v_addr) {
-	v_free(v_addr);
-	k_free(get_physical_address((uint32_t const)v_addr));
+	if (v_free(v_addr) != 0 || k_free(get_physical_address((uint32_t const)v_addr))) {
+		panic("invalid free");
+	};
+
 	free_page_table(v_addr, get_v_page_nb(v_addr));
 }
 
@@ -69,7 +72,10 @@ static inline uint32_t get_v_page_nb(void const* const v_addr) {
 
 void vmunbook(void const* const v_addr) {
 	uint32_t v_page_nb = get_v_page_nb(v_addr);
-	v_free(v_addr);
+	if (v_free(v_addr) != 0) {
+		panic("invalid free");
+	};
+
 	free_all_p_pages(v_addr, v_page_nb);
 }
 
@@ -84,7 +90,9 @@ static void free_p_page(uint8_t const* const v_addr) {
 	if (page_table_exist(v_addr)) {
 		void* p_addr = get_physical_address((uint32_t const)v_addr);
 		if (p_addr != NULL) {
-			k_free(p_addr);
+			if (k_free(p_addr) != 0) {
+				panic("invalid free");
+			};
 			free_page_table(v_addr, 1);
 		}
 	}
@@ -108,6 +116,11 @@ void mbook_test() {
 	// press_any();
 	munbook(addr);
 	printk("memory freeeeed\n");
+	printk("trying to unbook twice\n");
+	press_any();
+	munbook(addr);
+	press_any();
+
 	addr = mbook(17 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
 	if (addr == NULL) {
 		printk("address is NULL. Lets see what's going on...\n");

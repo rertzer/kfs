@@ -19,7 +19,6 @@ static inline uint32_t shift_start_index(uint32_t const start_page_index, uint32
 static inline bool	   status_already_set(uint32_t chunk_status, uint32_t status);
 static inline bool	   splited_area(uint32_t chunk_shift, uint32_t shift);
 static void			   book_kids(mmap_t* mmap, uint32_t page_index, uint32_t shift, uint32_t status);
-static void			   book_chunk(mmap_t* mmap, chunk_t chunk, uint32_t status);
 static inline uint32_t right_buddy_page_index(uint32_t page_index, uint32_t shift);
 
 void book_memory(mmap_t* mmap, uint8_t* addr, uint32_t len, uint32_t status) {
@@ -105,7 +104,7 @@ static void book_page(mmap_t* mmap, uint32_t page_index, uint32_t shift, uint32_
 		book_kids(mmap, page_index, shift, status);
 	} else if (chunk.status == MMAP_FREE) {
 		if (chunk.shift == shift) {
-			book_chunk(mmap, chunk, status);
+			set_chunk_status(mmap, &chunk, status);
 		} else {
 			split_chunk(mmap, chunk);
 			book_page(mmap, page_index, shift, status);
@@ -125,11 +124,6 @@ static void book_kids(mmap_t* mmap, uint32_t page_index, uint32_t shift, uint32_
 	shift -= 1;
 	book_page(mmap, page_index, shift, status);
 	book_page(mmap, right_buddy_page_index(page_index, shift), shift, status);
-}
-
-static void book_chunk(mmap_t* mmap, chunk_t chunk, uint32_t status) {
-	chunk.status = status;
-	set_chunk_status(mmap, chunk);
 }
 
 static inline uint32_t right_buddy_page_index(uint32_t page_index, uint32_t shift) {

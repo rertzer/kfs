@@ -5,20 +5,18 @@
 
 extern terminal_t term;
 
-size_t term_putstr(const char* str) {
-	size_t len = strlen(str);
-	len = term_putchars(str, len);
-	return (len);
+size_t term_putstr(char const* const str) {
+	return (term_putchars(str, strlen(str)));
 }
 
-size_t term_putchars(const char* array, size_t len) {
+size_t term_putchars(const char* const array, size_t const len) {
 	for (size_t i = 0; i < len; ++i) {
 		term_putchar(array[i]);
 	}
 	return (len);
 }
 
-size_t term_putchars_ln(const char* array, size_t len) {
+size_t term_putchars_ln(const char* const array, size_t const len) {
 	for (size_t i = 0; i < len; ++i) {
 		term_putchar(array[i]);
 	}
@@ -26,7 +24,7 @@ size_t term_putchars_ln(const char* array, size_t len) {
 	return (len);
 }
 
-size_t term_putchar(char c) {
+size_t term_putchar(char const c) {
 	switch (c) {
 		case '\t':
 			write_tab();

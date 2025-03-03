@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "mmap.h"
 
-inline uint32_t get_bytes_nb(mmap_t* mmap, uint32_t shift) {
+inline uint32_t get_bytes_nb(mmap_t const* const mmap, uint32_t const shift) {
 	return (mmap->bytes_nb >> shift);
 }
 
@@ -15,11 +15,11 @@ inline uint8_t get_byte_status(uint8_t byte, uint8_t offset) {
 	return (byte);
 }
 
-inline uint32_t get_local_page_index(mmap_t* mmap, uint32_t page_index) {
+inline uint32_t get_local_page_index(mmap_t const* const mmap, uint32_t const page_index) {
 	return (page_index - mmap->start_index);
 }
 
-inline bool valid_page_index(mmap_t* mmap, uint32_t page_index) {
+inline bool valid_page_index(mmap_t const* const mmap, uint32_t const page_index) {
 	bool valid = true;
 	if (page_index < mmap->start_index || page_index > mmap->end_index) {
 		valid = false;

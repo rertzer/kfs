@@ -35,6 +35,7 @@ static t_page*   new_page(size_t size, t_fp_mbook mmap)
     page->free.page = page;
     page->free.size = (page_size - SIZEOF_METADATA_PAGE) | FREE;
     page->free.prev_block = NULL;
+    get_next_block(&page->free)->size = 0;
     return (page);
 }
 

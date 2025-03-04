@@ -1,5 +1,4 @@
 #include "interrupts.h"
-#include "memory.h"
 #include "paging.h"
 #include "panic.h"
 

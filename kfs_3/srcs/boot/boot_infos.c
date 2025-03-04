@@ -78,7 +78,7 @@ uint8_t boot_infos(char* pointer, size_t len) {
 
 static void print_multiboot_magic() {
 	uint32_t magic = *to_upper_kernel(&multiboot_magic);
-	printk("multiboot magic: 0x%08x", magic);
+	printk("multiboot magic: %08x", magic);
 	if (magic == MULTIBOOT_MAGIC_1) {
 		printk(" (multiboot V1)\n");
 	} else if (magic == MULTIBOOT_MAGIC_2) {
@@ -94,18 +94,18 @@ static void print_multiboot_infos(multiboot_addr_t* mba) {
 	uint32_t  multiboot_mmap_length = mba->mbi[11];
 	uint32_t* multiboot_mmap_addr = to_upper_kernel((uint32_t*)mba->mbi[12]);
 
-	printk("flags:  0x%08x\n", mba->mbi[0]);
+	printk("flags:  %08x\n", mba->mbi[0]);
 	printk("mem_lower:  %u KiB (max 640)\n", mba->mbi[1]);
-	printk("mem_upper:  0x%08x\n", mba->mbi[2]);
-	printk("boot_device:  0x%08x\n", mba->mbi[3]);
+	printk("mem_upper:  %08x\n", mba->mbi[2]);
+	printk("boot_device:  %08x\n", mba->mbi[3]);
 	printk("cmdline:  %s\n", multiboot_cmdline);
-	printk("elf num:  0x%08x, ", mba->mbi[7]);
-	printk("elf size:  0x%08x\n", mba->mbi[8]);
-	printk("elf addr:  0x%08x, ", mba->mbi[9]);
-	printk("elf shndx:  0x%08x\n", mba->mbi[10]);
+	printk("elf num:  %08x, ", mba->mbi[7]);
+	printk("elf size:  %08x\n", mba->mbi[8]);
+	printk("elf addr:  %08x, ", mba->mbi[9]);
+	printk("elf shndx:  %08x\n", mba->mbi[10]);
 	printk("bootloader:  %s\n", multiboot_bootloader);
-	printk("mmap length:  0x%08x, ", multiboot_mmap_length);
-	printk("mmap addr:  0x%08x\n", multiboot_mmap_addr);
+	printk("mmap length:  %08x, ", multiboot_mmap_length);
+	printk("mmap addr:  %08x\n", multiboot_mmap_addr);
 }
 
 static uint8_t* get_upper_string(uint32_t addr) {

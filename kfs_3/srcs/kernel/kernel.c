@@ -2,11 +2,10 @@
 #include "builtin.h"
 #include "gdt.h"
 #include "keycode.h"
+#include "malloc.h"
 #include "memory.h"
 #include "panic.h"
 #include "terminal.h"
-
-#include "malloc.h"
 
 extern volatile uint8_t current_code;
 
@@ -33,7 +32,7 @@ void kernel_main(void) {
 	// panic("Kernel test");
 	// mbook_test();
 	// memory_test_vmbook();
-	test_malloc(NULL, set_simple_test, set_complex_test, NULL);
+	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 
 	term_prompt();
 	while (true) {

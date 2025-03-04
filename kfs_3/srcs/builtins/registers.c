@@ -23,14 +23,14 @@ static inline void init_regs(uint32_t* regs) {
 }
 
 static void print_registers(uint32_t* regs) {
-	printk("eax: 0x%08x\tebx: 0x%08x\n", regs[0], regs[1]);
-	printk("ecx: 0x%08x\tedx: 0x%08x\n", regs[2], regs[3]);
-	printk("ebp: 0x%08x\tesp: 0x%08x\n", regs[4], regs[5]);
-	printk("esi: 0x%08x\tedi: 0x%08x\n", regs[6], regs[7]);
-	printk("cs : 0x%04x\t\tss : 0x%04x\n", regs[13], regs[8]);
-	printk("ds : 0x%04x\t\tes : 0x%04x\n", regs[9], regs[10]);
-	printk("fs : 0x%04x\t\tgs : 0x%04x\n", regs[11], regs[12]);
-	printk("cr0: 0x%08x\tcr3: 0x%08x\n", regs[14], regs[15]);
-	printk("flags : 0x%08x\n", regs[16]);
-	printk("ret address: 0x%08x\n", get_retaddr());
+	printk("eax: %08x\tebx: %08x\n", regs[0], regs[1]);
+	printk("ecx: %08x\tedx: %08x\n", regs[2], regs[3]);
+	printk("ebp: %08x\tesp: %08x\n", regs[4], regs[5]);
+	printk("esi: %08x\tedi: %08x\n", regs[6], regs[7]);
+	printk("cs : %04x\t\tss : %04x\n", regs[13], regs[8]);
+	printk("ds : %04x\t\tes : %04x\n", regs[9], regs[10]);
+	printk("fs : %04x\t\tgs : %04x\n", regs[11], regs[12]);
+	printk("cr0: %08x\tcr3: %08x\n", regs[14], regs[15]);
+	printk("flags : %08x\n", regs[16]);
+	printk("ret address: %08x\n", get_retaddr());
 }

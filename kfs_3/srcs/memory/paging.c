@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "panic.h"
 
-#include "utils.h" //for getting ft_memset
+#include "utils.h"	//for getting ft_memset
 
 extern uint32_t const page_dir;
 
@@ -122,7 +122,7 @@ void page_testing() {
 	char*	 addr = v_mmap(PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
 	// char* addr = v_mmap(1, SUPERVISOR_LEVEL, READ_ONLY);
 	printk("%s\n", good_string);
-	printk("my funny addr %08x has size %u \n", addr, v_size(addr));
+	printk("addr %08x has size %u \n", addr, v_size(addr));
 	// printk("\ntesting access rights, panic expected\n");
 	press_any();
 	char cacahuete = addr[offset];

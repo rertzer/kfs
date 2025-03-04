@@ -108,7 +108,7 @@ void mbook_test() {
 		press_any();
 	}
 	addr[666] = 'Z';
-	printk("at index 0: %c ('Z' expected)\n", addr[666]);
+	printk("at index 666: %c ('Z' expected)\n", addr[666]);
 	uint32_t far_offset = 4096 * 14 + 666;
 	addr[far_offset] = 'A';
 	printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
@@ -116,12 +116,12 @@ void mbook_test() {
 	// press_any();
 	munbook(addr);
 	printk("memory freeeeed\n");
-	printk("trying to unbook twice\n");
-	press_any();
-	munbook(addr);
+	// printk("trying to unbook twice\n");
+	// press_any();
+	// munbook(addr);
 	press_any();
 
-	addr = mbook(17 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
+	addr = mbook(16 * PAGE_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
 	if (addr == NULL) {
 		printk("address is NULL. Lets see what's going on...\n");
 		press_any();
@@ -136,7 +136,7 @@ void mbook_test() {
 
 	// printk("at index 0: %c ('Z' expected)\n", addr[666]);
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
-	// far_offset = 4096 * 17 + 9999;
+	// far_offset = 4096 * 16 + 9999;
 	// printk("writting in a too far offset\n");
 	// addr[far_offset] = 'A';
 	// printk("at index %u: %c ('A expected)\n", far_offset, addr[far_offset]);
@@ -187,5 +187,4 @@ void memory_test_vmbook() {
 	// printk("42 == %s\n", ft);
 	press_any();
 	memory_infos(NULL, 0);
-	press_any();
 }

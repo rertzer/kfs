@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "builtin.h"
 #include "gdt.h"
+#include "interrupts.h"
 #include "keycode.h"
 #include "malloc.h"
 #include "memory.h"
@@ -33,6 +34,7 @@ void kernel_main(void) {
 	// mbook_test();
 	// memory_test_vmbook();
 	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
+	interrupts_test();
 
 	term_prompt();
 	while (true) {

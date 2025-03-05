@@ -1,5 +1,6 @@
 #include "interrupts.h"
 #include "builtin.h"
+#include "panic.h"
 
 extern volatile uint32_t						  hereafter;
 extern uint32_t									  isr_stub_table[];
@@ -40,4 +41,27 @@ void exception_handler() {
 	printk("exception %d !\n", ex_number);
 	registers(NULL, 0);
 	__asm__ volatile("cli; hlt");
+}
+
+void default_exception_handler(uint32_t int_nb) {
+	switch (int_nb) {
+		case (0):
+			panic("Divide by zero");
+			break;
+		case (1):
+			printf("Debug Exception -- not yet handled\n");
+			break;
+		case (2):
+			panic("Non Maskable Interrupt");
+			break;
+		case (3):
+			printf("Breakpoint Interrupt -- not yet handled\n");
+			break;
+		case (4):
+			panic("Overflow Exception");
+			break;
+		default:
+			panic("unknown exception");
+			break;
+	}
 }

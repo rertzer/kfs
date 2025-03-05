@@ -79,6 +79,7 @@ SOURCES =	boot/boot.s \
 			interrupts/interrupts.c \
 			interrupts/pic.c \
 			interrupts/pit.s \
+			interrupts/interrupts_test.c \
 			interrupts/isrstub.s \
 			kernel/kernel.c \
 			kernel/kernel_utils.c \

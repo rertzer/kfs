@@ -24,10 +24,19 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 void exception_handler();
+void default_exception_handler(uint32_t int_nb);
 void general_protection_handler(uint32_t registers[8], uint32_t error_code);
 void page_fault_handler(uint32_t l_address, uint32_t error_code);
 void keyboard_handler(uint8_t scan);
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 void init_idt(void);
+
+// tests
+void interrupts_test();
+void zero_divide_test();
+void debug_exception_test();
+void nmi_test();
+void breakpoint_test();
+void overflow_test(uint32_t over);
 
 #endif

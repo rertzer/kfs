@@ -2,6 +2,7 @@
 extern page_fault_handler
 extern general_protection_handler
 extern exception_handler
+extern default_exception_handler
 extern keyboard_handler
 extern pit_total_ms
 extern timer_counter
@@ -25,6 +26,20 @@ isr_stub_table:
 
 ; ==================== TEXT ===============================
 section .text
+
+%macro isr_default_stub 1
+isr_stub_%+%1:
+	cli
+	pusha
+	mov eax, %+%1
+	push eax
+    call default_exception_handler
+	add esp, 4	
+	popa
+	sti
+    iret 
+%endmacro
+
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
@@ -116,11 +131,11 @@ isr_stub_33:
 	sti
 	iret
 	
-isr_no_err_stub 0
-isr_no_err_stub 1
-isr_no_err_stub 2
-isr_no_err_stub 3
-isr_no_err_stub 4
+isr_default_stub 0
+isr_default_stub 1
+isr_default_stub 2
+isr_default_stub 3
+isr_default_stub 4
 isr_no_err_stub 5
 isr_no_err_stub 6
 isr_no_err_stub 7

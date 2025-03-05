@@ -2,4 +2,6 @@ CompileFlags:
   Add: 
     - "-I../incs/"
     - "-I../../incs/"
+    - "-I../../../incs/"
+    - "-I../../../../incs/"
     - "-m32"

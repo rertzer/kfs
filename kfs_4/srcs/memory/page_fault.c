@@ -1,4 +1,6 @@
+#include "builtin.h"
 #include "interrupts.h"
+#include "kernel.h"
 #include "paging.h"
 #include "panic.h"
 

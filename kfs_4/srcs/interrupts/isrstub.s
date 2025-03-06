@@ -3,11 +3,12 @@ extern page_fault_handler
 extern general_protection_handler
 extern exception_handler
 extern default_exception_handler
+extern error_exception_handler
 extern keyboard_handler
 extern pit_total_ms
 extern timer_counter
-	extern hello
-	extern flush_tlb
+extern hello
+extern flush_tlb
 
 
 section .data
@@ -29,17 +30,31 @@ section .text
 
 %macro isr_default_stub 1
 isr_stub_%+%1:
-	cli
+	;cli
 	pusha
 	mov eax, %+%1
 	push eax
     call default_exception_handler
 	add esp, 4	
 	popa
-	sti
+	;sti
     iret 
 %endmacro
 
+%macro isr_error_stub 1
+isr_stub_%+%1:
+	cli
+	pushad
+	push dword [esp+32]
+	mov eax, %+%1
+	push eax
+    call error_exception_handler
+	add esp, 8	
+	popad
+	sti
+	add esp, 4
+    iret 
+%endmacro
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
@@ -83,7 +98,7 @@ isr_stub_13:
 
 ; page fault exception 
 isr_stub_14:
-	cli
+	;cli
 	pushad
 	push dword [esp+32]
 	mov eax, cr2
@@ -91,7 +106,7 @@ isr_stub_14:
 	call page_fault_handler
 	add esp, 8
 	popad
-	sti
+	;sti
 	add esp, 4	
 	iret
 
@@ -139,7 +154,7 @@ isr_default_stub 4
 isr_default_stub 5
 isr_default_stub 6
 isr_default_stub 7
-isr_err_stub    8
+isr_default_stub 8
 isr_no_err_stub 9
 isr_err_stub    10
 isr_err_stub    11

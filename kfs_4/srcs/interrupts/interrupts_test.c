@@ -12,7 +12,7 @@ void interrupts_test() {
 	// bound_test();
 	// invalid_opcode_test();
 	// coprocessor_not_available_test();
-	// double_fault_test();
+	double_fault_test();
 }
 
 void zero_divide_test() {
@@ -78,6 +78,7 @@ void coprocessor_not_available_test() {
 void double_fault_test() {
 	printf("double fault test\n");
 	press_any();
-	// asm volatile("JMP 0xFFFF:0 ");
-	boom();
+	asm volatile("int $0x08");
+	// char* oops = (char*)0xdeadbeef;
+	// oops[0] = '!';
 }

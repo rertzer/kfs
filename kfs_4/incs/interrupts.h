@@ -25,6 +25,7 @@ typedef struct {
 
 void exception_handler();
 void default_exception_handler(uint32_t int_nb);
+void error_exception_handler(uint32_t int_nb, uint32_t error_code);
 void general_protection_handler(uint32_t registers[8], uint32_t error_code);
 void page_fault_handler(uint32_t l_address, uint32_t error_code);
 void keyboard_handler(uint8_t scan);

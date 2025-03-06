@@ -69,8 +69,14 @@ void default_exception_handler(uint32_t int_nb) {
 		case (7):
 			panic("Coprocessor Not Available");
 			break;
+		case (8):
+			printf("double fault\n");
+			break;
 		default:
 			panic("unknown exception");
 			break;
 	}
+}
+void error_exception_handler(uint32_t int_nb, uint32_t error_code) {
+	printf("interrupt nb: %u, error code: %x\n", int_nb, error_code);
 }

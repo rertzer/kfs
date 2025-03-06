@@ -37,6 +37,11 @@ void zero_divide_test();
 void debug_exception_test();
 void nmi_test();
 void breakpoint_test();
-void overflow_test(uint32_t over);
-
+void overflow_test();
+void bound_test();
+void asm_bound_test();
+void invalid_opcode_test();
+void coprocessor_not_available_test();
+void asm_coprocessor_not_available_test();
+void double_fault_test();
 #endif

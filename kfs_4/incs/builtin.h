@@ -6,7 +6,7 @@
 #include "boot_infos.h"
 #include "kernel.h"
 
-#define REGS_NB 17
+#define REGS_NB 18
 
 #define BUILTINS                                                                                     \
 	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt", \
@@ -38,17 +38,17 @@ typedef struct {
 
 typedef uint8_t (*builtin_fun_t)(char* pointer, size_t len);
 
-bool	 readline();
-uint8_t	 echo(char* word, size_t word_len);
-uint8_t	 qwerty(char* pointer, size_t len);
-uint8_t	 azerty(char* pointer, size_t len);
-uint8_t	 reboot(char* pointer, size_t len);
-uint8_t	 halt(char* pointer, size_t len);
-uint8_t	 registers(char* pointer, size_t len);
-uint8_t	 boot_infos(char* pointer, size_t len);
+bool	readline();
+uint8_t echo(char* word, size_t word_len);
+uint8_t qwerty(char* pointer, size_t len);
+uint8_t azerty(char* pointer, size_t len);
+uint8_t reboot(char* pointer, size_t len);
+uint8_t halt(char* pointer, size_t len);
+uint8_t registers(char* pointer, size_t len);
+uint8_t boot_infos(char* pointer, size_t len);
 
-void	 print_mem_infos(mem_info_t* mem_infos);
-uint8_t	 memory_infos(char* pointer, size_t len);
+void	print_mem_infos(mem_info_t* mem_infos);
+uint8_t memory_infos(char* pointer, size_t len);
 
 void	 freboot();
 uint32_t boom();

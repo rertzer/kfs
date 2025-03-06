@@ -60,6 +60,15 @@ void default_exception_handler(uint32_t int_nb) {
 		case (4):
 			panic("Overflow Exception");
 			break;
+		case (5):
+			panic("Bound Exception");
+			break;
+		case (6):
+			panic("Invalid Opcode");
+			break;
+		case (7):
+			panic("Coprocessor Not Available");
+			break;
 		default:
 			panic("unknown exception");
 			break;

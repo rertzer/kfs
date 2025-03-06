@@ -30,7 +30,8 @@ static void print_registers(uint32_t* regs) {
 	printk("cs : %04x\t\tss : %04x\n", regs[13], regs[8]);
 	printk("ds : %04x\t\tes : %04x\n", regs[9], regs[10]);
 	printk("fs : %04x\t\tgs : %04x\n", regs[11], regs[12]);
-	printk("cr0: %08x\tcr3: %08x\n", regs[14], regs[15]);
-	printk("flags : %08x\n", regs[16]);
+	printk("cr0: %08x\tcr2: %08x\n", regs[14], regs[15]);
+	printk("cr3: %08x\t", regs[16]);
+	printk("flags : %08x\n", regs[17]);
 	printk("ret address: %08x\n", get_retaddr());
 }

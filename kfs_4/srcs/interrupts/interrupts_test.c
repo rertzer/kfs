@@ -5,10 +5,14 @@
 
 void interrupts_test() {
 	// zero_divide_test();
-	// debug_exception_test();
+	debug_exception_test();
 	// nmi_test();
 	// breakpoint_test();
-	overflow_test(0xFFFFFFFF);
+	// overflow_test();
+	// bound_test();
+	// invalid_opcode_test();
+	// coprocessor_not_available_test();
+	// double_fault_test();
 }
 
 void zero_divide_test() {
@@ -36,28 +40,44 @@ void breakpoint_test() {
 	asm volatile("int3");
 }
 
-void overflow_test(uint32_t over) {
+void overflow_test() {
 	printf("overflow test INTO without overflow\n");
 	press_any();
-	volatile uint32_t a = 0xFFFFFFF0;
-	a += over;
+	volatile int32_t a = 0x7FFFFFFE;
+	a += 1;
 	asm volatile("into");
+	printf("0x7FFFFFFE + 1 = %d\n", a);
 	printf("overflow test INTO with overflow\n");
 	press_any();
-	a -= 2;
-	uint32_t		  flags = 0;
-	volatile uint32_t b = 0;
-	asm volatile(
-		" \
-	mov $0xFFFFFFFF, %%eax; \
-	add %2, %%eax;\
-	into; \
-	mov %%eax, %0; \
-	pushf;\
-	pop %%ebx;\
-	mov %%ebx, %1;"
-		: "=a"(b), "=b"(flags)
-		: "r"(over)
-		: "memory");
-	printf("a= %u b = %u flags: %x\n", a, b, flags);
+	a += 1;
+	asm volatile("into");
+	printf("0x7FFFFFFF + 1 = %d\n", a);
+	asm volatile("into");
+}
+
+void bound_test() {
+	printf("test bound instruction\n");
+	press_any();
+	asm_bound_test();
+	printf("inside bound\n");
+}
+
+void invalid_opcode_test() {
+	printf("test invalid opcode\n");
+	press_any();
+	asm volatile(".byte 0x0F, 0xFF");  // Invalid opcode
+}
+
+// The processor executed a WAIT/FWAIT instruction while the MP and TS flags of register CR0 were set
+void coprocessor_not_available_test() {
+	printf("coprocessor_not_available_test\n");
+	press_any();
+	asm_coprocessor_not_available_test();
+}
+
+void double_fault_test() {
+	printf("double fault test\n");
+	press_any();
+	// asm volatile("JMP 0xFFFF:0 ");
+	boom();
 }

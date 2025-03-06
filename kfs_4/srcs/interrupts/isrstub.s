@@ -136,9 +136,9 @@ isr_default_stub 1
 isr_default_stub 2
 isr_default_stub 3
 isr_default_stub 4
-isr_no_err_stub 5
-isr_no_err_stub 6
-isr_no_err_stub 7
+isr_default_stub 5
+isr_default_stub 6
+isr_default_stub 7
 isr_err_stub    8
 isr_no_err_stub 9
 isr_err_stub    10
@@ -179,3 +179,37 @@ isr_no_err_stub 44
 isr_no_err_stub 45
 isr_no_err_stub 46
 isr_no_err_stub 47
+
+; ------------------------------------------ test -----------------------------------------------
+MATH_PRESENT equ 1 << 1
+TASK_SWITCHTED equ 1 << 3 
+
+section .data
+align 32
+bound_test_limits:
+	dd 1
+	dd 9
+
+section .text
+global asm_bound_test
+asm_bound_test:
+	pusha
+	mov eax, 55
+	lea esi, [bound_test_limits]
+	mov ebx, esi
+	bound eax, [esi] 
+	popa
+	ret
+
+global asm_coprocessor_not_available_test
+asm_coprocessor_not_available_test:
+	pusha
+	; set control register such that a WAIT will trigger an exception
+	mov eax, cr0
+	or eax, MATH_PRESENT 
+	or eax,	TASK_SWITCHTED 
+	mov cr0, eax	
+	; trigger exception 7
+	wait
+	popa
+	ret

@@ -181,11 +181,13 @@ get_registers:
 	mov [ecx + 52], cs 
 	mov eax, cr0
 	mov [ecx + 56], eax
-	mov eax, cr3
+	mov eax, cr2
 	mov [ecx + 60], eax
+	mov eax, cr3
+	mov [ecx + 64], eax
 	pushf
 	pop eax
-	mov [ecx + 64], eax 
+	mov [ecx + 68], eax 
 
 	mov esp, ebp
 	pop ebp
@@ -195,11 +197,17 @@ get_registers:
 ;section .multiboot.text
 global boom
 boom:
-	push 0x08
-	lea eax, [theend]
-	push eax 
-	retf	
+	pusha
+	;push 0x08
+	;lea eax, [theend]
+	;push eax 
+	;jmp theend
+	jmp 0x08:theend ; general protection fault
+	;jmp 0xFFFFFFFF ; invalid address
+	popa
+	ret	
 
 theend:
-	ret
+	popa
+	retf
 

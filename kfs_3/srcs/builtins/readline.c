@@ -99,6 +99,6 @@ static uint8_t cmd_cmp(cmdline_t* cmdline, const char* builtin) {
 
 static uint8_t cmd_error(cmdline_t* cmdline) {
 	printk("Invalid command: ");
-	term_putchars_ln(cmdline->cmd, cmdline->cmd_len);
+	printf("%s\n", cmdline->cmd);
 	return (1);
 }

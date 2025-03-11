@@ -124,10 +124,17 @@ void switch_previous_term() {
 	switch_term(next);
 }
 
+
+/* single terminal */
+
+void term_write(char c, uint8_t color, size_t x, size_t y) {
+	vga_write(term.buffer, c, color, x, y);
+}
+
 void term_prompt() {
 	term.line_len = 0;
 	term.prompt_row = term.row;
-	vga_write(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK), term.column, term.row);
+	term_write(PROMPT, vga_char_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK), term.column, term.row);
 	term_next();
 	term_next();
 }
@@ -142,7 +149,7 @@ size_t term_cursor_pos() {
 
 void write_tab() {
 	for (size_t i = 0; i < TAB_SIZE; ++i) {
-		vga_write(' ', term.color, term.column, term.row);
+		term_write(' ', term.color, term.column, term.row);
 		term_next();
 	}
 }
@@ -227,7 +234,7 @@ void term_backspace() {
 		size_t current = term_cursor_pos();
 		size_t end = term_prompt_line_end();
 		if (current == end) {
-			vga_write(' ', term.color, term.column, term.row);
+			term_write(' ', term.color, term.column, term.row);
 		} else {
 			for (; current < end; ++current) {
 				term.buffer[current] = term.buffer[current + 1];

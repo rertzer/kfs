@@ -15,13 +15,13 @@ void panic(char* msg) {
 	panic_set_term_background();
 	panic_set_header();
 	panic_init_values();
-	term_putstr("Ooops!\n");
+	printk("Ooops!\n");
 	panic_set_cursor(9, 28);
-	term_putstr("Something bad happened :)\n");
+	printk("Something bad happened :)\n");
 	panic_set_cursor(10, 12);
-	term_putstr(msg);
+	printk(msg);
 	panic_set_left_margin(22);
-	term_putstr("\n\n");
+	printk("\n\n");
 	registers(NULL, 0);
 	panic_set_left_margin(12);
 	panic_set_cursor(23, 12);

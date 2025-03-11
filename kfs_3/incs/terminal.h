@@ -67,11 +67,8 @@ typedef struct terminal_s {
 	uint8_t	  color;
 } terminal_t;
 
-void		vga_write(char c, uint8_t color, size_t x, size_t y);
-uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);
-uint16_t	vga_char(unsigned char uc, uint8_t color);
-vga_color_t vga_fg_color(uint8_t color);
-vga_color_t vga_bg_color(uint8_t color);
+void		term_write(char c, uint8_t color, size_t x, size_t y);
+
 void		all_terms_init();
 void		term_init(size_t term_index);
 void		load_term(terminal_t* dest, terminal_t* src);
@@ -86,7 +83,6 @@ bool		term_left();
 bool		term_right();
 void		term_home();
 void		term_end();
-void		term_first_column();
 void		term_last_column();
 void		term_previous_row();
 void		term_next_row();
@@ -95,9 +91,6 @@ void		term_next();
 void		term_scroll();
 void		term_front_color_next();
 void		term_back_color_next();
-size_t		term_putstr(const char* str);
-size_t		term_putchars(const char* array, size_t len);
-size_t		term_putchars_ln(const char* array, size_t len);
 size_t		term_putchar(char c);
 void		term_prompt();
 size_t		term_prompt_pos();

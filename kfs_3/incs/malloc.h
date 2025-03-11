@@ -135,5 +135,7 @@ t_set_test test(
 
 __attribute__ ((sentinel))
 void test_malloc(t_ft_report report, ...);
+void    set_simple_test(t_test_suite *tests);
+void    set_complex_test(t_test_suite *tests);
 
-#endif //MALLOC_H
+#endif // MALLOC_H

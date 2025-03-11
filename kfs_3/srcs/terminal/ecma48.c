@@ -1,4 +1,4 @@
-// #include "utils.h"
+#include "ecma48.h"
 
 #include "unistd.h"
 
@@ -6,33 +6,7 @@
 #define ESCAPE_SEQUENCE             '\e'
 #define CONTROL_SEQUENCE_INTRODUCER 0x5B
 
-typedef int Type; // TODO: remove it
-typedef int Vec2; // TODO: remove it
-
-typedef void (*t_fp_ecma48_char_handler)(Type*, char);
-typedef void (*t_p_ecma48_empty_handler)(Type*);
-typedef void (*t_fp_ecma48_cursor_handler)(Type*, Vec2);
-typedef void (*t_fp_ecma48_scroll_handler)(Type*, int);
-// typedef void (*t_fp_ecma48_handler)(Type*, int...); OLD
-typedef void (*t_fp_ecma48_handler)(Type*, ...);
-
-typedef struct s_t_ecma48_handlers {
-    t_fp_ecma48_cursor_handler  on_cursor_mouvement;
-    t_fp_ecma48_cursor_handler  on_set_cursor_position;
-
-    t_fp_ecma48_scroll_handler  on_scroll_up;
-    t_fp_ecma48_scroll_handler  on_scroll_down;
-
-    t_fp_ecma48_handler         on_graphic_rendition;
-
-    t_p_ecma48_empty_handler    on_clear_screen;
-    t_p_ecma48_empty_handler    on_next_line;
-    t_fp_ecma48_char_handler    default_char_handler;
-    t_fp_ecma48_char_handler    char_handlers[255];
-} t_ecma48_handlers;
-
-int parse_input_parameter(char* input, int* output[16])
-{
+int parse_input_parameter(char* input, int* output[16]) {
     int index = 0;
     int output_index = 0;
 
@@ -51,8 +25,7 @@ int parse_input_parameter(char* input, int* output[16])
     return index;
 }
 
-int dispatch(t_ecma48_handlers *this, Type* ref, char* input)
-{
+static int dispatch(t_ecma48_handlers *this, void* ref, char* input) {
     int index = 0;
 
     if (input[index] == ESCAPE_SEQUENCE) {
@@ -67,25 +40,25 @@ int dispatch(t_ecma48_handlers *this, Type* ref, char* input)
                 switch (input[index])
                 {
                 case 'A':
-                    this->on_cursor_mouvement(ref, Vec2{0, -params[0]});
+                    this->on_cursor_mouvement(ref, 0, -params[0]);
                     break;
                 case 'B':
-                    this->on_cursor_mouvement(ref, Vec2{0, +params[0]});
+                    this->on_cursor_mouvement(ref, 0, +params[0]);
                     break;
                 case 'C':
-                    this->on_cursor_mouvement(ref, Vec2{+params[0], 0});
+                    this->on_cursor_mouvement(ref, +params[0], 0);
                     break;
                 case 'D':
-                    this->on_cursor_mouvement(ref, Vec2{-params[0], 0});
+                    this->on_cursor_mouvement(ref, -params[0], 0);
                     break;
                 case 'H':
                     if (this->on_set_cursor_position) {
-                        this->on_set_cursor_position(ref, Vec2{params[1], params[0]});
+                        this->on_set_cursor_position(ref, params[1], params[0]);
                     }
                     break;
                 case 'f':
                     if (this->on_cursor_mouvement) {
-                        this->on_cursor_mouvement(ref, Vec2{params[1], params[0]});
+                        this->on_cursor_mouvement(ref, params[1], params[0]);
                     }
                     break;
                 case 'S':
@@ -96,10 +69,10 @@ int dispatch(t_ecma48_handlers *this, Type* ref, char* input)
                     if (this->on_scroll_down) {
                         this->on_scroll_down(ref, params[0]);
                     } break;
-                case 'm':
-                    if (this->on_graphic_rendition) {
-                        this->on_graphic_rendition(ref, params[0]);
-                    } break;
+                // case 'm':
+                //     if (this->on_graphic_rendition) {
+                //         this->on_graphic_rendition(ref, params[0]);
+                //     } break;
                 case 'J':
                     if (params[0] == 2 && this->on_clear_screen) {
                         this->on_clear_screen(ref);
@@ -128,14 +101,14 @@ int dispatch(t_ecma48_handlers *this, Type* ref, char* input)
     return 1;
 }
 
-void hooks(t_ecma48_handlers* this, Type* ref, char* buffer, int size) {
+void hooks(t_ecma48_handlers* this, void* ref, char* buffer, size_t size) {
     int index = 0;
     while (index < size) {
         index += dispatch(this, ref, &buffer[index]);
     }
 }
 
-void hooks_fd(t_ecma48_handlers* this, Type* ref, int fd) {
+void hooks_fd(t_ecma48_handlers* this, void* ref, int fd) {
 	int     read_size = 0;
     char    read_buffer[STD_IO_BUFFER_SIZE] = {};
     
@@ -143,8 +116,4 @@ void hooks_fd(t_ecma48_handlers* this, Type* ref, int fd) {
 	if (read_size > 0) {
         hooks(this, ref, &read_buffer, read_size);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> kfs3

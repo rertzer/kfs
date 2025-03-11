@@ -89,16 +89,17 @@ void handle_default_keycode(keycode_t keycode) {
 	}
 }
 
+#include "unistd.h"
+
 bool handle_default_ascii(uint8_t ascii) {
 	bool getline = false;
-	term_putchar(ascii);
+	char tmp[1] = {ascii};
+	write(42, tmp, 1);
 	if (ascii == '\n') {
 		getline = true;
 	}
 	return (getline);
 }
-
-void term_readline() {}
 
 void press_any() {
 	keypress_t keypress = init_keypress();

@@ -50,4 +50,11 @@ typedef enum vga_blink_e {
 	BLINK = 1,
 } vga_blink_t;
 
+uint8_t		vga_char_color(vga_color_t fg, vga_color_t bg);
+uint16_t	vga_char(unsigned char uc, uint8_t color);
+vga_color_t vga_fg_color(uint8_t color);
+vga_color_t vga_bg_color(uint8_t color);
+
+void		vga_write(uint16_t* vga_buffer, char c, uint8_t color, size_t x, size_t y);
+
 #endif

@@ -1,11 +1,11 @@
-#include "kernel.h"
-#include "terminal.h"
+#include "vga.h"
 
-extern terminal_t term;
+size_t vga_linear_position(size_t x, size_t y) {
+	return (y * VGA_WIDTH + x);
+}
 
-void vga_write(char c, uint8_t color, size_t x, size_t y) {
-	const size_t index = y * VGA_WIDTH + x;
-	term.buffer[index] = vga_char(c, color);
+void vga_write(uint16_t* vga_buffer, char c, uint8_t color, size_t x, size_t y) {
+	vga_buffer[vga_linear_position(x, y)] = vga_char(c, color);
 }
 
 uint16_t vga_char(unsigned char uc, uint8_t color) {

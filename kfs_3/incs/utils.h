@@ -32,5 +32,7 @@ int32_t min(int32_t a, int32_t b);
 int32_t max(int32_t a, int32_t b);
 uint32_t abs(int32_t v);
 
+/* math extended */
+int32_t clamp(int32_t value, int32_t min, int32_t max);
 
 #endif // UTILS_H

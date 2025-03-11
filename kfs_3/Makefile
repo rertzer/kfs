@@ -85,7 +85,6 @@ SOURCES =	boot/boot.s \
 			$(SOURCES_MEMORY) \
 			panic/panic.c \
 			terminal/terminal.c \
-			terminal/putchar.c \
 			terminal/vga.c \
 			$(SOURCES_LIBS)
 

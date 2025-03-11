@@ -32,7 +32,7 @@ uint32_t round_up_power_two(uint32_t n);
 void	 page_testing();
 bool	 is_alnum(uint8_t c);
 uint32_t index_len(uint32_t start, uint32_t end);
-uint32_t min(uint32_t a, uint32_t b);
+// uint32_t min(uint32_t a, uint32_t b);
 
 /* ======================== kernel utils ============================== */
 unsigned char inb(unsigned short port);

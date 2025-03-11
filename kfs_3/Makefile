@@ -10,19 +10,57 @@ DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = debian-kfs1
 DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
+FLAG_DEBUG		= -g -ggdb3
+FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
+
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
 
-PRINTK_SOURCE = printk/printk.c \
-				printk/hexa.c \
-				printk/integer.c \
-				printk/string.c \
-				printk/pointer.c \
-				printk/unsigned.c \
-				printk/utils.c \
-				printk/options.c
+SOURCE_MALLOC = $(addprefix malloc/,	\
+				malloc_bins.c			\
+				malloc_block.c			\
+				malloc_page.c			\
+				malloc_show.c			\
+				malloc_test.c			\
+				malloc.c)
+
+SOURCE_STDLIB = $(addprefix stdlib/,	\
+				$(SOURCE_MALLOC)		\
+				itoa.c					\
+				atoi.c)
+
+
+SOURCE_STDIO = $(addprefix stdio/,		\
+				printf.c				\
+				printk.c)
+
+SOURCE_UNISTD = $(addprefix unistd/,	\
+				write.c)
+
+SOURCES_LIBS = $(addprefix libs/, 		\
+				$(SOURCE_STDLIB)		\
+				$(SOURCE_STDIO)			\
+				$(SOURCE_UNISTD)		\
+				ctype.c					\
+				math.c					\
+				string.c)
+
+SOURCES_MEMORY	= $(addprefix memory/, 		\
+					mbook.c					\
+					paging.c				\
+					page_fault.c			\
+					memory.c				\
+					mmap.c					\
+					mmap_info.c				\
+					mmap_init.c				\
+					mmap_book.c				\
+					mmap_chunk.c			\
+					mmap_free.c				\
+					v_memory.c				\
+					utils.c)					
+
 
 SOURCES =	boot/boot.s \
 			boot/boot_infos.c \
@@ -44,24 +82,12 @@ SOURCES =	boot/boot.s \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
-			memory/mbook.c \
-			memory/paging.c \
-			memory/page_fault.c \
-			memory/memory.c \
-			memory/mmap.c \
-			memory/mmap_info.c \
-			memory/mmap_init.c \
-			memory/mmap_book.c \
-			memory/mmap_chunk.c \
-			memory/mmap_free.c \
-			memory/v_memory.c \
+			$(SOURCES_MEMORY) \
 			panic/panic.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \
-			utils/utils.c
-
-SOURCES += $(PRINTK_SOURCE)
+			$(SOURCES_LIBS)
 
 HEADER_FILES = builtin.h \
 			   interrupts.h \
@@ -96,8 +122,11 @@ $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg
 
 $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 	@echo "Linking files..."
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) -T $(KFS_CONFIG_DIR)/linker.ld -o $(PROJECT).bin -ffreestanding -Og -nostdlib /app/$(OBJS) -lgcc
-
+	@$(DOCKER_EXEC) i386-elf-gcc \
+		$(INCS) \
+		-T $(KFS_CONFIG_DIR)/linker.ld \
+		-o $(PROJECT).bin \
+		-ffreestanding -Og $(FLAG_DEBUG) -nostdlib /app/$(OBJS) -lgcc
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
@@ -110,7 +139,9 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
 	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
-						-std=gnu99 -ffreestanding -Og -Wall -Wextra -Winline\
+						$(FLAG_DEBUG) \
+						$(FLAG_WARNING) \
+						-std=gnu99 -ffreestanding -Og \
 						-c /app/$< \
 						-o /app/$@
 

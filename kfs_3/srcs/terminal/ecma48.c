@@ -143,4 +143,8 @@ void hooks_fd(t_ecma48_handlers* this, Type* ref, int fd) {
 	if (read_size > 0) {
         hooks(this, ref, &read_buffer, read_size);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> kfs3

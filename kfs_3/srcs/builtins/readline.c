@@ -1,6 +1,7 @@
 #include "builtin.h"
 #include "kernel.h"
 #include "terminal.h"
+#include "utils.h"
 
 extern volatile terminal_t term;
 

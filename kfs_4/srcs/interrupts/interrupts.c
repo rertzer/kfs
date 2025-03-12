@@ -8,16 +8,35 @@ __attribute__((aligned(0x10))) static idt_entry_t idt[256];
 
 static idtr_t idtr;
 
+static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
+
 void init_idt() {
 	idtr.base = (uint32_t)&idt[0];
 	idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
 	for (uint8_t vector = 0; vector < IDT_MAX_DESCRIPTORS; ++vector) {
-		idt_set_descriptor(vector, isr_stub_table[vector], IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
+		// only to test segment not present
+		if (vector == 21) {
+			idt_set_descriptor(vector, isr_stub_table[vector], IDT_FLAG_32BIT_INTERRUPT);
+			// } else if (vector == 13) {
+			// 	empty_descriptor(vector, isr_stub_table[vector], IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
+		} else {
+			idt_set_descriptor(vector, isr_stub_table[vector], IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
+		}
 	}
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
 	printk("- Interrupt Descriptor table OK\n");
+}
+
+static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
+	idt_entry_t* descriptor = &idt[vector];
+
+	descriptor->isr_low = 0xdead;  //(uint32_t)isr & 0xFFFF;
+	descriptor->kernel_cs = 0x18;
+	descriptor->reserved = 0;
+	descriptor->attributes = flags;
+	descriptor->isr_high = (uint32_t)isr >> 16;
 }
 
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
@@ -70,7 +89,7 @@ void default_exception_handler(uint32_t int_nb) {
 			panic("Coprocessor Not Available");
 			break;
 		case (8):
-			printf("double fault\n");
+			panic("double fault\n");
 			break;
 		default:
 			panic("unknown exception");

@@ -30,14 +30,14 @@ section .text
 
 %macro isr_default_stub 1
 isr_stub_%+%1:
-	;cli
+	cli
 	pusha
 	mov eax, %+%1
 	push eax
     call default_exception_handler
 	add esp, 4	
 	popa
-	;sti
+	sti
     iret 
 %endmacro
 
@@ -145,7 +145,7 @@ isr_stub_33:
 	popa
 	sti
 	iret
-	
+
 isr_default_stub 0
 isr_default_stub 1
 isr_default_stub 2

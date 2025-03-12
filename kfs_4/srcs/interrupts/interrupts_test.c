@@ -5,7 +5,7 @@
 
 void interrupts_test() {
 	// zero_divide_test();
-	debug_exception_test();
+	// debug_exception_test();
 	// nmi_test();
 	// breakpoint_test();
 	// overflow_test();
@@ -77,8 +77,8 @@ void coprocessor_not_available_test() {
 
 void double_fault_test() {
 	printf("double fault test\n");
+	printf("please uncommment lines 21 and 22 in interrupt.c\n");
 	press_any();
-	asm volatile("int $0x08");
-	// char* oops = (char*)0xdeadbeef;
-	// oops[0] = '!';
+	// asm volatile("int $0x15");	// error 11
+	asm volatile("int $0xd");
 }

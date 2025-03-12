@@ -29,7 +29,7 @@ void kernel_main(void) {
 
 	press_any();
 	// boot_infos(NULL, 0);
-	page_testing();
+	// page_testing();
 	// panic("Kernel test");
 	// mbook_test();
 	// memory_test_vmbook();

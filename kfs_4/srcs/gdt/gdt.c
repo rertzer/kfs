@@ -14,6 +14,7 @@ void init_gdt() {
 	gdt_descriptor_t user_code_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_CODE_ACCESS, GDT_FLAGS};
 	gdt_descriptor_t user_data_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_DATA_ACCESS, GDT_FLAGS};
 	gdt_descriptor_t user_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_STACK_ACCESS, GDT_FLAGS};
+	gdt_descriptor_t bad_stack_desc = (gdt_descriptor_t){0, 0xFFFFF, GDT_BAD_STACK_ACCESS, GDT_FLAGS};
 
 	add_gdt_descriptor(&gdt[0], null_desc);
 	add_gdt_descriptor(&gdt[1], kernel_code_desc);
@@ -22,6 +23,7 @@ void init_gdt() {
 	add_gdt_descriptor(&gdt[4], user_code_desc);
 	add_gdt_descriptor(&gdt[5], user_data_desc);
 	add_gdt_descriptor(&gdt[6], user_stack_desc);
+	add_gdt_descriptor(&gdt[7], bad_stack_desc);
 
 	set_gdt(get_gdt_limit(), GDT_BUFFER);
 	printk("- Global Descriptor Table OK\n");

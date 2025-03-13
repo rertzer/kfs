@@ -16,7 +16,7 @@ void interrupts_test() {
 	// copro_segment_test();
 	// invalid_tss_test();
 	// segment_not_present_test();
-	// stack_exception_test();
+	stack_exception_test();
 	// general_protection_test();
 	//	coprocessor_error_test();
 }
@@ -96,8 +96,6 @@ void copro_segment_test() {
 void invalid_tss_test() {
 	printf("invalid tss test\n");
 	press_any();
-	// asm volatile("CALL 0x18:0xFFFF");
-	// boom();
 	asm volatile("int $0xa");
 }
 
@@ -116,7 +114,12 @@ void general_protection_test() {
 void stack_exception_test() {
 	printf("stack exception test\n");
 	press_any();
-	asm volatile("int $0xc");
+	asm_stack_exception_test();
+	// asm volatile(
+	// 	"\
+	// 	mov $0x18, AL;\
+	// 	;mov SS, AL");
+	// asm volatile("int $0xc");
 }
 
 void coprocessor_error_test() {

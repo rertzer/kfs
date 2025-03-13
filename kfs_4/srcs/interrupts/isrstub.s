@@ -154,52 +154,6 @@ isr_interrupt_stub i
 %assign i i+1
 %endrep
 
-;isr_default_stub 0
-;isr_default_stub 1
-;isr_default_stub 2
-;isr_default_stub 3
-;isr_default_stub 4
-;isr_default_stub 5
-;isr_default_stub 6
-;isr_default_stub 7
-;isr_default_stub 8
-;isr_default_stub 9
-;isr_error_stub  10
-;isr_error_stub  11
-;isr_error_stub  12
-;isr_error_stub  13
-;isr_default_stub 15
-;isr_default_stub 16
-;isr_default_stub 17
-;isr_default_stub 18
-;isr_default_stub 19
-;isr_default_stub 20
-;isr_default_stub 21
-;isr_default_stub 22
-;isr_default_stub 23
-;isr_default_stub 24
-;isr_default_stub 25
-;isr_default_stub 26
-;isr_default_stub 27
-;isr_default_stub 28
-;isr_default_stub 29
-;isr_default_stub 30
-;isr_default_stub 31
-;isr_interrupt_stub 34
-;isr_interrupt_stub 35
-;isr_interrupt_stub 36
-;isr_interrupt_stub 37
-;isr_interrupt_stub 38
-;isr_interrupt_stub 39
-;isr_interrupt_stub 40
-;isr_interrupt_stub 41
-;isr_interrupt_stub 42
-;isr_interrupt_stub 43
-;isr_interrupt_stub 44
-;isr_interrupt_stub 45
-;isr_interrupt_stub 46
-;isr_interrupt_stub 47
-
 %macro int_builtin_stub 1
 int_builtin_%+%1:
 	int %1
@@ -246,3 +200,12 @@ asm_coprocessor_not_available_test:
 	wait
 	popa
 	ret
+
+global asm_stack_exception_test
+asm_stack_exception_test:
+	pusha
+	mov eax, 0x38 ; 0x38 is an absent stack segment just for testing
+	mov ss, eax
+	popa
+	ret
+

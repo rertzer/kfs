@@ -50,5 +50,6 @@ void invalid_tss_test();
 void segment_not_present_test();
 void general_protection_test();
 void stack_exception_test();
+void asm_stack_exception_test();
 void coprocessor_error_test();
 #endif

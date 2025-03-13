@@ -24,9 +24,9 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 void exception_handler();
+void interrupt_handler(uint32_t int_nb);
 void default_exception_handler(uint32_t int_nb);
 void error_exception_handler(uint32_t int_nb, uint32_t error_code);
-void general_protection_handler(uint32_t registers[8], uint32_t error_code);
 void page_fault_handler(uint32_t l_address, uint32_t error_code);
 void keyboard_handler(uint8_t scan);
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
@@ -45,4 +45,10 @@ void invalid_opcode_test();
 void coprocessor_not_available_test();
 void asm_coprocessor_not_available_test();
 void double_fault_test();
+void copro_segment_test();
+void invalid_tss_test();
+void segment_not_present_test();
+void general_protection_test();
+void stack_exception_test();
+void coprocessor_error_test();
 #endif

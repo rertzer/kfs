@@ -8,13 +8,14 @@
 
 #define REGS_NB 18
 
-#define BUILTINS                                                                                     \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt", \
-	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos",
+#define BUILTINS                                                                                                  \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",              \
+	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos", \
+	[INTERRUPT] = "interrupt",
 
 #define BUILTIN_FUNCTIONS                                                                                           \
 	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [REBOOT] = reboot, [HALT] = halt, [REGISTERS] = registers, \
-	[HEXDUMP] = hexdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos
+	[HEXDUMP] = hexdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos, [INTERRUPT] = interrupt
 
 typedef enum {
 	ECHO,
@@ -26,6 +27,7 @@ typedef enum {
 	HEXDUMP,
 	BOOT_INFOS,
 	MEMORY_INFOS,
+	INTERRUPT,
 	BUILTINS_NB
 } builtin_t;
 
@@ -49,6 +51,7 @@ uint8_t boot_infos(char* pointer, size_t len);
 
 void	print_mem_infos(mem_info_t* mem_infos);
 uint8_t memory_infos(char* pointer, size_t len);
+uint8_t interrupt(char* pointer, size_t len);
 
 void	 freboot();
 uint32_t boom();

@@ -1,6 +1,7 @@
 #include "interrupts.h"
 #include "builtin.h"
 #include "panic.h"
+#include "stdlib.h"
 
 extern volatile uint32_t						  hereafter;
 extern uint32_t									  isr_stub_table[];
@@ -8,7 +9,8 @@ __attribute__((aligned(0x10))) static idt_entry_t idt[256];
 
 static idtr_t idtr;
 
-static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
+// static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
+static void error_panic(char* msg, uint32_t error_code);
 
 void init_idt() {
 	idtr.base = (uint32_t)&idt[0];
@@ -28,16 +30,16 @@ void init_idt() {
 	__asm__ volatile("sti");
 	printk("- Interrupt Descriptor table OK\n");
 }
-
-static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
-	idt_entry_t* descriptor = &idt[vector];
-
-	descriptor->isr_low = 0xdead;  //(uint32_t)isr & 0xFFFF;
-	descriptor->kernel_cs = 0x18;
-	descriptor->reserved = 0;
-	descriptor->attributes = flags;
-	descriptor->isr_high = (uint32_t)isr >> 16;
-}
+//
+// static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
+// 	idt_entry_t* descriptor = &idt[vector];
+//
+// 	descriptor->isr_low = 0xdead;  //(uint32_t)isr & 0xFFFF;
+// 	descriptor->kernel_cs = 0x18;
+// 	descriptor->reserved = 0;
+// 	descriptor->attributes = flags;
+// 	descriptor->isr_high = (uint32_t)isr >> 16;
+// }
 
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 	idt_entry_t* descriptor = &idt[vector];
@@ -49,16 +51,8 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 	descriptor->isr_high = (uint32_t)isr >> 16;
 }
 
-void general_protection_handler(uint32_t registers[8], uint32_t error_code) {
-	(void)registers;
-	printk("general protection fault\nerror code: %08x", error_code);
-}
-
-void exception_handler() {
-	uint32_t ex_number = hereafter;
-	hereafter = 666;
-	printk("exception %d !\n", ex_number);
-	registers(NULL, 0);
+void interrupt_handler(uint32_t int_nb) {
+	printk("interrupt request %d !\n", int_nb);
 	__asm__ volatile("cli; hlt");
 }
 
@@ -91,11 +85,38 @@ void default_exception_handler(uint32_t int_nb) {
 		case (8):
 			panic("double fault\n");
 			break;
+		case (9):
+			panic("Coporocessor Segment Overrun");
+			break;
+		case (16):
+			panic("Coprocessor Error");
+			break;
 		default:
 			panic("unknown exception");
 			break;
 	}
 }
 void error_exception_handler(uint32_t int_nb, uint32_t error_code) {
-	printf("interrupt nb: %u, error code: %x\n", int_nb, error_code);
+	switch (int_nb) {
+		case (10):
+			error_panic("Invalid TSS Exception,    error code: 00000000", error_code);
+			break;
+		case (11):
+			error_panic("Segment Not Present,      error code: 00000000", error_code);
+			break;
+		case (12):
+			error_panic("Stack Exception,          error code: 00000000", error_code);
+			break;
+		case (13):
+			error_panic("General Protection Fault, error code: 00000000", error_code);
+			break;
+		default:
+			error_panic("Unknown Exception,        error code: 00000000", error_code);
+			break;
+	}
+}
+
+static void error_panic(char* msg, uint32_t error_code) {
+	itoa(error_code, msg + 38, 16);
+	panic(msg);
 }

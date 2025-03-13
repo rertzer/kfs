@@ -12,7 +12,13 @@ void interrupts_test() {
 	// bound_test();
 	// invalid_opcode_test();
 	// coprocessor_not_available_test();
-	double_fault_test();
+	// double_fault_test();
+	// copro_segment_test();
+	// invalid_tss_test();
+	// segment_not_present_test();
+	// stack_exception_test();
+	// general_protection_test();
+	//	coprocessor_error_test();
 }
 
 void zero_divide_test() {
@@ -70,7 +76,7 @@ void invalid_opcode_test() {
 
 // The processor executed a WAIT/FWAIT instruction while the MP and TS flags of register CR0 were set
 void coprocessor_not_available_test() {
-	printf("coprocessor_not_available_test\n");
+	printf("coprocessor not available test\n");
 	press_any();
 	asm_coprocessor_not_available_test();
 }
@@ -79,6 +85,42 @@ void double_fault_test() {
 	printf("double fault test\n");
 	printf("please uncommment lines 21 and 22 in interrupt.c\n");
 	press_any();
-	// asm volatile("int $0x15");	// error 11
 	asm volatile("int $0xd");
+}
+void copro_segment_test() {
+	printf("coprocessor segement overrun test\n");
+	press_any();
+	asm volatile("int $0x09");
+}
+
+void invalid_tss_test() {
+	printf("invalid tss test\n");
+	press_any();
+	// asm volatile("CALL 0x18:0xFFFF");
+	// boom();
+	asm volatile("int $0xa");
+}
+
+void segment_not_present_test() {
+	printf("segment not present test\n");
+	press_any();
+	asm volatile("int $0x15");
+}
+
+void general_protection_test() {
+	printf("general protection test\n");
+	press_any();
+	boom();
+}
+
+void stack_exception_test() {
+	printf("stack exception test\n");
+	press_any();
+	asm volatile("int $0xc");
+}
+
+void coprocessor_error_test() {
+	printf("coprocessor error test\n");
+	press_any();
+	asm volatile("int $0x10");
 }

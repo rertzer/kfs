@@ -2,6 +2,7 @@
 extern page_fault_handler
 extern general_protection_handler
 extern exception_handler
+extern interrupt_handler
 extern default_exception_handler
 extern error_exception_handler
 extern keyboard_handler
@@ -25,6 +26,13 @@ isr_stub_table:
 	%assign i i+1 
 	%endrep
 
+global int_builtin_table
+int_builtin_table:
+	%assign i 0
+	%rep 48
+	dd int_builtin_%+i
+	%assign i i+1
+	%endrep
 ; ==================== TEXT ===============================
 section .text
 
@@ -56,45 +64,21 @@ isr_stub_%+%1:
     iret 
 %endmacro
 
-%macro isr_err_stub 1
+%macro isr_interrupt_stub 1
 isr_stub_%+%1:
 	cli
 	pusha
 	mov eax, %+%1
-	mov [hereafter], eax ;%+%1
-    call exception_handler
+	push eax
+    call interrupt_handler
+	add esp, 4	
+	popa
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register
-	popa
-	sti
-    iret 
-%endmacro
-
-%macro isr_no_err_stub 1
-isr_stub_%+%1:
-	cli
-	pusha
-	mov	al, 0x20	; set bit 4 of OCW 2
-	out	0x20, al	; write to primary PIC command register
-	mov eax, %+%1
-	mov [hereafter], eax;%+%1
-    call exception_handler
-	; send EOI to primary PIC
-	popa
 	sti
     iret
 %endmacro
 
-
-; general protection fault
-isr_stub_13:
-	cli
-	pusha
-	call general_protection_handler
-	hlt
-	popa
-	sti
-	iret
 
 ; page fault exception 
 isr_stub_14:
@@ -146,54 +130,88 @@ isr_stub_33:
 	sti
 	iret
 
-isr_default_stub 0
-isr_default_stub 1
-isr_default_stub 2
-isr_default_stub 3
-isr_default_stub 4
-isr_default_stub 5
-isr_default_stub 6
-isr_default_stub 7
-isr_default_stub 8
-isr_no_err_stub 9
-isr_err_stub    10
-isr_err_stub    11
-isr_err_stub    12
-;isr_err_stub    13
-; isr_err_stub    14
-isr_no_err_stub 15
-isr_no_err_stub 16
-isr_err_stub    17
-isr_no_err_stub 18
-isr_no_err_stub 19
-isr_no_err_stub 20
-isr_no_err_stub 21
-isr_no_err_stub 22
-isr_no_err_stub 23
-isr_no_err_stub 24
-isr_no_err_stub 25
-isr_no_err_stub 26
-isr_no_err_stub 27
-isr_no_err_stub 28
-isr_no_err_stub 29
-isr_err_stub    30
-isr_no_err_stub 31
-;isr_no_err_stub 32 ;timer
-;isr_no_err_stub 33 ;keyboard
-isr_no_err_stub 34
-isr_no_err_stub 35
-isr_no_err_stub 36
-isr_no_err_stub 37
-isr_no_err_stub 38
-isr_no_err_stub 39
-isr_no_err_stub 40
-isr_no_err_stub 41
-isr_no_err_stub 42
-isr_no_err_stub 43
-isr_no_err_stub 44
-isr_no_err_stub 45
-isr_no_err_stub 46
-isr_no_err_stub 47
+%assign i 0
+%rep 10 
+isr_default_stub i
+%assign i i+1
+%endrep
+
+%assign i 10
+%rep 4 
+isr_error_stub i
+%assign i i+1
+%endrep
+
+%assign i 15
+%rep 17 
+isr_default_stub i
+%assign i i+1
+%endrep
+
+%assign i 34 
+%rep 14 
+isr_interrupt_stub i
+%assign i i+1
+%endrep
+
+;isr_default_stub 0
+;isr_default_stub 1
+;isr_default_stub 2
+;isr_default_stub 3
+;isr_default_stub 4
+;isr_default_stub 5
+;isr_default_stub 6
+;isr_default_stub 7
+;isr_default_stub 8
+;isr_default_stub 9
+;isr_error_stub  10
+;isr_error_stub  11
+;isr_error_stub  12
+;isr_error_stub  13
+;isr_default_stub 15
+;isr_default_stub 16
+;isr_default_stub 17
+;isr_default_stub 18
+;isr_default_stub 19
+;isr_default_stub 20
+;isr_default_stub 21
+;isr_default_stub 22
+;isr_default_stub 23
+;isr_default_stub 24
+;isr_default_stub 25
+;isr_default_stub 26
+;isr_default_stub 27
+;isr_default_stub 28
+;isr_default_stub 29
+;isr_default_stub 30
+;isr_default_stub 31
+;isr_interrupt_stub 34
+;isr_interrupt_stub 35
+;isr_interrupt_stub 36
+;isr_interrupt_stub 37
+;isr_interrupt_stub 38
+;isr_interrupt_stub 39
+;isr_interrupt_stub 40
+;isr_interrupt_stub 41
+;isr_interrupt_stub 42
+;isr_interrupt_stub 43
+;isr_interrupt_stub 44
+;isr_interrupt_stub 45
+;isr_interrupt_stub 46
+;isr_interrupt_stub 47
+
+%macro int_builtin_stub 1
+int_builtin_%+%1:
+	int %1
+    ret
+%endmacro
+
+%assign i 0
+%rep 48
+int_builtin_stub i
+%assign i i+1
+%endrep
+
 
 ; ------------------------------------------ test -----------------------------------------------
 MATH_PRESENT equ 1 << 1

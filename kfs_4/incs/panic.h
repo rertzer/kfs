@@ -10,11 +10,12 @@
 #define PANIC_HEADER_HIGH 7
 #define PANIC_ROW_START PANIC_HEADER_HIGH + 1
 
-#define PANIC_HEADER                                                        \
-	"         )        (       ", "`  )   ( /(   (    )\\   (   ",          \
-		"/(/(   )(_))  )\\ )((_)  )\\  ", "((_)_\\ ((_)_  _(_/( (_) ((_) ", \
-		"| '_ \\)/ _` || ' \\))| |/ _|  ", "| .__/ \\__,_||_||_| |_|\\__|  ", "|_|"
+#define PANIC_HEADER                                                                                 \
+	"         )        (       ", "`  )   ( /(   (    )\\   (   ", "/(/(   )(_))  )\\ )((_)  )\\  ", \
+		"((_)_\\ ((_)_  _(_/( (_) ((_) ", "| '_ \\)/ _` || ' \\))| |/ _|  ", "| .__/ \\__,_||_||_| |_|\\__|  ", "|_|"
 
 void panic(char* msg);
+void dump_stack();
+void read_dump();
 
 #endif

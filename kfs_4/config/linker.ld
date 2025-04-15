@@ -6,7 +6,7 @@ HIGH_SHIFT = 0xC0000000;
 SECTIONS
 	{
 	/* low kernel start address */
-	. = 0x00100000; 
+	. = 0x00110000; 
 	LOW_KERNEL_START = .;
 
 	/* low kernel section */ 

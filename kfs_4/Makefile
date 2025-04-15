@@ -89,6 +89,7 @@ SOURCES =	boot/boot.s \
 			keyboard/scancode.c \
 			$(SOURCES_MEMORY) \
 			panic/panic.c \
+			panic/dump_stack.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \

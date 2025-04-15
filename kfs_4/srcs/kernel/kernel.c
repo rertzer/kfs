@@ -3,7 +3,6 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keycode.h"
-#include "malloc.h"
 #include "memory.h"
 #include "panic.h"
 #include "terminal.h"
@@ -27,6 +26,7 @@ void kernel_main(void) {
 	printk("- memory OK\n");
 	printk("jrOS ready. Enjoy!\n");
 
+	read_dump();
 	press_any();
 	// boot_infos(NULL, 0);
 	// page_testing();

@@ -33,6 +33,7 @@ int_builtin_table:
 	dd int_builtin_%+i
 	%assign i i+1
 	%endrep
+
 ; ==================== TEXT ===============================
 section .text
 

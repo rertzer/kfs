@@ -7,7 +7,9 @@ extern uint32_t			stack_bottom;
 extern volatile uint8_t current_code;
 extern uint32_t			page_dir;
 extern uint32_t			low_kernel_page_table;
+extern uint32_t*		dump_addr;
 
+static void dump(uint32_t* start, uint32_t* end);
 static void print_line(uint32_t* line);
 static bool dump_stop(uint8_t* counter);
 static bool sleeping();
@@ -31,21 +33,31 @@ void tabledump(void) {
 uint8_t hexdump(char* pointer, size_t len) {
 	(void)pointer;
 	(void)len;
+	dump(&stack_top, &stack_bottom);
+	return (0);
+}
+
+uint8_t readdump(char* pointer, size_t len) {
+	(void)pointer;
+	(void)len;
+	uint32_t stack_size = ((uint32_t)&stack_bottom - (uint32_t)&stack_top) / 4;
+	dump(dump_addr, dump_addr + stack_size);
+	return (0);
+}
+
+static void dump(uint32_t* start, uint32_t* end) {
 	current_code = 0;
 	uint8_t counter = 0;
 
-	for (uint32_t* line = &stack_top; line <= &stack_bottom; ++line) {
+	for (uint32_t* line = start; line <= end; ++line) {
 		print_line(line);
 		if (dump_stop(&counter)) {
 			break;
 		}
 	}
-
-	printk("\nStack bottom: 0x%08x\n", &stack_top);
-	printk("Stack top:    0x%08x\n", &stack_bottom);
-	printk("Stack size: %d\n", (uint32_t)&stack_bottom - (uint32_t)&stack_top);
-
-	return (0);
+	printk("\nStack bottom: %08x\n", end);
+	printk("Stack top:    %08x\n", start);
+	printk("Stack size dump: %d\n", (uint32_t)end - (uint32_t)start);
 }
 
 static void print_line(uint32_t* line) {

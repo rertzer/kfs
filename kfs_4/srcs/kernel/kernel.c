@@ -25,8 +25,7 @@ void kernel_main(void) {
 	init_v_memory();
 	printk("- memory OK\n");
 	printk("jrOS ready. Enjoy!\n");
-
-	read_dump();
+	readdump(NULL, 0);
 	press_any();
 	// boot_infos(NULL, 0);
 	// page_testing();
@@ -35,6 +34,11 @@ void kernel_main(void) {
 	// memory_test_vmbook();
 	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 	interrupts_test();
+
+	// STACK DUMP TEST
+	// dump_stack();
+	// press_any();
+	// reboot(NULL, 3);
 
 	term_prompt();
 	while (true) {

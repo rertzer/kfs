@@ -5,8 +5,6 @@
 
 extern terminal_t term;
 
-volatile char* dump = (char*)0xC0100000;
-
 static void		   print_panic(char* msg);
 static void		   panic_set_term_background();
 static void		   panic_set_header();
@@ -26,7 +24,6 @@ static void print_panic(char* msg) {
 	panic_set_header();
 	panic_init_values();
 	term_putstr("Ooops!\n");
-	term_putchar(*dump);
 	panic_set_cursor(9, 28);
 	term_putstr("Something bad happened :(\n");
 	panic_set_cursor(10, 12);

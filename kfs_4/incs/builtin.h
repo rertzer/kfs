@@ -8,14 +8,15 @@
 
 #define REGS_NB 18
 
-#define BUILTINS                                                                                                  \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",              \
-	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [BOOT_INFOS] = "bootinfos", [MEMORY_INFOS] = "memoryinfos", \
-	[INTERRUPT] = "interrupt",
+#define BUILTINS                                                                                           \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",       \
+	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [READDUMP] = "readdump", [BOOT_INFOS] = "bootinfos", \
+	[MEMORY_INFOS] = "memoryinfos", [INTERRUPT] = "interrupt",
 
 #define BUILTIN_FUNCTIONS                                                                                           \
 	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [REBOOT] = reboot, [HALT] = halt, [REGISTERS] = registers, \
-	[HEXDUMP] = hexdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos, [INTERRUPT] = interrupt
+	[HEXDUMP] = hexdump, [READDUMP] = readdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos,           \
+	[INTERRUPT] = interrupt
 
 typedef enum {
 	ECHO,
@@ -25,6 +26,7 @@ typedef enum {
 	HALT,
 	REGISTERS,
 	HEXDUMP,
+	READDUMP,
 	BOOT_INFOS,
 	MEMORY_INFOS,
 	INTERRUPT,
@@ -57,6 +59,7 @@ void	 freboot();
 uint32_t boom();
 uint32_t get_retaddr();
 uint8_t	 hexdump(char* pointer, size_t len);
+uint8_t	 readdump(char* pointer, size_t len);
 void	 tabledump();
 
 #endif

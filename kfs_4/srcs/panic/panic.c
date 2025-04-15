@@ -5,7 +5,7 @@
 
 extern terminal_t term;
 
-volatile char* dump = (char*)0xC0110000;
+volatile char* dump = (char*)0xC0100000;
 
 static void		   print_panic(char* msg);
 static void		   panic_set_term_background();

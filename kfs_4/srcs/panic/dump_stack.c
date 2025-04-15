@@ -1,10 +1,10 @@
 #include "panic.h"
 #include "stdio.h"
 
-volatile char* dump_addr = (char*)0xC0110000;
+volatile char* dump_addr = (char*)0xC0100000;
 
 void dump_stack() {
-	*dump_addr = 'B';
+	*dump_addr = 'X';
 }
 
 void read_dump() {

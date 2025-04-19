@@ -40,5 +40,6 @@ uint32_t abs(int32_t v);
 /* jros */
 arg_t arg_split(char const* const str);
 void  arg_split_clean(arg_t* args);
+bool  arg_split_test();
 
 #endif	// UTILS_H

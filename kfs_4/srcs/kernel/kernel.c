@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "panic.h"
 #include "terminal.h"
+#include "utils.h"
 
 extern volatile uint8_t current_code;
 
@@ -39,6 +40,7 @@ void kernel_main(void) {
 	// dump_stack();
 	// press_any();
 	// reboot(NULL, 3);
+	// arg_split_test();
 
 	term_prompt();
 	while (true) {

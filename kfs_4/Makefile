@@ -46,8 +46,9 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				$(SOURCE_STDLIB)		\
 				$(SOURCE_STDIO)			\
 				$(SOURCE_UNISTD)		\
-				ctype.c					\
 				arg_split.c				\
+				ctype.c					\
+				substr.c	\
 				math.c					\
 				string.c)
 

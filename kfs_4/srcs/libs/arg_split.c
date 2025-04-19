@@ -8,7 +8,6 @@ static size_t arg_count(char const* const src);
 static void	  split_string(arg_t* args, char const* const str);
 static size_t get_next_word_index(char const* const str, size_t i);
 static size_t get_word_end_index(char const* const str, size_t i);
-static char*  sp_substr(char const* const src, size_t start, size_t len);
 static bool	  test_line(char* line, size_t nb);
 
 arg_t arg_split(char const* const src) {
@@ -71,7 +70,7 @@ static void split_string(arg_t* args, char const* const src) {
 			break;
 		}
 		end = get_word_end_index(src, start);
-		args->argv[i] = sp_substr(src, start, end - start);
+		args->argv[i] = jr_substr(src, start, end - start);
 		if (args->argv[i] == NULL) {
 			arg_split_clean(args);
 			break;

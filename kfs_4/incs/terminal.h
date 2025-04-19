@@ -93,6 +93,7 @@ size_t		term_putchar(char const c);
 void		term_prompt();
 size_t		term_prompt_pos();
 size_t		term_cursor_pos();
+size_t		term_line_len();
 void		write_tab();
 void		update_cursor(size_t x, size_t y);
 void		term_next_line();

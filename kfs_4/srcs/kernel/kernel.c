@@ -60,7 +60,7 @@ static void process_keyboard(keypress_t* keypress) {
 		}
 	}
 	if (getline == true) {
-		readline();
+		process_line();
 		term_prompt();
 	}
 }

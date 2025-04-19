@@ -142,6 +142,10 @@ size_t term_cursor_pos() {
 	return (term.row * VGA_WIDTH + term.column);
 }
 
+size_t term_line_len() {
+	return (term.line_len);
+}
+
 void write_tab() {
 	for (size_t i = 0; i < TAB_SIZE; ++i) {
 		vga_write(' ', term.color, term.column, term.row);

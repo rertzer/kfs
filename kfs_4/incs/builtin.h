@@ -42,7 +42,8 @@ typedef struct {
 
 typedef uint8_t (*builtin_fun_t)(char* pointer, size_t len);
 
-bool	readline();
+bool	process_line();
+char*	readline();
 uint8_t echo(char* word, size_t word_len);
 uint8_t qwerty(char* pointer, size_t len);
 uint8_t azerty(char* pointer, size_t len);

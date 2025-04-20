@@ -24,6 +24,8 @@ void	 flush_tlb();
 uint8_t	 kbrd_reboot();
 uint8_t	 qemu_shutdown();
 void	 get_registers(uint32_t* registers);
+void	 kbrd_asm_reboot();
+void	 qemu_asm_shutdown();
 
 /* ======================== utils ==================================== */
 uint32_t round_up_power_two(uint32_t n);

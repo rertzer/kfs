@@ -85,6 +85,7 @@ SOURCES =	boot/boot.s \
 			interrupts/interrupts_test.c \
 			interrupts/isrstub.s \
 			kernel/kernel.c \
+			kernel/kernel_asm_utils.c \
 			kernel/kernel_utils.c \
 			keyboard/keycode.c \
 			keyboard/keypress.c \

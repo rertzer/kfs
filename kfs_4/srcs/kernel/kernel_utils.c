@@ -37,11 +37,10 @@ uint8_t kbrd_reboot() {
 	while (flags & KBRD_UDATA) {
 		flags = inb(KBRD_INTRFC);
 	}
-	outb(KBRD_RESET, KBRD_INTRFC);
-	sleep();
+	kbrd_asm_reboot();
 	return (1);
 }
 uint8_t qemu_shutdown() {
-	outw(0x2000, 0x604);
+	qemu_asm_shutdown();
 	return (1);
 }

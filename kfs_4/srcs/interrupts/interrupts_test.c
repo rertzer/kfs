@@ -116,10 +116,10 @@ void stack_exception_test() {
 	press_any();
 	asm_stack_exception_test();
 	// asm volatile(
-	// 	"\
-	// 	mov $0x18, AL;\
-	// 	;mov SS, AL");
-	// asm volatile("int $0xc");
+	/* 	"\
+		mov $0x18, AL;\
+		;mov SS, AL");
+	 asm volatile("int $0xc"); */
 }
 
 void coprocessor_error_test() {

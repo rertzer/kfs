@@ -90,18 +90,6 @@ static size_t get_word_end_index(char const* const str, size_t i) {
 	return (i);
 }
 
-static char* sp_substr(char const* const src, size_t start, size_t len) {
-	char* dest = kpmalloc(sizeof(char) * len + 1);
-	if (dest == NULL) {
-		return (NULL);
-	}
-	for (size_t i = 0; i < len; ++i) {
-		dest[i] = src[start + i];
-	}
-	dest[len] = '\0';
-	return (dest);
-}
-
 void arg_split_clean(arg_t* args) {
 	if (args->argv == NULL) {
 		args->argc = 0;

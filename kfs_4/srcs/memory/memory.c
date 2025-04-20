@@ -65,7 +65,7 @@ void memory_test() {
 		}
 	}
 	press_any();
-	memory_infos(NULL, 0);
+	memory_infos(0, NULL);
 	press_any();
 
 	for (size_t i = 0; i < block_nb; ++i) {
@@ -76,6 +76,6 @@ void memory_test() {
 	}
 
 	press_any();
-	memory_infos(NULL, 0);
+	memory_infos(0, NULL);
 	press_any();
 }

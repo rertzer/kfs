@@ -42,13 +42,7 @@ static uint8_t line_exec(arg_t* args) {
 
 	for (size_t i = 0; i < BUILTINS_NB; ++i) {
 		if (cmd_cmp(args->argv[0], builtins[i]) == 0) {
-			char*  arg_one = NULL;
-			size_t arg_one_len = 0;
-			if (args->argc > 1) {
-				arg_one = args->argv[1];
-				arg_one_len = strlen(arg_one);
-			}
-			ret = builtins_fun[i](arg_one, arg_one_len);
+			ret = builtins_fun[i](args->argc, args->argv);
 			found = true;
 			break;
 		}

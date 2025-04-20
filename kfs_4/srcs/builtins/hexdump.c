@@ -15,31 +15,16 @@ static bool dump_stop(uint8_t* counter);
 static bool sleeping();
 static bool read_keyboard(keypress_t* kp);
 
-void tabledump(void) {
-	// printk("page dir at   0x%08x\n", &page_dir);
-	// for (uint32_t* i = &page_dir; i < &page_dir + 4; ++i) {
-	// 	printk("%08x \n", *i);
-	// }
-	printk("tabledump\n");
-
-	uint32_t* dir_entry = (uint32_t*)PAGE_DIR_ADDR;
-	for (uint32_t i = 830; i < 840; ++i) {
-		printk("%u: %08x \n", i, *(dir_entry + i));
-	}
-	// printk("setgdt: 0x%08x\n", set_gdt);
-	// printk("init_gdt: 0x%08x\n", init_gdt);
-}
-
-uint8_t hexdump(char* pointer, size_t len) {
-	(void)pointer;
-	(void)len;
+uint8_t hexdump(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 	dump(&stack_top, &stack_bottom);
 	return (0);
 }
 
-uint8_t readdump(char* pointer, size_t len) {
-	(void)pointer;
-	(void)len;
+uint8_t readdump(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 	uint32_t stack_size = ((uint32_t)&stack_bottom - (uint32_t)&stack_top) / 4;
 	dump(dump_addr, dump_addr + stack_size);
 	return (0);
@@ -107,4 +92,19 @@ static bool read_keyboard(keypress_t* kp) {
 		}
 	}
 	return (update);
+}
+
+void tabledump(void) {
+	// printk("page dir at   0x%08x\n", &page_dir);
+	// for (uint32_t* i = &page_dir; i < &page_dir + 4; ++i) {
+	// 	printk("%08x \n", *i);
+	// }
+	printk("tabledump\n");
+
+	uint32_t* dir_entry = (uint32_t*)PAGE_DIR_ADDR;
+	for (uint32_t i = 830; i < 840; ++i) {
+		printk("%u: %08x \n", i, *(dir_entry + i));
+	}
+	// printk("setgdt: 0x%08x\n", set_gdt);
+	// printk("init_gdt: 0x%08x\n", init_gdt);
 }

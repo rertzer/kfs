@@ -33,34 +33,26 @@ typedef enum {
 	BUILTINS_NB
 } builtin_t;
 
-typedef struct {
-	char   cmd[256];
-	size_t cmd_len;
-	char   arg[256];
-	size_t arg_len;
-} cmdline_t;
+typedef uint8_t (*builtin_fun_t)(size_t argc, char** argv);
 
-typedef uint8_t (*builtin_fun_t)(char* pointer, size_t len);
+bool  process_line();
+char* readline();
 
-bool	process_line();
-char*	readline();
-uint8_t echo(char* word, size_t word_len);
-uint8_t qwerty(char* pointer, size_t len);
-uint8_t azerty(char* pointer, size_t len);
-uint8_t reboot(char* pointer, size_t len);
-uint8_t halt(char* pointer, size_t len);
-uint8_t registers(char* pointer, size_t len);
-uint8_t boot_infos(char* pointer, size_t len);
-
-void	print_mem_infos(mem_info_t* mem_infos);
-uint8_t memory_infos(char* pointer, size_t len);
-uint8_t interrupt(char* pointer, size_t len);
+uint8_t echo(size_t argc, char** argv);
+uint8_t qwerty(size_t argc, char** argv);
+uint8_t azerty(size_t argc, char** argv);
+uint8_t reboot(size_t argc, char** argv);
+uint8_t halt(size_t argc, char** argv);
+uint8_t registers(size_t argc, char** argv);
+uint8_t boot_infos(size_t argc, char** argv);
+uint8_t hexdump(size_t argc, char** argv);
+uint8_t readdump(size_t argc, char** argv);
+uint8_t memory_infos(size_t argc, char** argv);
+uint8_t interrupt(size_t argc, char** argv);
 
 void	 freboot();
 uint32_t boom();
 uint32_t get_retaddr();
-uint8_t	 hexdump(char* pointer, size_t len);
-uint8_t	 readdump(char* pointer, size_t len);
 void	 tabledump();
-
+void	 print_mem_infos(mem_info_t* mem_infos);
 #endif

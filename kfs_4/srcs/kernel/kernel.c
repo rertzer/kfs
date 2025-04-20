@@ -26,9 +26,9 @@ void kernel_main(void) {
 	init_v_memory();
 	printk("- memory OK\n");
 	printk("jrOS ready. Enjoy!\n");
-	// readdump(NULL, 0);
+	// readdump(0, NULL);
 	// press_any();
-	// boot_infos(NULL, 0);
+	// boot_infos(0, NULL);
 	// page_testing();
 	// panic("Kernel test");
 	// mbook_test();
@@ -39,7 +39,7 @@ void kernel_main(void) {
 	// STACK DUMP TEST
 	// dump_stack();
 	// press_any();
-	// reboot(NULL, 3);
+	// reboot(0, NULL);
 	// arg_split_test();
 
 	term_prompt();

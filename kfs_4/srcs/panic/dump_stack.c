@@ -1,5 +1,4 @@
 #include "panic.h"
-#include "stdio.h"
 
 volatile uint32_t* dump_addr = (uint32_t*)0xC0100000;
 extern uint32_t	   stack_top;

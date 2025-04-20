@@ -16,7 +16,8 @@ void panic(char* msg) {
 	dump_stack();
 	print_panic(msg);
 	int_allowed();
-	reboot(NULL, 20);
+	char* reboot_args[] = {"reboot", "20"};
+	reboot(2, reboot_args);
 }
 
 static void print_panic(char* msg) {
@@ -30,7 +31,7 @@ static void print_panic(char* msg) {
 	term_putstr(msg);
 	panic_set_left_margin(22);
 	term_putstr("\n\n");
-	registers(NULL, 0);
+	registers(0, NULL);
 	panic_set_left_margin(12);
 	panic_set_cursor(23, 12);
 }

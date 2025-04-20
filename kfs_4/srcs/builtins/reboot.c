@@ -1,16 +1,17 @@
 #include "builtin.h"
 #include "kernel.h"
+#include "utils.h"
 
 static uint8_t counter_clock();
 
-uint8_t reboot(char* pointer, size_t len) {
-	(void)pointer;
-	if (len == 0) {
-		len = 8;
+uint8_t reboot(size_t argc, char** argv) {
+	size_t time = 8;
+	if (argc > 1) {
+		time = ft_atoi(argv[1]);
 	}
 
 	printk("rebooting ");
-	while (counter_clock() <= len) {
+	while (counter_clock() <= time) {
 		sleep();
 	}
 
@@ -28,9 +29,9 @@ static uint8_t counter_clock() {
 	return (counter);
 }
 
-uint8_t halt(char* pointer, size_t len) {
-	(void)pointer;
-	(void)len;
+uint8_t halt(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 	qemu_shutdown();
 	return (1);
 }

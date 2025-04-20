@@ -104,7 +104,7 @@ void mbook_test() {
 	if (addr == NULL) {
 		printk("address is NULL. Lets see what's going on...\n");
 		press_any();
-		memory_infos(NULL, 0);
+		memory_infos(0, NULL);
 		press_any();
 	}
 	addr[666] = 'Z';
@@ -125,7 +125,7 @@ void mbook_test() {
 	if (addr == NULL) {
 		printk("address is NULL. Lets see what's going on...\n");
 		press_any();
-		memory_infos(NULL, 0);
+		memory_infos(0, NULL);
 		press_any();
 	}
 	addr[007] = 'Z';
@@ -148,7 +148,7 @@ void memory_test_vmbook() {
 	size_t block_size = 7;
 	void*  addrs[1000];
 
-	memory_infos(NULL, 0);
+	memory_infos(0, NULL);
 	press_any();
 	for (size_t i = 0; i < block_nb; ++i) {
 		addrs[i] = vmbook(PAGE_SIZE << block_size, USER_LEVEL, READ_WRITE);
@@ -172,7 +172,7 @@ void memory_test_vmbook() {
 		printk("42 == %s\n", ft);
 	}
 	press_any();
-	memory_infos(NULL, 0);
+	memory_infos(0, NULL);
 	press_any();
 
 	for (size_t i = 0; i < block_nb; ++i) {
@@ -186,5 +186,5 @@ void memory_test_vmbook() {
 	// press_any();
 	// printk("42 == %s\n", ft);
 	press_any();
-	memory_infos(NULL, 0);
+	memory_infos(0, NULL);
 }

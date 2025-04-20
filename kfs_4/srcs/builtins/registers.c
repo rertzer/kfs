@@ -4,9 +4,9 @@
 static inline void init_regs(uint32_t* regs);
 static void		   print_registers(uint32_t* regs);
 
-uint8_t registers(char* pointer, size_t len) {
-	(void)pointer;
-	(void)len;
+uint8_t registers(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 	uint32_t regs[REGS_NB];
 
 	init_regs(regs);

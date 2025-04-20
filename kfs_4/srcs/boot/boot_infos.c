@@ -65,9 +65,9 @@ static uint32_t mmmp_print_entry(multiboot_memory_map_t* mmmp_entry) {
 	return (mmmp_entry->len);
 }
 
-uint8_t boot_infos(char* pointer, size_t len) {
-	(void)pointer;
-	(void)len;
+uint8_t boot_infos(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 
 	print_multiboot_magic();
 	multiboot_addr_t mba = get_multiboot_addr();

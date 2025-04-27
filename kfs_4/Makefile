@@ -77,6 +77,7 @@ SOURCES =	boot/boot.s \
 			builtins/qwerty.c \
 			builtins/readline.c \
 			builtins/registers.c \
+			builtins/test_stack_dump.c \
 		  	gdt/gdt.c \
 			gdt/setgdt.s \
 			interrupts/interrupts.c \

@@ -4,7 +4,7 @@
 #include "keycode.h"
 
 void interrupts_test() {
-	zero_divide_test();
+	// zero_divide_test();
 	// debug_exception_test();
 	// nmi_test();
 	// breakpoint_test();
@@ -98,7 +98,9 @@ void invalid_tss_test() {
 	press_any();
 	asm volatile("int $0xa");
 }
-
+/* interrupt 0x15 has been marked as NOT PRESENT; calling it triggers an
+ * segment not present exception. See interrupt.c line 20
+ * */
 void segment_not_present_test() {
 	printf("segment not present test\n");
 	press_any();

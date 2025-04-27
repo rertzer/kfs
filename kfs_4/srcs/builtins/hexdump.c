@@ -46,9 +46,9 @@ static void dump(uint32_t* start, uint32_t* end) {
 }
 
 static void print_line(uint32_t* line) {
-	printk("%08x	", line);
+	printk("%08y	", line);
 	for (uint32_t i = 0; i < 6; ++i) {
-		printk("%08x ", line[i]);
+		printk("%08y ", line[i]);
 	}
 	printk("\n");
 }

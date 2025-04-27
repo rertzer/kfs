@@ -166,6 +166,25 @@ static void _print_unsigned_integer(t_state *state) {
   }
 }
 
+static void _print_hexadecimal(t_state *state) {
+  unsigned int number = va_arg(*state->l_args, unsigned long);
+  char tmp[20] = {0};
+  itoa(number, tmp, 16);
+  int len = strlen(tmp);
+
+  if (state->options.width > len && state->options.flags & ~LEFT) {
+    dump_character(state, (state->options.flags & ZERO) ? '0' : ' ',
+                   state->options.width - len);
+  }
+
+  dump_string(state, tmp, len);
+
+  if (state->options.width > len && state->options.flags & LEFT) {
+    dump_character(state, ' ', state->options.width - len);
+  }
+}
+
+#if 0
 static void _print_lower_hexadecimal_case(t_state *state) {
   unsigned int number = va_arg(*state->l_args, unsigned long);
   char tmp[20] = {0};
@@ -191,6 +210,33 @@ static void _print_lower_hexadecimal_case(t_state *state) {
     dump_character(state, ' ', state->options.width - len);
   }
 }
+#else
+static void _print_lower_hexadecimal_case(t_state *state) {
+  unsigned int number = va_arg(*state->l_args, unsigned long);
+  char tmp[20] = {0};
+  itoa(number, tmp, 16);
+  int len = strlen(tmp);
+
+  if (len && state->options.flags & (PREFIX | ZERO)) {
+    dump_string(state, "0x", 2);
+  }
+
+  if (state->options.width > len && state->options.flags & ~LEFT) {
+    dump_character(state, (state->options.flags & ZERO) ? '0' : ' ',
+                   state->options.width - len);
+  }
+
+  if (len && state->options.flags & (PREFIX & ~ZERO)) {
+    dump_string(state, "0x", 2);
+  }
+
+  dump_string(state, tmp, len);
+
+  if (state->options.width > len && state->options.flags & LEFT) {
+    dump_character(state, ' ', state->options.width - len);
+  }
+}
+#endif
 
 static void _print_upper_hexadecimal_case(t_state *state) {
   int old_pos = state->output_len;
@@ -228,6 +274,8 @@ static t_fp_dump print_map(char c) {
     return (_print_percentage);
   case 'n':
     return (_print_current_len);
+  case 'y': // New feature requested by rertzer
+    return (_print_hexadecimal);
   }
   return (NULL);
 }

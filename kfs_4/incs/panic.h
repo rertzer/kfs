@@ -10,6 +10,7 @@
 #define PANIC_HEADER_HIGH 7
 #define PANIC_ROW_START PANIC_HEADER_HIGH + 1
 
+/*Fire font ASCII art*/
 #define PANIC_HEADER                                                                                 \
 	"         )        (       ", "`  )   ( /(   (    )\\   (   ", "/(/(   )(_))  )\\ )((_)  )\\  ", \
 		"((_)_\\ ((_)_  _(_/( (_) ((_) ", "| '_ \\)/ _` || ' \\))| |/ _|  ", "| .__/ \\__,_||_||_| |_|\\__|  ", "|_|"

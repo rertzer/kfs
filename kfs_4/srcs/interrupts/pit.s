@@ -46,3 +46,10 @@ get_timer_counter:
 	mov eax, dword [timer_counter]
 	sti
 	ret
+
+global get_pit_total_ms
+get_pit_total_ms:
+	cli
+	mov eax, dword [timer_counter]
+	sti
+	ret

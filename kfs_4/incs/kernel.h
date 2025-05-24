@@ -18,6 +18,7 @@
 void	 init_pit();
 void	 reset_timer_counter();
 uint32_t get_timer_counter();
+uint32_t get_pit_total_ms();
 void	 godot();
 void	 invalidate_low_kernel();
 void	 flush_tlb();

@@ -30,7 +30,7 @@ void init_gdt() {
 }
 
 static inline uint32_t get_gdt_limit() {
-	return (sizeof(uint64_t) * GDT_ENTRIES_NB - 1);
+	return (sizeof(gdt_entry_t) * GDT_ENTRIES_NB - 1);
 }
 
 static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {

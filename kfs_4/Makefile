@@ -9,7 +9,7 @@ OPT_FLAG = -g3 -Og
 
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
-DOCKER_CONT_NAME = debian-kfs1
+DOCKER_CONT_NAME = rertzer/crosscompiler_i386
 DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
 FLAG_DEBUG		= -g -ggdb3
@@ -157,7 +157,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 
 
 clean:
-	@echo "Cleaning files..."
+	@echo "Cleaning files..."O
 	@$(RM) -rf $(KFS_BUILD_DIR)
 	@$(RM) -rf $(OBJS_DIR)
 	@$(RM) -rf $(DEPS_DIR)

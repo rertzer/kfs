@@ -1,22 +1,24 @@
-# JyrOS
+# About
 
 JyrOS is an experimental kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
 
 It follows the 42 school Kernel From Scratch series.
 
-## Implemented features
+> Notice that the work is still in progress.
+
+# Features
 
 - boot via Grub
-- a simple Shell (8 different terminals)
-  - command line
-  - keyboard handling (qwerty and azerty)
+- 8 different terminals
+  - 80 x 25 chararcters VGA text mode ([code page 437](https://en.wikipedia.org/wiki/Code_page_437))
+  - P2/2 keyboard handling ([scan code set 1](https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1)) (qwerty and azerty layout)
   - scrolling
   - cursor management
 - Global Descriptor Table
-  - flat segment
+  - flat segmentation model
 - Paging and Virtual Memory
   - page tables (two levels)
-  - separated user and kernel space
+  - separated user and kernel space (higher half kernel)
   - virtual and physical allocation
   - buddy allocator
   - malloc and free
@@ -24,45 +26,41 @@ It follows the 42 school Kernel From Scratch series.
 - interrupts handling (hardware and software)
 - clock handling
 
-## Build from sources
+# Build from sources
 
-### Requirements
+## Requirements
 
 - Docker
-- Qemu
+- QEMU
 - GDB
 
-### Compiling
+## Compiling
 
-- Compiling the kernel requires a cross-compiler for the i386 architecture.
-- Our cross-compiler is build in a Docker.
-- You will need to build it:
-  - `make build_docker`
-- You can then build the kernel:
-  - `make`
-- and start the kernel on Qemu:
+- Compiling the kernel requires a cross-compiler for the i386 architecture. Our cross-compiler is in a docker that will be downloaded automatically, unless you prefer to build it locally with: `make build_docker`.
+- The kernel is build with the command: `make`.
+- To run the kernel on QEMU:
   - using the iso (start with Grub): `make start_iso`
   - or the binary (skip Grub): `make start_bin`
 
-### Debug
+## Debug
 
-- for debugging, you can start a gdb session
-- gdb will run in a separate window
-- a default breakpoint is put on kernel_main()
+- For debugging, you can start a gdb session.
+- GDB will run in a separate window.
+- A default breakpoint is put on kernel_main.
 - `make debug`
 
-## terminal
+# terminal
 
 Up to 8 terminals are available.
 
-### terminal shortcuts
+## terminal shortcuts
 
 - C^ left: previous terminal
 - C^ right: next terminal
 - C^ [: switch foregroud color
 - C^ ]: switch background color
 
-### terminal builtins
+## terminal builtins
 
 - echo
   - `echo <oneword>`
@@ -93,7 +91,7 @@ Up to 8 terminals are available.
 - reboot
   - reboot the kernel
 
-## Interrupts
+# Interrupts
 
 - Int 0: Divide Error
 - Int 1: Debug Exception
@@ -116,7 +114,7 @@ Up to 8 terminals are available.
 - Int 32: Timer
 - Int 33: Keyboard
 
-## Tests
+# Tests
 
 - test builtins:
   - `testStackDump`

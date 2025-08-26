@@ -120,7 +120,8 @@ all: $(PROJECT).iso
 else
 all:
 	@echo "Image '$(DOCKER_CONT_NAME)' does not exist."
-	@echo "Use 'make build_docker' to create it."
+	@echo "Pulling '$(DOCKER_CONT_NAME)' from Docker Hub."
+	@docker pull $(DOCKER_CONT_NAME)
 endif
 
 $(PROJECT).iso: $(PROJECT).bin $(KFS_CONFIG_DIR)/grub.cfg

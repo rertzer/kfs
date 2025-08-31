@@ -1,5 +1,4 @@
-section .multiboot.data
-gdtr_storage DW 0 ; For limit storage
+section .multiboot.data gdtr_storage DW 0 ; For limit storage
      DD 0 ; For base storage
 
 section .multiboot.text

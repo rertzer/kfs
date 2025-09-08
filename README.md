@@ -1,6 +1,6 @@
 # About
 
-JyrOS is an experimental kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
+JyrOS is al kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
 
 It follows the 42 school Kernel From Scratch series.
 
@@ -11,7 +11,7 @@ It follows the 42 school Kernel From Scratch series.
 - boot via Grub
 - 8 different terminals
   - 80 x 25 chararcters VGA text mode ([code page 437](https://en.wikipedia.org/wiki/Code_page_437))
-  - P2/2 keyboard handling ([scan code set 1](https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1)) (qwerty and azerty layout)
+  - PS/2 keyboard handling ([scan code set 1](https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1)) (qwerty and azerty layout)
   - scrolling
   - cursor management
 - Global Descriptor Table

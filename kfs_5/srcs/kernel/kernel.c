@@ -17,14 +17,11 @@ void kernel_main(void) {
 	init_gdt();
 	init_PIC();
 	init_pit();
-	printk("- Programmable Interval Timer OK\n");
 	init_idt();
 	keypress_t keypress = init_keypress();
 	invalidate_low_kernel();
-	printk("- Low Kernel addresses invalidation OK\n");
 	init_memory();
 	init_v_memory();
-	printk("- memory OK\n");
 	printk("jrOS ready. Enjoy!\n");
 	// readdump(0, NULL);
 	// press_any();

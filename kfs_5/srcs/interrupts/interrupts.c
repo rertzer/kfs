@@ -32,7 +32,6 @@ void init_idt() {
 	}
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
-	printk("- Interrupt Descriptor table OK\n");
 }
 //
 // static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {

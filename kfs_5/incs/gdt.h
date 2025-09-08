@@ -69,6 +69,8 @@ typedef union gdt_entry_u {
 	uint8_t	 bytes[8];
 } gdt_entry_t;
 
-void init_gdt();
-void set_gdt(uint32_t limit, uint32_t base);
+void			 init_gdt();
+void			 set_gdt(uint32_t limit, uint32_t base);
+gdt_descriptor_t get_gdt_desc(init_gdt_descriptor_e d);
+void			 print_gdt_descriptor(init_gdt_descriptor_e d);
 #endif

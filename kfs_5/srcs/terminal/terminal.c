@@ -25,8 +25,6 @@ void all_terms_init() {
 	current_term = 0;
 	load_term(&term, &all_terms[current_term]);
 	update_cursor(term.column, term.row);
-	printk("Welcome to jrOS!\n");
-	printk("- terminal init OK\n");
 }
 
 void term_init(size_t const i) {

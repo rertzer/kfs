@@ -7,17 +7,17 @@ gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 tss_t		 tss_placeholder;
 tss_t		 tss_zero;
 
-static void			   gdt_set_to_zero();
-static void			   init_gdt_descriptors();
-static inline uint32_t get_gdt_limit();
-static void			   add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
+static void				gdt_set_to_zero();
+static void				init_gdt_descriptors();
+static inline uint32_t	get_gdt_limit();
+static void				add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc);
+static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry);
 
 void init_gdt() {
 	gdt_set_to_zero();
-	set_tss_default(&tss_zero);
 	init_gdt_descriptors();
 	set_gdt(get_gdt_limit(), GDT_BUFFER);
-	printk("- Global Descriptor Table OK\n");
+	set_tss_default(&tss_zero);
 }
 
 static void init_gdt_descriptors() {
@@ -52,5 +52,30 @@ static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
 	entry->bytes[1] = (uint8_t)((desc.limit >> 8) & 0xFF);
 	entry->bytes[6] = (uint8_t)((desc.limit >> 16) & 0xFF);
 	entry->bytes[5] = (uint8_t)(desc.access);
-	entry->bytes[6] = (uint8_t)(desc.flags << 4);
+	entry->bytes[6] |= (uint8_t)(desc.flags << 4);
+}
+
+gdt_descriptor_t get_gdt_desc(init_gdt_descriptor_e d) {
+	return (get_gdt_desc_by_entry(&gdt[d]));
+}
+
+gdt_descriptor_t get_gdt_desc_by_offset(uint32_t offset) {
+	uint32_t addr = (uint32_t)gdt + offset;
+	return (get_gdt_desc_by_entry((gdt_entry_t*)addr));
+}
+
+static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry) {
+	gdt_descriptor_t desc = {0, 0, 0, 0};
+
+	desc.base = entry->bytes[2] | entry->bytes[3] << 8 | entry->bytes[4] << 16 | entry->bytes[7];
+	desc.limit = entry->bytes[0] | entry->bytes[1] << 8 | (entry->bytes[6] & 0xF) << 16;
+	desc.access = entry->bytes[5];
+	desc.flags = (entry->bytes[6] & 0xF0) >> 4;
+
+	return (desc);
+}
+
+void print_gdt_descriptor(init_gdt_descriptor_e d) {
+	gdt_descriptor_t desc = get_gdt_desc(d);
+	printk("base: %08x\tlimit:%08x\naccess:%08x\tflags:%08x\n", desc.base, desc.limit, desc.access, desc.flags);
 }

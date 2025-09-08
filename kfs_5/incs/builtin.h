@@ -36,6 +36,27 @@ typedef enum {
 	BUILTINS_NB
 } builtin_t;
 
+typedef enum {
+	REG_EAX,
+	REG_EBX,
+	REG_ECX,
+	REG_EDX,
+	REG_EBP,
+	REG_ESP,
+	REG_ESI,
+	REG_EDI,
+	REG_SS,
+	REG_DS,
+	REG_ES,
+	REG_FS,
+	REG_GS,
+	REG_CS,
+	REG_CR0,
+	REG_CR2,
+	REG_CR3,
+	REG_EFLAGS,
+} register_e;
+
 typedef uint8_t (*builtin_fun_t)(size_t argc, char** argv);
 
 bool  process_line();

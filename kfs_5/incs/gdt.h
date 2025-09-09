@@ -1,12 +1,10 @@
 #ifndef GDT_H
-#define GDT_H
-#include <stdbool.h>
+#define GDT_H #include<stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
 #define GDT_BUFFER 0xC0000800
-#define GDT_MAX_ENTRIES 1024
-#define GDT_ENTRIES_NB 8
+#define GDT_MAX_ENTRIES 1042
 
 #define GDT_FLAG_32_BIT_PROTECTED 0x04
 #define GDT_FLAG_4KB_GRANULARITY 0x08

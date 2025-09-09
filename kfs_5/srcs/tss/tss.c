@@ -1,7 +1,9 @@
 #include "tss.h"
 #include "gdt.h"
 #include "kernel.h"
+#include "panic.h"
 #include "printk.h"
+#include "processus.h"
 #include "utils.h"
 
 inline void set_tss_exec(tss_t* tss, void* fun);
@@ -13,10 +15,10 @@ uint32_t get_tss_limit() {
 void run_task_zero() {
 	uint16_t placeholder_offset = get_gdt_init_desc_offset(TSS_PLACEHOLDER);
 	uint16_t zero_offset = get_gdt_init_desc_offset(TSS_ZERO);
-	printk("placeholder %08x\n", placeholder_offset);
 	load_task_register(placeholder_offset);
+	proc_t zero_proc = init_zero_proc();
 	task_switch(zero_offset);
-	printk("task switch failed\n");
+	panic("zero task switch failed");
 }
 
 void set_tss(tss_t* tss, void* fun) {

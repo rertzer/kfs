@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "panic.h"
 #include "terminal.h"
+#include "tss.h"
 #include "utils.h"
 
 extern volatile uint8_t current_code;
@@ -18,11 +19,13 @@ void kernel_main(void) {
 	init_PIC();
 	init_pit();
 	init_idt();
-	keypress_t keypress = init_keypress();
 	invalidate_low_kernel();
 	init_memory();
 	init_v_memory();
-	printk("jrOS ready. Enjoy!\n");
+	run_task_zero();
+}
+
+void kernel_zero() {
 	// readdump(0, NULL);
 	// press_any();
 	// boot_infos(0, NULL);
@@ -33,13 +36,17 @@ void kernel_main(void) {
 	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
 	// interrupts_test();
 
-	// STACK DUMP TEST
 	// dump_stack();
 	// press_any();
 	// reboot(0, NULL);
 	// arg_split_test();
 
+	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
+	int_allowed();
+	keypress_t keypress = init_keypress();
 	term_prompt();
+	uint16_t tr = store_task_register();
+	printk("TR: %08x\n", tr);
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

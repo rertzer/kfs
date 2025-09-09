@@ -14,6 +14,9 @@
 #define KBRD_RESET 0xFE
 #define KBRD_UDATA 0x02
 
+/* ================================================================================ */
+void kernel_zero();
+
 /* ======================== assembly functions ==================================== */
 void	 init_pit();
 void	 reset_timer_counter();

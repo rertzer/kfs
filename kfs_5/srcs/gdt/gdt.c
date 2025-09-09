@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "kernel.h"
 #include "printk.h"
 #include "tss.h"
 #include "utils.h"
@@ -17,7 +18,12 @@ void init_gdt() {
 	gdt_set_to_zero();
 	init_gdt_descriptors();
 	set_gdt(get_gdt_limit(), GDT_BUFFER);
-	set_tss_default(&tss_zero);
+	set_tss(&tss_zero, kernel_zero);
+	// tss_t* test = get_tss_addr_by_gdt_offset(0x48);
+	// print_tss(test);
+	// uint16_t tr_offset = store_task_register();
+	// printk("tss_zero %08x, test %08x, tr %08x\n", &tss_zero, test, tr_offset);
+	// print_gdt_descriptor_by_offset(0x48);
 }
 
 static void init_gdt_descriptors() {
@@ -30,7 +36,7 @@ static void init_gdt_descriptors() {
 	add_gdt_descriptor(&gdt[USER_STACK_DESC], (gdt_descriptor_t){0, 0xFFFFF, GDT_USER_STACK_ACCESS, GDT_FLAGS});
 	add_gdt_descriptor(&gdt[BAD_STACK_DESC], (gdt_descriptor_t){0, 0xFFFFF, GDT_BAD_STACK_ACCESS, GDT_FLAGS});
 	add_gdt_descriptor(&gdt[TSS_PLACEHOLDER],
-					   (gdt_descriptor_t){(uint32_t)&tss_placeholder, get_tss_limit(), TSS_ABSENT_ACCESS, TSS_FLAGS});
+					   (gdt_descriptor_t){(uint32_t)&tss_placeholder, get_tss_limit(), TSS_AVAIL_ACCESS, TSS_FLAGS});
 	add_gdt_descriptor(&gdt[TSS_ZERO],
 					   (gdt_descriptor_t){(uint32_t)&tss_zero, get_tss_limit(), TSS_AVAIL_ACCESS, TSS_FLAGS});
 }
@@ -55,7 +61,11 @@ static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
 	entry->bytes[6] |= (uint8_t)(desc.flags << 4);
 }
 
-gdt_descriptor_t get_gdt_desc(init_gdt_descriptor_e d) {
+uint16_t get_gdt_init_desc_offset(init_gdt_descriptor_e d) {
+	return (d * sizeof(gdt_entry_t));
+}
+
+gdt_descriptor_t get_gdt_init_desc(init_gdt_descriptor_e d) {
 	return (get_gdt_desc_by_entry(&gdt[d]));
 }
 
@@ -67,7 +77,7 @@ gdt_descriptor_t get_gdt_desc_by_offset(uint32_t offset) {
 static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry) {
 	gdt_descriptor_t desc = {0, 0, 0, 0};
 
-	desc.base = entry->bytes[2] | entry->bytes[3] << 8 | entry->bytes[4] << 16 | entry->bytes[7];
+	desc.base = entry->bytes[2] | entry->bytes[3] << 8 | entry->bytes[4] << 16 | entry->bytes[7] << 24;
 	desc.limit = entry->bytes[0] | entry->bytes[1] << 8 | (entry->bytes[6] & 0xF) << 16;
 	desc.access = entry->bytes[5];
 	desc.flags = (entry->bytes[6] & 0xF0) >> 4;
@@ -75,7 +85,16 @@ static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry) {
 	return (desc);
 }
 
-void print_gdt_descriptor(init_gdt_descriptor_e d) {
-	gdt_descriptor_t desc = get_gdt_desc(d);
+void print_gdt_init_descriptor(init_gdt_descriptor_e d) {
+	gdt_descriptor_t desc = get_gdt_init_desc(d);
+	print_gdt_descriptor(desc);
+}
+
+void print_gdt_descriptor_by_offset(uint32_t offset) {
+	gdt_descriptor_t desc = get_gdt_desc_by_offset(offset);
+	print_gdt_descriptor(desc);
+}
+
+void print_gdt_descriptor(gdt_descriptor_t desc) {
 	printk("base: %08x\tlimit:%08x\naccess:%08x\tflags:%08x\n", desc.base, desc.limit, desc.access, desc.flags);
 }

@@ -71,6 +71,10 @@ typedef union gdt_entry_u {
 
 void			 init_gdt();
 void			 set_gdt(uint32_t limit, uint32_t base);
-gdt_descriptor_t get_gdt_desc(init_gdt_descriptor_e d);
-void			 print_gdt_descriptor(init_gdt_descriptor_e d);
+gdt_descriptor_t get_gdt_init_desc(init_gdt_descriptor_e d);
+gdt_descriptor_t get_gdt_desc_by_offset(uint32_t offset);
+uint16_t		 get_gdt_init_desc_offset(init_gdt_descriptor_e);
+void			 print_gdt_init_descriptor(init_gdt_descriptor_e d);
+void			 print_gdt_descriptor_by_offset(uint32_t offset);
+void			 print_gdt_descriptor(gdt_descriptor_t desc);
 #endif

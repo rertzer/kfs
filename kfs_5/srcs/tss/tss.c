@@ -1,26 +1,38 @@
 #include "tss.h"
 #include "gdt.h"
+#include "kernel.h"
 #include "printk.h"
 #include "utils.h"
+
+inline void set_tss_exec(tss_t* tss, void* fun);
 
 uint32_t get_tss_limit() {
 	return (sizeof(tss_t) - 1);
 }
 
-void create_tss_zero() {}
-
-void set_tss_default(tss_t* tss) {
-	ft_memset(tss, '\0', sizeof(tss_t));
-	printk("before: \n");
-	print_tss(tss);
-	// copy_registers_to_tss(tss);
-	init_tss_registers(tss);
-	printk("after: \n");
-	print_tss(tss);
-	print_gdt_descriptor(USER_STACK_DESC);
+void run_task_zero() {
+	uint16_t placeholder_offset = get_gdt_init_desc_offset(TSS_PLACEHOLDER);
+	uint16_t zero_offset = get_gdt_init_desc_offset(TSS_ZERO);
+	printk("placeholder %08x\n", placeholder_offset);
+	load_task_register(placeholder_offset);
+	task_switch(zero_offset);
+	printk("task switch failed\n");
 }
 
-tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {}
+void set_tss(tss_t* tss, void* fun) {
+	ft_memset(tss, '\0', sizeof(tss_t));
+	init_tss_registers(tss);
+	set_tss_exec(tss, fun);
+}
+
+inline void set_tss_exec(tss_t* tss, void* fun) {
+	tss->eip = (uint32_t)fun;
+}
+
+tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {
+	gdt_descriptor_t desc = get_gdt_desc_by_offset(offset);
+	return ((tss_t*)desc.base);
+}
 
 void print_tss(tss_t* tss) {
 	printk(

@@ -3,6 +3,9 @@ section .text
 extern stack_bottom
 global copy_registers_to_tss
 global init_tss_registers
+global load_task_register
+global store_task_register
+global task_switch
 
 init_tss_registers:
 	push ebp
@@ -79,4 +82,40 @@ copy_registers_to_tss:
 	pop ebp
 	ret
 
+load_task_register:
+	push ebp
+	mov ebp, esp
 
+	mov word ax, [ebp+8]
+	ltr ax 
+
+	mov esp, ebp
+	pop ebp
+	ret
+
+store_task_register:
+	push ebp
+	mov ebp, esp
+
+	xor eax, eax
+	str ax
+
+	mov esp, ebp
+	pop ebp
+	ret
+
+
+task_switch:
+	push ebp
+	mov ebp, esp
+	
+	xor eax, eax
+	mov word ax, [ebp+8] ; retrieve gdt offset
+
+	push word ax 
+	push dword 0x00
+	jmp far [esp]
+
+	mov esp, ebp
+	pop ebp
+	ret

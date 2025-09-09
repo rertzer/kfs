@@ -50,9 +50,14 @@ typedef struct {
 
 /* ==================== functions ======================= */
 uint32_t get_tss_limit();
-void	 set_tss_default(tss_t* tss);
+void	 set_tss(tss_t* tss, void* fun);
 void	 copy_registers_to_tss(tss_t* tss);
 void	 init_tss_registers(tss_t* tss);
 void	 print_tss(tss_t* tss);
 tss_t*	 get_tss_addr_by_gdt_offset(uint32_t offset);
+void	 load_task_register(uint32_t offset);
+uint16_t store_task_register();
+void	 run_task_zero();
+void	 task_switch(uint16_t gdt_offset);
+
 #endif

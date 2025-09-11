@@ -13,3 +13,4 @@
 - [ ] refactor malloc
 - [ ] rename/arrange the lib part
 - [ ] clean up assembly code
+- [ ] add bool type to kprintf

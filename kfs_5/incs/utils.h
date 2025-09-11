@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "libkfs.h"
 
 typedef struct {
 	size_t argc;
@@ -11,15 +12,14 @@ typedef struct {
 } arg_t;
 
 /* string.c */
-size_t strlen(const char* str);
+// size_t strlen(const char* str);
 
 size_t ft_strrchr(const char* str, char c);
 
 int	  ft_memcmp(void* s1, void* s2, size_t n);
 void  ft_memset(void* address, char c, uint32_t size);
 void* ft_memcpy(void* dest, const void* src, size_t n);
-int     strncmp(const char *s1, const char *s2, size_t n);
-
+int	  strncmp(const char* s1, const char* s2, size_t n);
 
 /* ctype.c */
 bool is_space(uint8_t c);

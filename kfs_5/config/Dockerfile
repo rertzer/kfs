@@ -4,6 +4,9 @@ ENV PREFIX="/cross"
 ENV TARGET=i386-elf
 ENV PATH="$PATH:$PREFIX/bin"
 
+ARG gnu_mirror="https://mirror.ibcp.fr/pub"
+#ARG gnu_mirror="http://ftp.gnu.org"
+
 RUN apt update && apt install -y --no-install-recommends\
 	ca-certificates\
 	build-essential\
@@ -19,7 +22,7 @@ RUN apt update && apt install -y --no-install-recommends\
 
 WORKDIR /tmp
 
-RUN curl -O http://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.gz && tar -xvzf binutils-2.43.tar.gz
+RUN curl -O $gnu_mirror/gnu/binutils/binutils-2.43.tar.gz && tar -xvzf binutils-2.43.tar.gz
 
 WORKDIR /tmp/build_binutils
 
@@ -29,7 +32,7 @@ RUN ../binutils-2.43/configure --target=$TARGET --prefix="$PREFIX" --with-sysroo
 
 WORKDIR /tmp
 
-RUN curl -O "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.gz" && tar -xvzf gcc-14.2.0.tar.gz
+RUN curl -O $gnu_mirror/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.gz && tar -xvzf gcc-14.2.0.tar.gz
 
 WORKDIR /tmp/build_gcc
 
@@ -42,7 +45,7 @@ RUN ../gcc-14.2.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --
 FROM debian:bookworm-slim
 
 ENV PREFIX="/cross"
-ENV PATH="$PATH:$PREFIX/bin"
+ENV PATH="$PATH:$PREFIX/bin:$PREFIX/i386-elf/bin"
 
 RUN apt update && apt install -y --no-install-recommends\
 	libgmp3-dev\

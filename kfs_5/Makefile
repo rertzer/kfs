@@ -1,6 +1,10 @@
 PROJECT = jros
 PROJECT_DIR = .
 
+LIBKFS_DIR = ../libkfs 
+LIBKFS = $(LIBKFS_DIR)/libkfs.a
+LIBKFS_INCS = -I $(LIBKFS_DIR)/incs
+
 RM = /bin/rm
 KFS_BUILD_DIR = isodir
 KFS_CONFIG_DIR = config
@@ -20,6 +24,8 @@ SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
+
+
 
 SOURCE_MALLOC = $(addprefix malloc/,	\
 				malloc_bins.c			\
@@ -142,23 +148,26 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 		$(INCS) \
 		-T $(KFS_CONFIG_DIR)/linker.ld \
 		-o $(PROJECT).bin \
-		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) -lgcc
+		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) /app/$(LIBKFS)-lgcc
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) $(LIBKFS_INCS)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
-	@$(DOCKER_EXEC) nasm -g -f elf32 $(INCS) $< -o $@
+	@$(DOCKER_EXEC) nasm -g -f elf32 $(INCS) $(LIBKFS_INCS) $< -o $@
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES) $(LIBKFS_INCS)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) $(LIBKFS_INCS)\
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
 						$(FLAG) \
 						-std=gnu99 -ffreestanding -Og \
 						-c /app/$< \
 						-o /app/$@
+
+$(LIBKFS):
+	make -C $(LIBKFS_DIR)
 
 
 clean:
@@ -193,4 +202,4 @@ debug: $(PROJECT).bin
 
 -include $(DEPS)
 
-.PHONY: all clean fclean re build_docker start_iso start_bin
+.PHONY: all build_docker clean debug fclean re start_iso start_bin

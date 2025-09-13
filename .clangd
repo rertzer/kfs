@@ -4,6 +4,7 @@ CompileFlags:
     - "-I../../incs/"
     - "-I../../../incs/"
     - "-I../../../../incs/"
+    - "-I../libkfs/incs"
     - "-I../../libkfs/incs"
-    - "-I../../../libkfs/incs"
+    - "-I../../../libkfs/incs/"
     - "-m32"

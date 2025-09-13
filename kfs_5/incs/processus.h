@@ -9,7 +9,7 @@
 
 #define MAX_PROC_NB 1024
 
-typedef enum { READY, RUN, SLEEP, ZOMBIE } proc_status_e;
+typedef enum { PROC_READY, PROC_RUN, PROC_SLEEP, PROC_ZOMBIE } proc_status_e;
 
 typedef struct signal_lst_s {
 	struct signal_lst_s* prev;

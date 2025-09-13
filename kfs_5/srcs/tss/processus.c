@@ -19,7 +19,7 @@ proc_t init_zero_proc() {
 	proc.childrens = NULL;
 	proc.tss = get_tss_addr_by_gdt_offset(TSS_ZERO);
 	proc.signals = NULL;
-	proc.status = SLEEP;
+	proc.status = PROC_SLEEP;
 	proc.stack = (uint8_t*)proc.tss->esp;
 	proc.heap = NULL;
 

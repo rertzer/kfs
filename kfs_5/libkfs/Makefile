@@ -1,5 +1,5 @@
-PROJECT = libkfs
-PROJECT_DIR = .
+NAME = libkfs
+NAME_DIR = .
 
 RM = /bin/rm
 KFS_BUILD_DIR = isodir
@@ -10,16 +10,17 @@ OPT_FLAG = -g3 -Og
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
 DOCKER_CONT_NAME = rertzer/crosscompiler_i386
-DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
+DOCKER_EXEC = $(DOCKER) run --rm -v $(NAME_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME)
 
 FLAG_DEBUG		= -g -ggdb3
 FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
 FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG)
 
-SRCS_DIR = $(PROJECT_DIR)/srcs
-OBJS_DIR = $(PROJECT_DIR)/objs
-INCS_DIR = $(PROJECT_DIR)/incs
-DEPS_DIR = $(PROJECT_DIR)/deps
+SRCS_DIR = $(NAME_DIR)/srcs
+OBJS_DIR = $(NAME_DIR)/objs
+INCS_DIR = $(NAME_DIR)/incs
+DEPS_DIR = $(NAME_DIR)/deps
+
 
 SOURCES = strlen.c
 
@@ -33,7 +34,7 @@ INCS = -I $(INCS_DIR)
 INCS_FILES = $(addprefix $(INCS_DIR)/, $(HEADER_FILES))
 
 ifneq ($(shell $(DOCKER) image list --format '{{.Repository}}' | grep -w $(DOCKER_CONT_NAME)),)
-all: $(PROJECT).a
+all: $(NAME).a
 else
 all:
 	@echo "Image '$(DOCKER_CONT_NAME)' does not exist."
@@ -41,14 +42,9 @@ all:
 	@docker pull $(DOCKER_CONT_NAME)
 endif
 
-$(PROJECT).a: $(OBJS)# $(KFS_CONFIG_DIR)/linker.ld
+$(NAME).a: $(OBJS)
 	@echo "creating libkfs archive..."
 	@$(DOCKER_EXEC) ar cr $@ $(OBJS)
-#	i386-elf-gcc \
-#		$(INCS) \
-#		-T $(KFS_CONFIG_DIR)/linker.ld \
-#		-o $(PROJECT).bin \
-#		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) -lgcc
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
 	@echo "Compiling $(notdir $<)..."
@@ -74,7 +70,7 @@ clean:
 
 fclean: clean
 	@echo "Cleaning libkfs archive..."
-	@$(RM) -f $(PROJECT).a
+	@$(RM) -f $(NAME).a
 
 re: fclean all
 

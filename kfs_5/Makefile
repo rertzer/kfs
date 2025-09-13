@@ -1,7 +1,7 @@
 PROJECT = jros
 PROJECT_DIR = .
 
-LIBKFS_DIR = ../libkfs
+LIBKFS_DIR = ./libkfs
 LIBKFS = $(LIBKFS_DIR)/libkfs.a
 LIBKFS_INCS = -I $(LIBKFS_DIR)/incs
 
@@ -147,7 +147,7 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 		$(INCS) \
 		-T $(KFS_CONFIG_DIR)/linker.ld \
 		-o $(PROJECT).bin \
-		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) /app/$(LIBKFS)-lgcc
+		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) /app/$(LIBKFS) -lgcc
 
 $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) $(LIBKFS)
 	@echo "Compiling $(notdir $<)..."
@@ -158,7 +158,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES) $(LIBKFS)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
-	$(DOCKER_EXEC) i386-elf-gcc $(INCS) $(LIBKFS_INCS) \
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) $(LIBKFS_INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
 						$(FLAG) \
 						-std=gnu99 -ffreestanding -Og \

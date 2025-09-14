@@ -1,7 +1,7 @@
 CC := cc
-FLAGS := -Wall -Wextra -Werror
+FLAGS := -Wall -Wextra -Werror -DTEST
 CRITERION_FLAGS = -Wl,-rpath=$(SRC_DIR_CRITERION) -L$(SRC_DIR_CRITERION)
- 
+
 NAME := libkfs
 LIB_NAME := $(NAME).a
 NAME_TEST := $(NAME)_tests
@@ -17,16 +17,15 @@ INC_DIR_CRITERION := /home/rertzer/Criterion/include/criterion
 SRC_DIR_CRITERION := /home/rertzer/Criterion/build/src
 LIB_CRITERION := -lcriterion
 
-SOURCES :=  strlen.c
+SOURCES :=  kfs_strlen.c
 
-SOURCES_TEST := strlen_test.c
+SOURCES_TEST := kfs_strlen_test.c
 
 OBJ := $(SOURCES:.c=.o)
 OBJ_TEST := $(SOURCES_TEST:.c=.o)
 
 OBJS := $(addprefix $(OBJ_DIR), $(OBJ))
 OBJS_TEST := $(addprefix $(OBJ_DIR_TEST), $(OBJ_TEST))
-
 
 DEPS := $(OBJS:.o=.d)
 DEPS_TEST := $(OBJS_TEST:.o=.d)
@@ -38,7 +37,6 @@ $(LIB_NAME): $(OBJ_DIR) $(OBJS)
 	ar cr $@  $(OBJS)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	ls $(SRC_DIR)
 	$(CC) $(FLAGS) -ffreestanding -nostdlib  -c -MMD $< -o $@ -I $(INC_DIR)
 
 test: $(NAME_TEST)

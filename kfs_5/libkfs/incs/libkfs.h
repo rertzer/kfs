@@ -6,8 +6,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef JROS
+#define kfs_strlen strlen
+size_t strlen(const char* const str);
+#endif
+
 /* ============================ functions ================================== */
 
-size_t strlen(char *str);
+size_t kfs_strlen(const char* const str);
 
 #endif

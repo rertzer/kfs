@@ -7,4 +7,6 @@ CompileFlags:
     - "-I../libkfs/incs"
     - "-I../../libkfs/incs"
     - "-I../../../libkfs/incs/"
+    - "-I/home/rertzer/Criterion/include/criterion/"
+    - "-I../include_test/"
     - "-m32"

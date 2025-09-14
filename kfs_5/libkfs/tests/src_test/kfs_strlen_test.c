@@ -1,6 +1,8 @@
 #include "criterion.h"
-// #include "include_test/test_kfs_strlen.h"
 #include "libkfs.h"
+
+#include "kfs_strlen.h"
+#include "kfs_strrchr.h"
 
 Test(strlen, is_defined) {
 	kfs_strlen("");

@@ -2,11 +2,10 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include "stdlib.h"
+#include "string.h"
 #include "unistd.h"
 #include "utils.h"
-
-#include "jroslib.h"
-#include "stdlib.h"
 
 typedef struct s_data {
 	char*		output_buffer;

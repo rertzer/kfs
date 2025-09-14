@@ -48,6 +48,7 @@ void kernel_zero() {
 	term_prompt();
 	uint16_t tr = store_task_register();
 	printk("TR: %08x\n", tr);
+
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

@@ -22,7 +22,8 @@ INCS_DIR = $(NAME_DIR)/incs
 DEPS_DIR = $(NAME_DIR)/deps
 
 
-SOURCES = kfs_strlen.c
+SOURCES = kfs_strlen.c \
+		  kfs_strrchr.c
 
 SOURCEHEADER_FILES = libkfs.h 
 

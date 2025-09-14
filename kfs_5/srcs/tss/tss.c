@@ -1,7 +1,5 @@
 #include "tss.h"
 #include "gdt.h"
-#include "kernel.h"
-#include "keycode.h"
 #include "panic.h"
 #include "printk.h"
 #include "processus.h"
@@ -17,8 +15,7 @@ void run_task_zero() {
 	uint16_t placeholder_offset = get_gdt_init_desc_offset(TSS_PLACEHOLDER);
 	uint16_t zero_offset = get_gdt_init_desc_offset(TSS_ZERO);
 	load_task_register(placeholder_offset);
-	proc_t zero_proc = init_zero_proc();
-	press_any();
+	// proc_t zero_proc = init_zero_proc();
 	task_switch(zero_offset);
 	panic("zero task switch failed");
 }

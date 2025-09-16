@@ -6,5 +6,6 @@
 
 inline size_t strlen(char const* const str);
 inline char*  strrchr(const char* str, char c);
+inline int	  memcmp(const void* s1, const void* s2, size_t n);
 
 #endif

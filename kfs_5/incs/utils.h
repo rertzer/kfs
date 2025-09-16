@@ -10,7 +10,6 @@ typedef struct {
 	char** argv;
 } arg_t;
 
-int	  ft_memcmp(void* s1, void* s2, size_t n);
 void  ft_memset(void* address, char c, uint32_t size);
 void* ft_memcpy(void* dest, const void* src, size_t n);
 int	  strncmp(const char* s1, const char* s2, size_t n);

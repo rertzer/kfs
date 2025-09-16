@@ -259,8 +259,8 @@ static void print_header_mem_infos(int* column_size) {
 static void print_row_mem_infos(int* column_size, uint32_t index, t_ctx ctx, t_full_historic_memory_report* report) {
 	int diff;
 
-	diff = ft_memcmp(&report->before.full[ctx.user][ctx.memory].report[index],
-					 &report->after.full[ctx.user][ctx.memory].report[index], sizeof(mem_info_t));
+	diff = memcmp(&report->before.full[ctx.user][ctx.memory].report[index],
+				  &report->after.full[ctx.user][ctx.memory].report[index], sizeof(mem_info_t));
 	if (diff == 0)
 		return;
 

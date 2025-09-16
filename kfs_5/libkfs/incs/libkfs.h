@@ -9,10 +9,12 @@
 #ifdef JROS
 #define kfs_strlen strlen
 #define kfs_strrchr strrchr
+#define kfs_memcmp memcmp
 #endif
 
 /* ============================ functions ================================== */
 
+#include "kfs_memcmp.h"
 #include "kfs_strlen.h"
 #include "kfs_strrchr.h"
 #endif

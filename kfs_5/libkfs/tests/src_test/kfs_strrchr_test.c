@@ -1,13 +1,13 @@
 #include "kfs_strrchr.h"
 #include <signal.h>
+#include <stdio.h>
 #include <string.h>
 #include "criterion.h"
 
 Test(kfs_strrchr, a_char_in_null_string, .signal = SIGSEGV) {
 	char* str = NULL;
 	char  c = 'A';
-	char* k = kfs_strrchr(str, c);
-	printf("ref: %p\n", k);
+	kfs_strrchr(str, c);
 }
 
 Test(kfs_strrchr, null_char_in_null_string) {
@@ -15,7 +15,6 @@ Test(kfs_strrchr, null_char_in_null_string) {
 	char  c = '\0';
 	char* k = kfs_strrchr(str, c);
 	char* l = strrchr(str, c);
-	printf("kfs: %p, ref: %p\n", k, l);
 	cr_expect(k == l);
 }
 
@@ -24,7 +23,6 @@ Test(kfs_strrchr, a_char_in_empty_string) {
 	char  c = 'a';
 	char* k = kfs_strrchr(str, c);
 	char* l = strrchr(str, c);
-	printf("kfs: %p, ref: %p\n", k, l);
 	cr_expect(k == l);
 }
 
@@ -33,7 +31,6 @@ Test(kfs_strrchr, a_char_not_in_string) {
 	char  c = 'a';
 	char* k = kfs_strrchr(str, c);
 	char* l = strrchr(str, c);
-	printf("kfs: %p, ref: %p\n", k, l);
 	cr_expect(k == l);
 }
 
@@ -43,7 +40,6 @@ Test(kfs_strrchr, a_char_in_string) {
 	for (size_t i = 0; i < sizeof(strs) / sizeof(*strs); ++i) {
 		char* k = kfs_strrchr(strs[i], c);
 		char* l = strrchr(strs[i], c);
-		printf("kfs: %p, ref: %p\n", k, l);
 		cr_expect(k == l);
 	}
 }
@@ -54,7 +50,6 @@ Test(kfs_strrchr, null_char_in_string) {
 	for (size_t i = 0; i < sizeof(strs) / sizeof(*strs); ++i) {
 		char* k = kfs_strrchr(strs[i], c);
 		char* l = strrchr(strs[i], c);
-		printf("kfs: %p, ref: %p\n", k, l);
 		cr_expect(k == l);
 	}
 }

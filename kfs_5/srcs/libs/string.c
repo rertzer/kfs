@@ -1,15 +1,5 @@
 #include "utils.h"
 
-int ft_memcmp(void* s1, void* s2, size_t n) {
-	uint8_t* a = s1;
-	uint8_t* b = s2;
-	int		 diff = 0;
-	for (size_t i = 0; diff == 0 && i < n; i++) {
-		diff = a[i] - b[i];
-	}
-	return (diff);
-}
-
 void ft_memset(void* address, char c, uint32_t size) {
 	uint8_t* ptr = address;
 	for (uint32_t i = 0; i < size; ++i) {

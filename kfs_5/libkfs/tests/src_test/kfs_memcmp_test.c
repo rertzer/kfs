@@ -2,7 +2,6 @@
 #include <limits.h>
 #include <signal.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 #include "criterion.h"
 
@@ -125,7 +124,6 @@ Test(kfs_memcmp, different_strings_nbeforediff) {
 		int k = kfs_memcmp(s1[i], s2[i], n[i]);
 		int m = memcmp(s1[i], s2[i], n[i]);
 
-		printf("memcmp B %lu: kfs: %d, ref: %d\n", i, k, m);
 		cr_assert(k == m);
 	}
 }
@@ -133,13 +131,12 @@ Test(kfs_memcmp, different_strings_nbeforediff) {
 Test(kfs_memcmp, different_strings_nafterediff) {
 	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
 	char*  s2[] = {"fedcba", "afghij", "abged", "abcdeg", "abcdefgh", "abcdef", "abcd"};
-	size_t n[] = {2, 3, 3, 6, 7, 4};
+	size_t n[] = {2, 3, 4, 6, 7, 4};
 
 	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
 		int k = kfs_memcmp(s1[i], s2[i], n[i]);
 		int m = memcmp(s1[i], s2[i], n[i]);
 
-		printf("memcmp B %lu: kfs: %d, ref: %d\n", i, k, m);
 		cr_assert(k == m);
 	}
 }

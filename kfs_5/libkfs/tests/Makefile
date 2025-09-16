@@ -19,11 +19,13 @@ LIB_CRITERION := -lcriterion
 
 SOURCES :=  kfs_strlen.c \
 			kfs_strrchr.c \
-			kfs_memcmp.c
+			kfs_memcmp.c \
+			kfs_memset.c
 
 SOURCES_TEST := kfs_strlen_test.c \
 				kfs_strrchr_test.c \
-				kfs_memcmp_test.c
+				kfs_memcmp_test.c \
+				kfs_memset_test.c
 
 OBJ := $(SOURCES:.c=.o)
 OBJ_TEST := $(SOURCES_TEST:.c=.o)

@@ -24,7 +24,8 @@ DEPS_DIR = $(NAME_DIR)/deps
 
 SOURCES = kfs_strlen.c \
 		  kfs_strrchr.c \
-		  kfs_memcmp.c
+		  kfs_memcmp.c \
+		  kfs_memset.c
 
 SOURCEHEADER_FILES = libkfs.h 
 

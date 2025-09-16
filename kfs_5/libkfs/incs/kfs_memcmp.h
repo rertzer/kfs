@@ -1,5 +1,5 @@
-#ifndef KFS_MEMCMP
-#define KFS_MEMCMP
+#ifndef KFS_MEMCMP_H
+#define KFS_MEMCMP_H
 
 #include <stddef.h>
 #include <stdint.h>

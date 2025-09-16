@@ -1,25 +1,5 @@
 #include "utils.h"
 
-// size_t strlen(const char* str) {
-// 	size_t len = 0;
-// 	while (str[len]) {
-// 		++len;
-// 	}
-// 	return (len);
-// }
-
-size_t ft_strrchr(const char* str, char c) {
-	size_t i = 0;
-	size_t res = 0;
-
-	while (str[i]) {
-		if (str[i] == c)
-			res = i;
-		++i;
-	}
-	return (res);
-}
-
 int ft_memcmp(void* s1, void* s2, size_t n) {
 	uint8_t* a = s1;
 	uint8_t* b = s2;

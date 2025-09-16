@@ -65,7 +65,7 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
 
 
 clean:
-	@echo "Cleaning libkfs files..."O
+	@echo "Cleaning libkfs files..."
 	@$(RM) -rf $(OBJS_DIR)
 	@$(RM) -rf $(DEPS_DIR)
 

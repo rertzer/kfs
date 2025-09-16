@@ -6,10 +6,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// #ifdef JROS
-// #define kfs_strlen strlen
-// #define kfs_strrchr strrchr
-// #endif
+#ifdef JROS
+#define kfs_strlen strlen
+#define kfs_strrchr strrchr
+#endif
 
 /* ============================ functions ================================== */
 

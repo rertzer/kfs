@@ -1,11 +1,13 @@
-#include "criterion.h"
-#include "libkfs.h"
-
 #include "kfs_strlen.h"
-#include "kfs_strrchr.h"
+#include <signal.h>
+#include "criterion.h"
 
 Test(strlen, is_defined) {
 	kfs_strlen("");
+}
+
+Test(strlen, null_string, .signal = SIGSEGV) {
+	kfs_strlen(NULL);
 }
 
 Test(kfs_strlen, simple_strings) {

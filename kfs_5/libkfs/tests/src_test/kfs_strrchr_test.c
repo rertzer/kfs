@@ -1,6 +1,14 @@
 #include "kfs_strrchr.h"
+#include <signal.h>
 #include <string.h>
 #include "criterion.h"
+
+Test(kfs_strrchr, a_char_in_null_string, .signal = SIGSEGV) {
+	char* str = NULL;
+	char  c = 'A';
+	char* k = kfs_strrchr(str, c);
+	printf("ref: %p\n", k);
+}
 
 Test(kfs_strrchr, null_char_in_null_string) {
 	char* str = "";
@@ -11,7 +19,7 @@ Test(kfs_strrchr, null_char_in_null_string) {
 	cr_expect(k == l);
 }
 
-Test(kfs_strrchr, a_char_in_null_string) {
+Test(kfs_strrchr, a_char_in_empty_string) {
 	char* str = "";
 	char  c = 'a';
 	char* k = kfs_strrchr(str, c);

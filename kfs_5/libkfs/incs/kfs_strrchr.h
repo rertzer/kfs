@@ -2,7 +2,6 @@
 #define KFS_STRRCHR_H
 
 #include <stdint.h>
-#include <stdio.h>
 #include "stddef.h"
 
 inline char* kfs_strrchr(const char* str, char c) {

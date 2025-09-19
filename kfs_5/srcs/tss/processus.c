@@ -17,7 +17,7 @@ proc_t init_zero_proc() {
 	proc.owner = 0;
 	proc.father = NULL;
 	proc.childrens = NULL;
-	proc.tss = get_tss_addr_by_gdt_offset(TSS_ZERO);
+	proc.tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
 	proc.signals = NULL;
 	proc.status = SLEEP;
 	proc.stack = (uint8_t*)proc.tss->esp;

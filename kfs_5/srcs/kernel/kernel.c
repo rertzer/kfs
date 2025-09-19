@@ -22,8 +22,8 @@ void kernel_main(void) {
 	invalidate_low_kernel();
 	init_memory();
 	init_v_memory();
-	// run_task_zero();
-	kernel_zero();
+	run_task_zero();
+	// kernel_zero();
 }
 
 void kernel_zero() {

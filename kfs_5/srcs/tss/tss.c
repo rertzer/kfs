@@ -3,7 +3,7 @@
 #include "panic.h"
 #include "printk.h"
 #include "processus.h"
-#include "utils.h"
+#include "string.h"
 
 inline void set_tss_exec(tss_t* tss, void* fun);
 
@@ -21,7 +21,7 @@ void run_task_zero() {
 }
 
 void set_tss(tss_t* tss, void* fun) {
-	ft_memset(tss, '\0', sizeof(tss_t));
+	memset(tss, '\0', sizeof(tss_t));
 	init_tss_registers(tss);
 	set_tss_exec(tss, fun);
 }

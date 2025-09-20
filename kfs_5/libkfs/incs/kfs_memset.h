@@ -4,8 +4,9 @@
 #include <stddef.h>
 
 inline void* kfs_memset(void* address, char c, size_t size) {
-	(void)c;
-	(void)size;
+	for (size_t i = 0; i < size; ++i) {
+		((char*)address)[i] = c;
+	}
 	return (address);
 }
 

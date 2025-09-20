@@ -1,8 +1,8 @@
 #include "gdt.h"
 #include "kernel.h"
 #include "printk.h"
+#include "string.h"
 #include "tss.h"
-#include "utils.h"
 
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 tss_t		 tss_placeholder;
@@ -42,7 +42,7 @@ static void init_gdt_descriptors() {
 }
 
 static void gdt_set_to_zero() {
-	ft_memset(gdt, '\0', sizeof(gdt_entry_t) * GDT_MAX_ENTRIES);
+	memset(gdt, '\0', sizeof(gdt_entry_t) * GDT_MAX_ENTRIES);
 }
 
 static inline uint32_t get_gdt_limit() {

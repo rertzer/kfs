@@ -44,7 +44,7 @@ static enum e_flags flags_map(char c) {
 typedef void (*t_fp_dump)(t_state*);
 
 static void dump_character(t_state* state, char character, size_t n) {
-	ft_memset(&state->output_buffer[state->output_len], character, n);
+	memset(&state->output_buffer[state->output_len], character, n);
 	state->output_len += n;
 }
 

@@ -1,12 +1,5 @@
 #include "utils.h"
 
-void ft_memset(void* address, char c, uint32_t size) {
-	uint8_t* ptr = address;
-	for (uint32_t i = 0; i < size; ++i) {
-		ptr[i] = c;
-	}
-}
-
 void* ft_memcpy(void* dest, const void* src, size_t n) {
 	uint8_t* d = dest;
 	uint8_t* s = (uint8_t*)src;

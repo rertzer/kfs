@@ -2,14 +2,14 @@
 #include "gdt.h"
 #include "malloc.h"
 #include "panic.h"
-#include "utils.h"
+#include "string.h"
 
 uint16_t pid_tss_table[MAX_PROC_NB];
 proc_t*	 proc_table[MAX_PROC_NB];
 
 void init_porcessus() {
-	ft_memset(&pid_tss_table, '\0', sizeof(pid_tss_table));
-	ft_memset(&proc_table, '\0', sizeof(proc_table));
+	memset(&pid_tss_table, '\0', sizeof(pid_tss_table));
+	memset(&proc_table, '\0', sizeof(proc_table));
 }
 
 proc_t init_zero_proc() {

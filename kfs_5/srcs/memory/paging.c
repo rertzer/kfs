@@ -3,8 +3,7 @@
 #include "keycode.h"
 #include "memory.h"
 #include "panic.h"
-
-#include "utils.h"	//for getting ft_memset
+#include "string.h"
 
 extern uint32_t const page_dir;
 
@@ -46,7 +45,7 @@ void create_page_table(uint32_t const offset) {
 
 static void clear_page_table(uint32_t const offset) {
 	uint8_t* const memset_address = (uint8_t*)PAGE_DIR_BASE + (offset << PAGE_TABLE_SHIFT);
-	ft_memset(memset_address, 0, PAGE_SIZE);
+	memset(memset_address, 0, PAGE_SIZE);
 }
 
 static void add_page_to_dir_page(uint32_t const	 page_offset,

@@ -2,7 +2,7 @@
 #include "keycode.h"
 #include "memory.h"
 #include "string.h"
-#include "utils.h"	//for getting ft_memset
+#include "utils.h"
 
 /* User and Memory kind */
 
@@ -173,7 +173,7 @@ static void call_get_memory_info(t_ctx ctx, void* data) {
 }
 
 static mem_info_t memory_report_total(t_memory_report* report) {
-	ft_memset(&report->total, 0, sizeof(mem_info_t));
+	memset(&report->total, 0, sizeof(mem_info_t));
 	for (uint32_t i = 0; i <= MMAP_MAX_SHIFT; ++i) {
 		report->total.used += report->report[i].used;
 		report->total.free += report->report[i].free;

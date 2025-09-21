@@ -12,3 +12,11 @@ Test(ctype, isspace_space) {
 		cr_assert(answer == true);
 	}
 }
+
+Test(ctype, isspace_nospace) {
+	int testchars[9] = {0, 2, 8, 14, 42, 120, 127, 212, 255};
+	for (int i = 0; i < 9; ++i) {
+		int answer = kfs_isspace(testchars[i]);
+		cr_assert(answer == false);
+	}
+}

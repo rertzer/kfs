@@ -5,13 +5,14 @@
 
 #ifdef JROS
 #define kfs_isspace isspace
+#define kfs_isdigit isdigit
 #endif
 
 inline int kfs_isspace(int c) {
-	if (c == ' ' || (c >= 9 && c <= 13)) {
-		return (true);
-	}
-	return (false);
+	return (c == ' ' || (c >= 9 && c <= 13));
 }
 
+inline int kfs_isdigit(int c) {
+	return (c >= '0' && c <= '9');
+}
 #endif

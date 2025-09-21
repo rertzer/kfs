@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+
+#include "ctype.h"
 #include "stdlib.h"
 #include "string.h"
 #include "unistd.h"
@@ -296,9 +298,9 @@ static bool parse_format(t_state* old) {
 	}
 
 	// TODO: change it to strtol
-	if (new.format[0] != '0' && is_digit(new.format[0])) {
+	if (new.format[0] != '0' && isdigit(new.format[0])) {
 		new.options.width = ft_atoi(new.format);
-		while (new.format[0] && is_digit(new.format[0]))
+		while (new.format[0] && isdigit(new.format[0]))
 			new.format += 1;
 	}
 	// TODO: check if the char after the '*' is okay before consuming with va_arg

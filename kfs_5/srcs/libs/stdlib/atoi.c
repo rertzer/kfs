@@ -1,5 +1,4 @@
 #include "ctype.h"
-#include "utils.h"
 
 size_t ft_atoi(const char* str) {
 	size_t i = 0;
@@ -13,7 +12,7 @@ size_t ft_atoi(const char* str) {
 		if (str[i - 1] == '-')
 			sign = -1;
 	}
-	while (is_digit(str[i])) {
+	while (isdigit(str[i])) {
 		res = res * 10 + str[i] - '0';
 		++i;
 	}

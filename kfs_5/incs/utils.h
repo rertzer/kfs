@@ -11,7 +11,6 @@ typedef struct {
 } arg_t;
 
 /* ctype.c */
-bool is_digit(uint8_t c);
 bool is_upper(uint8_t c);
 bool is_lower(uint8_t c);
 bool is_alpha(uint8_t c);

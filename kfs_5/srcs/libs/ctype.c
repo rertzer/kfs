@@ -1,8 +1,5 @@
+#include "ctype.h"
 #include "utils.h"
-
-bool is_digit(uint8_t c) {
-	return (c >= '0' && c <= '9');
-}
 
 bool is_upper(uint8_t c) {
 	return (c >= 'A' && c <= 'Z');
@@ -17,7 +14,7 @@ bool is_alpha(uint8_t c) {
 }
 
 bool is_alnum(uint8_t c) {
-	return (is_digit(c) || is_alpha(c));
+	return (isdigit(c) || is_alpha(c));
 }
 
 int to_upper(int c) {

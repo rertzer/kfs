@@ -49,7 +49,7 @@ static void dump_character(t_state* state, char character, size_t n) {
 }
 
 static void dump_string(t_state* state, char* str, size_t len) {
-	ft_memcpy(&state->output_buffer[state->output_len], str, len);
+	memcpy(&state->output_buffer[state->output_len], str, len);
 	state->output_len += len;
 }
 

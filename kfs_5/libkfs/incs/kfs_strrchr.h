@@ -4,6 +4,10 @@
 #include <stdint.h>
 #include "stddef.h"
 
+#ifdef JROS
+#define kfs_strrchr strrchr
+#endif
+
 inline char* kfs_strrchr(const char* str, char c) {
 	size_t i = 0;
 	char*  found = NULL;

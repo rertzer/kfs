@@ -10,9 +10,6 @@ typedef struct {
 	char** argv;
 } arg_t;
 
-void* ft_memcpy(void* dest, const void* src, size_t n);
-int	  strncmp(const char* s1, const char* s2, size_t n);
-
 /* ctype.c */
 bool is_space(uint8_t c);
 bool is_digit(uint8_t c);

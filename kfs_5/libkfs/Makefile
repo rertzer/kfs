@@ -14,17 +14,18 @@ DOCKER_EXEC = $(DOCKER) run --rm -v $(NAME_DIR):$(DOCKER_DIR) $(DOCKER_CONT_NAME
 
 FLAG_DEBUG		= -g -ggdb3
 FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
-FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG) -DJROS
+FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG) -DJROS 
 
 SRCS_DIR = $(NAME_DIR)/srcs
 OBJS_DIR = $(NAME_DIR)/objs
 INCS_DIR = $(NAME_DIR)/incs
 DEPS_DIR = $(NAME_DIR)/deps
 
-
 SOURCES = kfs_strlen.c \
 		  kfs_strrchr.c \
+		  kfs_strncmp.c \
 		  kfs_memcmp.c \
+		  kfs_memcpy.c \
 		  kfs_memset.c
 
 SOURCEHEADER_FILES = libkfs.h 

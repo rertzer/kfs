@@ -3,6 +3,7 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keycode.h"
+#include "malloc.h"
 #include "memory.h"
 #include "panic.h"
 #include "terminal.h"
@@ -27,6 +28,7 @@ void kernel_main(void) {
 }
 
 void kernel_zero() {
+	int_allowed();
 	// readdump(0, NULL);
 	// press_any();
 	// boot_infos(0, NULL);
@@ -34,8 +36,7 @@ void kernel_zero() {
 	// panic("Kernel test");
 	// mbook_test();
 	// memory_test_vmbook();
-	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
-	// interrupts_test();
+	// test_malloc(NULL, set_simple_test, set_complex_test, NULL); interrupts_test();
 
 	// dump_stack();
 	// press_any();
@@ -43,7 +44,6 @@ void kernel_zero() {
 	// arg_split_test();
 
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
-	int_allowed();
 	keypress_t keypress = init_keypress();
 	term_prompt();
 	uint16_t tr = store_task_register();

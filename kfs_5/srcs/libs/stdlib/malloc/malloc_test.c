@@ -2,7 +2,6 @@
 #include "keycode.h"
 #include "memory.h"
 #include "string.h"
-#include "utils.h"
 
 /* User and Memory kind */
 
@@ -163,8 +162,8 @@ static void call_deallocator(t_ctx ctx, void* data) {
 static void call_write_in_memory(t_ctx ctx, void* data) {
 	(void)ctx;
 	t_test* test = (t_test*)data;
-	ft_memcpy(((uint8_t*)test->ref->addrs[test->addr_index]) + test->data.write.at, test->data.write.data,
-			  strlen(test->data.write.data));
+	memcpy(((uint8_t*)test->ref->addrs[test->addr_index]) + test->data.write.at, test->data.write.data,
+		   strlen(test->data.write.data));
 }
 
 static void call_get_memory_info(t_ctx ctx, void* data) {

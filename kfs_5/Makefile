@@ -54,8 +54,7 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				arg_split.c				\
 				ctype.c					\
 				substr.c	\
-				math.c					\
-				string.c)
+				math.c)
 
 SOURCES_MEMORY	= $(addprefix memory/, 		\
 					mbook.c					\
@@ -170,7 +169,7 @@ $(LIBKFS):
 
 
 clean:
-	@echo "Cleaning files..."O
+	@echo "Cleaning files..."
 	@$(RM) -rf $(KFS_BUILD_DIR)
 	@$(RM) -rf $(OBJS_DIR)
 	@$(RM) -rf $(DEPS_DIR)
@@ -179,6 +178,7 @@ fclean: clean
 	@echo "Cleaning build..."
 	@$(RM) -f $(PROJECT).iso
 	@$(RM) -f $(PROJECT).bin
+	make -C $(LIBKFS_DIR) fclean
 
 re: fclean all
 

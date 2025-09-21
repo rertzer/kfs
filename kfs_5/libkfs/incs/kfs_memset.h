@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+#ifdef JROS
+#define kfs_memset memset
+#endif
+
 inline void* kfs_memset(void* address, char c, size_t size) {
 	for (size_t i = 0; i < size; ++i) {
 		((char*)address)[i] = c;

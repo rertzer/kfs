@@ -36,3 +36,35 @@ Test(ctype, isdigit_nodigits) {
 		cr_assert(answer == false);
 	}
 }
+
+Test(ctype, isupper_upper) {
+	int testchars[10] = {'A', 'B', 'E', 'G', 'I', 'L', 'N', 'O', 'W', 'Z'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isupper(testchars[i]);
+		cr_assert(answer == true);
+	}
+}
+
+Test(ctype, isupper_notupper) {
+	int testchars[10] = {'a', '-', '9', 127, 220, 0, '%', '_', 'z', '!'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isupper(testchars[i]);
+		cr_assert(answer == false);
+	}
+}
+
+Test(ctype, islower_lower) {
+	int testchars[10] = {'a', 'b', 'e', 'g', 'i', 'l', 'n', 'o', 'w', 'z'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_islower(testchars[i]);
+		cr_assert(answer == true);
+	}
+}
+
+Test(ctype, islower_notlower) {
+	int testchars[10] = {'A', '-', '9', 127, 220, 0, '%', '_', 'Z', '!'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_islower(testchars[i]);
+		cr_assert(answer == false);
+	}
+}

@@ -11,8 +11,6 @@ typedef struct {
 } arg_t;
 
 /* ctype.c */
-bool is_upper(uint8_t c);
-bool is_lower(uint8_t c);
 bool is_alpha(uint8_t c);
 bool is_alnum(uint8_t c);
 int	 to_upper(int c);

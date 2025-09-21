@@ -5,5 +5,7 @@
 
 inline int isspace(int c);
 inline int isdigit(int c);
+inline int isupper(int c);
+inline int islower(int c);
 
 #endif

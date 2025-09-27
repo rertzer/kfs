@@ -7,7 +7,6 @@
 #include "stdlib.h"
 #include "string.h"
 #include "unistd.h"
-#include "utils.h"
 
 typedef struct s_data {
 	char*		output_buffer;
@@ -240,7 +239,7 @@ static void _print_upper_hexadecimal_case(t_state* state) {
 	int old_pos = state->output_len;
 	_print_lower_hexadecimal_case(state);
 	for (int i = old_pos; i < state->output_len; i++) {
-		state->output_buffer[i] = to_upper(state->output_buffer[i]);
+		state->output_buffer[i] = toupper(state->output_buffer[i]);
 	}
 }
 
@@ -299,7 +298,7 @@ static bool parse_format(t_state* old) {
 
 	// TODO: change it to strtol
 	if (new.format[0] != '0' && isdigit(new.format[0])) {
-		new.options.width = ft_atoi(new.format);
+		new.options.width = atoi(new.format);
 		while (new.format[0] && isdigit(new.format[0]))
 			new.format += 1;
 	}

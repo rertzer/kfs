@@ -2,7 +2,9 @@
 #define STDLIB_H
 
 #include <stddef.h>
+#include "libkfs.h"
 
+int	  atoi(const char* str);
 char* itoa(unsigned long val, char* buffer, unsigned long radix);
 
 #ifndef JROS

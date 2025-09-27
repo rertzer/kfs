@@ -10,15 +10,6 @@ typedef struct {
 	char** argv;
 } arg_t;
 
-/* ctype.c */
-bool is_alpha(uint8_t c);
-bool is_alnum(uint8_t c);
-int	 to_upper(int c);
-int	 to_lower(int c);
-
-/* stdlib.c */
-size_t ft_atoi(const char* str);
-
 /* math.c */
 int32_t	 min(int32_t a, int32_t b);
 int32_t	 max(int32_t a, int32_t b);

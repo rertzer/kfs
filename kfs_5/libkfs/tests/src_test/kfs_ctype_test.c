@@ -68,3 +68,53 @@ Test(ctype, islower_notlower) {
 		cr_assert(answer == false);
 	}
 }
+
+Test(ctype, isalnum_notnumb) {
+	int testchars[10] = {')', '-', '>', 127, 220, 0, '%', '_', '{', '!'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isalnum(testchars[i]);
+		cr_assert(answer == false);
+	}
+}
+
+Test(ctype, isaplpha_notalpha) {
+	int testchars[10] = {'0', '-', '9', 127, 220, 0, '%', '_', ',', '!'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isalpha(testchars[i]);
+		cr_assert(answer == false);
+	}
+}
+
+Test(ctype, isalnum_numb) {
+	int testchars[10] = {'0', '1', '2', '9', 'a', 'A', 'z', 'Z', 'P', 'q'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isalnum(testchars[i]);
+		cr_assert(answer == true);
+	}
+}
+
+Test(ctype, isaplpha_alpha) {
+	int testchars[10] = {'a', 'b', 'f', 'u', 'z', 'A', 'D', 'G', 'M', 'Z'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_isalpha(testchars[i]);
+		cr_assert(answer == true);
+	}
+}
+
+Test(ctype, toupper) {
+	int testchars[10] = {'a', 'b', '5', '_', ' ', 220, 0, 'G', 'M', 'Z'};
+	int expected[10] = {'A', 'B', '5', '_', ' ', 220, 0, 'G', 'M', 'Z'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_toupper(testchars[i]);
+		cr_assert(answer == expected[i]);
+	}
+}
+
+Test(ctype, toulower) {
+	int testchars[10] = {'a', 'b', '5', '_', ' ', 220, 0, 'G', 'M', 'Z'};
+	int expected[10] = {'a', 'b', '5', '_', ' ', 220, 0, 'g', 'm', 'z'};
+	for (int i = 0; i < 10; ++i) {
+		int answer = kfs_tolower(testchars[i]);
+		cr_assert(answer == expected[i]);
+	}
+}

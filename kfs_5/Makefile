@@ -52,7 +52,6 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				$(SOURCE_STDIO)			\
 				$(SOURCE_UNISTD)		\
 				arg_split.c				\
-				ctype.c					\
 				substr.c	\
 				math.c)
 

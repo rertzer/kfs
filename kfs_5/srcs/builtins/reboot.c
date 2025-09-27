@@ -1,13 +1,13 @@
 #include "builtin.h"
 #include "kernel.h"
-#include "utils.h"
+#include "stdlib.h"
 
 static uint8_t counter_clock();
 
 uint8_t reboot(size_t argc, char** argv) {
 	size_t time = 8;
 	if (argc > 1) {
-		time = ft_atoi(argv[1]);
+		time = atoi(argv[1]);
 	}
 
 	printk("rebooting ");

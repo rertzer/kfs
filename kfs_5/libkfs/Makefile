@@ -21,7 +21,8 @@ OBJS_DIR = $(NAME_DIR)/objs
 INCS_DIR = $(NAME_DIR)/incs
 DEPS_DIR = $(NAME_DIR)/deps
 
-SOURCES = kfs_ctype.c \
+SOURCES = kfs_atoi.c \
+		  kfs_ctype.c \
 		  kfs_strlen.c \
 		  kfs_strrchr.c \
 		  kfs_strncmp.c \

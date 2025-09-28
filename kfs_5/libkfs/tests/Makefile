@@ -18,6 +18,7 @@ SRC_DIR_CRITERION := /home/rertzer/Criterion/build/src
 LIB_CRITERION := -lcriterion
 
 SOURCES :=  kfs_atoi.c \
+			kfs_itoa.c \
 			kfs_ctype.c \
 			kfs_strlen.c \
 			kfs_strrchr.c \
@@ -27,6 +28,7 @@ SOURCES :=  kfs_atoi.c \
 			kfs_memset.c
 
 SOURCES_TEST := kfs_atoi_test.c \
+				kfs_itoa_test.c \
 				kfs_ctype_test.c \
 				kfs_strlen_test.c \
 				kfs_strrchr_test.c \

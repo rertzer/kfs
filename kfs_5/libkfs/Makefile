@@ -23,6 +23,7 @@ DEPS_DIR = $(NAME_DIR)/deps
 
 SOURCES = kfs_atoi.c \
 		  kfs_itoa.c \
+		  kfs_int_math.c \
 		  kfs_ctype.c \
 		  kfs_strlen.c \
 		  kfs_strrchr.c \

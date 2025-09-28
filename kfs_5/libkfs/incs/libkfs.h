@@ -8,6 +8,7 @@
 
 #include "kfs_atoi.h"
 #include "kfs_ctype.h"
+#include "kfs_int_math.h"
 #include "kfs_memcmp.h"
 #include "kfs_memcpy.h"
 #include "kfs_memset.h"

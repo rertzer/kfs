@@ -2,8 +2,6 @@
 #include "string.h"
 #include "terminal.h"
 
-#include "utils.h"	//for getting strlen
-
 extern terminal_t term;
 
 size_t term_putstr(char const* const str) {

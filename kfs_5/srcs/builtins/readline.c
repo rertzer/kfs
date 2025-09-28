@@ -1,8 +1,7 @@
+#include "args_split.h"
 #include "builtin.h"
-#include "kernel.h"
 #include "malloc.h"
 #include "terminal.h"
-#include "utils.h"
 
 extern volatile terminal_t term;
 

@@ -3,12 +3,9 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keycode.h"
-#include "malloc.h"
 #include "memory.h"
-#include "panic.h"
 #include "terminal.h"
 #include "tss.h"
-#include "utils.h"
 
 extern volatile uint8_t current_code;
 
@@ -47,7 +44,7 @@ void kernel_zero() {
 	keypress_t keypress = init_keypress();
 	term_prompt();
 	uint16_t tr = store_task_register();
-	printk("TR: %08x\n", tr);
+	printk("TR: %08x %d\n", tr);
 
 	while (true) {
 		sleep();

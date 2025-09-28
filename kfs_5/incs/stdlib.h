@@ -5,7 +5,7 @@
 #include "libkfs.h"
 
 int	  atoi(const char* str);
-char* itoa(unsigned long val, char* buffer, unsigned long radix);
+char* itoa(int val, char* buffer, int radix);
 
 #ifndef JROS
 void* malloc(size_t size);

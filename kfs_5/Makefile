@@ -35,9 +35,7 @@ SOURCE_MALLOC = $(addprefix malloc/,	\
 				malloc.c)
 
 SOURCE_STDLIB = $(addprefix stdlib/,	\
-				$(SOURCE_MALLOC)		\
-				itoa.c					\
-				atoi.c)
+				$(SOURCE_MALLOC))
 
 
 SOURCE_STDIO = $(addprefix stdio/,		\

@@ -1,5 +1,6 @@
 CompileFlags:
   Add: 
+    - "-I../incs_test/"
     - "-I../incs/"
     - "-I../../incs/"
     - "-I../../../incs/"

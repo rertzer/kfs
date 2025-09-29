@@ -1,6 +1,11 @@
 #ifndef LIBKFS_H
 #define LIBKFS_H
 
+#ifdef JROS
+#define malloc kmalloc
+#define free kfree
+#endif
+
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>

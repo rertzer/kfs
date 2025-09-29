@@ -30,7 +30,8 @@ SOURCES = kfs_atoi.c \
 		  kfs_strncmp.c \
 		  kfs_memcmp.c \
 		  kfs_memcpy.c \
-		  kfs_memset.c
+		  kfs_memset.c \
+		  kfs_list_head.c
 
 SOURCEHEADER_FILES = libkfs.h 
 

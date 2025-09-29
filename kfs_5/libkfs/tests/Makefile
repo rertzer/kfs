@@ -26,7 +26,8 @@ SOURCES :=  kfs_atoi.c \
 			kfs_strncmp.c \
 			kfs_memcmp.c \
 			kfs_memcpy.c \
-			kfs_memset.c
+			kfs_memset.c \
+			kfs_list_head.c
 
 SOURCES_TEST := kfs_atoi_test.c \
 				kfs_itoa_test.c \
@@ -37,7 +38,8 @@ SOURCES_TEST := kfs_atoi_test.c \
 				kfs_strncmp_test.c \
 				kfs_memcmp_test.c \
 				kfs_memcpy_test.c \
-				kfs_memset_test.c
+				kfs_memset_test.c \
+				kfs_list_head_test.c 
 
 OBJ := $(SOURCES:.c=.o)
 OBJ_TEST := $(SOURCES_TEST:.c=.o)

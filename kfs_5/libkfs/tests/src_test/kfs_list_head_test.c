@@ -188,7 +188,7 @@ Test(list_head, run_on_struct) {
 	test_t* tt[42];
 	for (size_t i = 0; i < 42; ++i) {
 		tt[i] = malloc(sizeof(test_t));
-		list_add_tail(&tt[i], &lh);
+		list_add_tail(tt[i], &lh);
 	}
 	test_t* current = lh.next;
 	while (current != (test_t*)&lh) {
@@ -196,8 +196,11 @@ Test(list_head, run_on_struct) {
 		current = current->lh.next;
 	}
 
+	current = lh.next;
 	cr_expect(list_size(&lh) == 42);
-
+	for (size_t i = 0; i < 42; ++i) {
+		cr_assert(current->payload2 == 42, "index %zu\n", i);
+	}
 	for (size_t i = 0; i < 42; ++i) {
 		free(tt[i]);
 	}

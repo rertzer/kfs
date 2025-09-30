@@ -1,7 +1,6 @@
 #include "keycode.h"
+#include "string.h"
 #include "terminal.h"
-
-#include "utils.h" //for getting strlen
 
 extern terminal_t term;
 

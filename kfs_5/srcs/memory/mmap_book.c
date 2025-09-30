@@ -1,8 +1,7 @@
+#include "int_math.h"
 #include "kernel.h"
 #include "mmap.h"
 #include "mmap_inline.h"
-
-#include "utils.h" //for getting min
 
 static void			   book_pages(mmap_t* mmap, uint32_t start_page_index, uint32_t end_page_index, uint32_t status);
 static void			   book_page(mmap_t* mmap, uint32_t page_index, uint32_t shift, uint32_t status);

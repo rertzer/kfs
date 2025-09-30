@@ -1,5 +1,6 @@
 # To do
 
+- [ ] upload the new docker
 - [ ] test the gdt desc funtions
 - [x] switch to kfs5
 - [x] get_registers: enum list ~~and right order~~

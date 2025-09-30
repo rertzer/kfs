@@ -1,9 +1,7 @@
 #include "malloc.h"
-#include "builtin.h"
 #include "keycode.h"
 #include "memory.h"
-
-#include "utils.h"	//for getting ft_memset
+#include "string.h"
 
 /* User and Memory kind */
 
@@ -164,8 +162,8 @@ static void call_deallocator(t_ctx ctx, void* data) {
 static void call_write_in_memory(t_ctx ctx, void* data) {
 	(void)ctx;
 	t_test* test = (t_test*)data;
-	ft_memcpy(((uint8_t*)test->ref->addrs[test->addr_index]) + test->data.write.at, test->data.write.data,
-			  strlen(test->data.write.data));
+	memcpy(((uint8_t*)test->ref->addrs[test->addr_index]) + test->data.write.at, test->data.write.data,
+		   strlen(test->data.write.data));
 }
 
 static void call_get_memory_info(t_ctx ctx, void* data) {
@@ -174,7 +172,7 @@ static void call_get_memory_info(t_ctx ctx, void* data) {
 }
 
 static mem_info_t memory_report_total(t_memory_report* report) {
-	ft_memset(&report->total, 0, sizeof(mem_info_t));
+	memset(&report->total, 0, sizeof(mem_info_t));
 	for (uint32_t i = 0; i <= MMAP_MAX_SHIFT; ++i) {
 		report->total.used += report->report[i].used;
 		report->total.free += report->report[i].free;
@@ -260,8 +258,8 @@ static void print_header_mem_infos(int* column_size) {
 static void print_row_mem_infos(int* column_size, uint32_t index, t_ctx ctx, t_full_historic_memory_report* report) {
 	int diff;
 
-	diff = ft_memcmp(&report->before.full[ctx.user][ctx.memory].report[index],
-					 &report->after.full[ctx.user][ctx.memory].report[index], sizeof(mem_info_t));
+	diff = memcmp(&report->before.full[ctx.user][ctx.memory].report[index],
+				  &report->after.full[ctx.user][ctx.memory].report[index], sizeof(mem_info_t));
 	if (diff == 0)
 		return;
 

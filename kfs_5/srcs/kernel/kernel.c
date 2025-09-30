@@ -3,15 +3,16 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keycode.h"
+#include "kfs_list_head.h"
+#include "malloc.h"
 #include "memory.h"
-#include "panic.h"
 #include "terminal.h"
 #include "tss.h"
-#include "utils.h"
 
 extern volatile uint8_t current_code;
 
 static void process_keyboard(keypress_t* keypress);
+static void list_head_test();
 
 void kernel_main(void) {
 	all_terms_init();
@@ -23,9 +24,11 @@ void kernel_main(void) {
 	init_memory();
 	init_v_memory();
 	run_task_zero();
+	// kernel_zero();
 }
 
 void kernel_zero() {
+	int_allowed();
 	// readdump(0, NULL);
 	// press_any();
 	// boot_infos(0, NULL);
@@ -33,8 +36,7 @@ void kernel_zero() {
 	// panic("Kernel test");
 	// mbook_test();
 	// memory_test_vmbook();
-	// test_malloc(NULL, set_simple_test, set_complex_test, NULL);
-	// interrupts_test();
+	// test_malloc(NULL, set_simple_test, set_complex_test, NULL); interrupts_test();
 
 	// dump_stack();
 	// press_any();
@@ -42,11 +44,12 @@ void kernel_zero() {
 	// arg_split_test();
 
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
-	int_allowed();
 	keypress_t keypress = init_keypress();
 	term_prompt();
 	uint16_t tr = store_task_register();
-	printk("TR: %08x\n", tr);
+	printk("TR: %08x %d\n", tr);
+	list_head_test();
+
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);
@@ -66,5 +69,43 @@ static void process_keyboard(keypress_t* keypress) {
 	if (getline == true) {
 		process_line();
 		term_prompt();
+	}
+}
+
+typedef struct {
+	list_head_t lh;
+	int			payload1;
+	int			payload2;
+} test_t;
+
+static void list_head_test() {
+	list_head_t lh;
+	list_head_init(&lh);
+
+	test_t* tt[42];
+	for (size_t i = 0; i < 42; ++i) {
+		tt[i] = kmalloc(sizeof(test_t));
+		list_add_tail(tt[i], &lh);
+	}
+	test_t* current = lh.next;
+	while (current != (test_t*)&lh) {
+		current->payload2 = 42;
+		current = current->lh.next;
+	}
+
+	current = lh.next;
+	size_t len = list_size(&lh);
+	if (len != 42) {
+		printf("list head test fail. size %zu instead of 42\n", len);
+	} else {
+		printf("list head test, size OK\n");
+	}
+	for (size_t i = 0; i < 42; ++i) {
+		if (current->payload2 != 42) {
+			printf("list head test fail at index %zu\n", i);
+		}
+	}
+	for (size_t i = 0; i < 42; ++i) {
+		kfree(tt[i]);
 	}
 }

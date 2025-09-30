@@ -1,11 +1,15 @@
 PROJECT = jros
 PROJECT_DIR = .
 
+LIBKFS_DIR = ./libkfs
+LIBKFS = $(LIBKFS_DIR)/libkfs.a
+LIBKFS_INCS = -I $(LIBKFS_DIR)/incs
+
 RM = /bin/rm
 KFS_BUILD_DIR = isodir
 KFS_CONFIG_DIR = config
 
-OPT_FLAG = -g3 -Og  
+OPT_FLAG = -g3 -Og
 
 DOCKER_DIR = /app
 DOCKER = /usr/bin/docker
@@ -14,12 +18,13 @@ DOCKER_EXEC = $(DOCKER) run --rm -v $(PROJECT_DIR):$(DOCKER_DIR) $(DOCKER_CONT_N
 
 FLAG_DEBUG		= -g -ggdb3
 FLAG_WARNING	= -Wall -Wextra -Winline -Wformat
-FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG)
+FLAG			= $(FLAG_DEBUG) $(FLAG_WARNING) $(OPT_FLAG) -DJROS
 
 SRCS_DIR = $(PROJECT_DIR)/srcs
 OBJS_DIR = $(PROJECT_DIR)/objs
 INCS_DIR = $(PROJECT_DIR)/incs
 DEPS_DIR = $(PROJECT_DIR)/deps
+
 
 SOURCE_MALLOC = $(addprefix malloc/,	\
 				malloc_bins.c			\
@@ -30,9 +35,7 @@ SOURCE_MALLOC = $(addprefix malloc/,	\
 				malloc.c)
 
 SOURCE_STDLIB = $(addprefix stdlib/,	\
-				$(SOURCE_MALLOC)		\
-				itoa.c					\
-				atoi.c)
+				$(SOURCE_MALLOC))
 
 
 SOURCE_STDIO = $(addprefix stdio/,		\
@@ -47,10 +50,8 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				$(SOURCE_STDIO)			\
 				$(SOURCE_UNISTD)		\
 				arg_split.c				\
-				ctype.c					\
-				substr.c	\
-				math.c					\
-				string.c)
+				substr.c				\
+				list_head.c)
 
 SOURCES_MEMORY	= $(addprefix memory/, 		\
 					mbook.c					\
@@ -142,27 +143,30 @@ $(PROJECT).bin: $(OBJS) $(KFS_CONFIG_DIR)/linker.ld
 		$(INCS) \
 		-T $(KFS_CONFIG_DIR)/linker.ld \
 		-o $(PROJECT).bin \
-		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) -lgcc
+		-ffreestanding $(FLAG_DEBUG) $(OPT_FLAG) -nostdlib /app/$(OBJS) /app/$(LIBKFS) -lgcc
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) 
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.s $(INCS_FILES) $(LIBKFS)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
-	@$(DOCKER_EXEC) nasm -g -f elf32 $(INCS) $< -o $@
+	@$(DOCKER_EXEC) nasm -g -f elf32 $(INCS) $(LIBKFS_INCS) $< -o $@ 
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES)
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(INCS_FILES) $(LIBKFS)
 	@echo "Compiling $(notdir $<)..."
 	@mkdir -p $(dir $@)
 	@mkdir -p $(patsubst $(OBJS_DIR)/%,$(DEPS_DIR)/%,$(dir ./$(@:.o=.d)))
-	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) \
+	@$(DOCKER_EXEC) i386-elf-gcc $(INCS) $(LIBKFS_INCS) \
 						-MMD -MF /app/$(patsubst $(SRCS_DIR)/%,$(DEPS_DIR)/%,./$(<:.c=.d)) \
 						$(FLAG) \
 						-std=gnu99 -ffreestanding -Og \
 						-c /app/$< \
 						-o /app/$@
 
+$(LIBKFS):
+	make -C $(LIBKFS_DIR)
+
 
 clean:
-	@echo "Cleaning files..."O
+	@echo "Cleaning files..."
 	@$(RM) -rf $(KFS_BUILD_DIR)
 	@$(RM) -rf $(OBJS_DIR)
 	@$(RM) -rf $(DEPS_DIR)
@@ -171,6 +175,7 @@ fclean: clean
 	@echo "Cleaning build..."
 	@$(RM) -f $(PROJECT).iso
 	@$(RM) -f $(PROJECT).bin
+	make -C $(LIBKFS_DIR) fclean
 
 re: fclean all
 
@@ -193,4 +198,4 @@ debug: $(PROJECT).bin
 
 -include $(DEPS)
 
-.PHONY: all clean fclean re build_docker start_iso start_bin
+.PHONY: all build_docker clean debug fclean re start_iso start_bin

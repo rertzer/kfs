@@ -1,14 +1,15 @@
 #include "processus.h"
+#include "gdt.h"
 #include "malloc.h"
 #include "panic.h"
-#include "utils.h"
+#include "string.h"
 
 uint16_t pid_tss_table[MAX_PROC_NB];
 proc_t*	 proc_table[MAX_PROC_NB];
 
 void init_porcessus() {
-	ft_memset(&pid_tss_table, '\0', sizeof(pid_tss_table));
-	ft_memset(&proc_table, '\0', sizeof(proc_table));
+	memset(&pid_tss_table, '\0', sizeof(pid_tss_table));
+	memset(&proc_table, '\0', sizeof(proc_table));
 }
 
 proc_t init_zero_proc() {
@@ -19,7 +20,7 @@ proc_t init_zero_proc() {
 	proc.childrens = NULL;
 	proc.tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
 	proc.signals = NULL;
-	proc.status = SLEEP;
+	proc.status = PROC_SLEEP;
 	proc.stack = (uint8_t*)proc.tss->esp;
 	proc.heap = NULL;
 

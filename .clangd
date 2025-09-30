@@ -1,0 +1,14 @@
+CompileFlags:
+  Add: 
+    - "-I../incs_test/"
+    - "-I../incs/"
+    - "-I../../incs/"
+    - "-I../../../incs/"
+    - "-I../../../../incs/"
+    - "-I../libkfs/incs"
+    - "-I../../libkfs/incs"
+    - "-I../../../libkfs/incs/"
+    - "-I../../../../libkfs/incs/"
+    - "-I/home/rertzer/Criterion/include/criterion/"
+    - "-I../include_test/"
+    - "-m32"

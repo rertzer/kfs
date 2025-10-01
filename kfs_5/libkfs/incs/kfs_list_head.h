@@ -12,7 +12,6 @@ typedef struct {
 void   list_head_init(list_head_t* lh);
 void   list_add(void* new_list, void* prev_list);
 void   list_add_tail(void* new_list, void* next_list);
-void   list_add_tail_offset(void* new_list, void* next_list, size_t offset);
 void   list_del(void* list);
 void   list_del_offset(void* list, size_t offset);
 void*  list_extract(void* list);

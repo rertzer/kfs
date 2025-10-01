@@ -34,9 +34,9 @@ void list_del(void* list) {
 }
 
 void list_del_offset(void* v_list, size_t offset) {
-	list_head_t* list = (list_head_t*)((char*)v_list + offset);
+	char* list = ((char*)v_list + offset);
 
-	list_remove(list);
+	list_remove((list_head_t*)list);
 	free(v_list);
 }
 

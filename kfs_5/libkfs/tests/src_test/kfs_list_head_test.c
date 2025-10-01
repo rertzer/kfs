@@ -294,26 +294,28 @@ Test(list_head, del_offset_free, .signal = SIGABRT) {
 
 	free(to);
 }
-//
-// Test(list_head, del_offset) {
-// 	list_head_t lh;
-//
-// 	list_head_init(&lh);
-// 	test_offset_t* to[42];
-// 	for (size_t i = 0; i < 42; ++i) {
-// 		to[i] = malloc(sizeof(test_offset_t));
-// 		to[i]->payload1 = i;
-// 		to[i]->payload2 = -i;
-// 		list_add(&(to[i]->lh), &lh);
-// 	}
-// 	size_t size = list_size(&lh);
-// 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
-//
-// 	list_del_offset(&(to[24]->lh), TO_OFFSET);
-// 	cr_assert(to[25]->lh.next == &(to[23]->lh));
-// 	cr_assert(to[23]->lh.prev == &(to[25]->lh));
-//
-// 	for (size_t i = 0; i < 42; ++i) {
-// 		free(to[i]);
-// 	}
-// }
+
+Test(list_head, del_offset) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_add(&(to[i]->lh), &lh);
+	}
+	size_t size = list_size(&lh);
+	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+
+	list_del_offset(to[24], TO_OFFSET);
+	cr_assert(to[25]->lh.next == &(to[23]->lh));
+	cr_assert(to[23]->lh.prev == &(to[25]->lh));
+
+	for (size_t i = 0; i < 42; ++i) {
+		if (i != 24) {
+			free(to[i]);
+		}
+	}
+}

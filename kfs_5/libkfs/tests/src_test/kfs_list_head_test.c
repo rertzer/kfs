@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <signal.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "criterion.h"
 #include "kfs_list_head_test.h"
@@ -205,3 +206,114 @@ Test(list_head, run_on_struct) {
 		free(tt[i]);
 	}
 }
+
+Test(list_head, run_on_offseted_struct) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_head_init(&(to[i]->lh));
+	}
+
+	for (size_t i = 0; i < 42; ++i) {
+		cr_expect(to[i]->lh.prev == &(to[i]->lh));
+		cr_expect(to[i]->lh.next == &(to[i]->lh));
+	}
+
+	for (size_t i = 0; i < 42; ++i) {
+		free(to[i]);
+	}
+}
+
+void print_from_offset(void* vlh) {
+	test_offset_t* lh = (test_offset_t*)vlh;
+	cr_assert(lh->payload1 == 42, "list for each: py1: %d expected 42\n", lh->payload1);
+	cr_assert(lh->payload2 == 21, "list for each: py2: %d expected 21\n", lh->payload2);
+}
+
+Test(list_head, list_for_each) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = 42;
+		to[i]->payload2 = 21;
+		list_add(&(to[i]->lh), &lh);
+	}
+
+	size_t size = list_size(&lh);
+	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+
+	for (size_t i = 0; i < 42; ++i) {
+		cr_expect(to[i]->payload1 == 42, "payload1: %d, expected 42\n", to[i]->payload1);
+		cr_expect(to[i]->payload2 == 21, "payload1: %d, expected 21\n", to[i]->payload2);
+	}
+	list_for_each(&lh, print_from_offset, TO_OFFSET);
+
+	for (size_t i = 0; i < 42; ++i) {
+		free(to[i]);
+	}
+}
+
+Test(list_head, extract_offset) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_add(&(to[i]->lh), &lh);
+	}
+	size_t size = list_size(&lh);
+	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+
+	test_offset_t* extracted = list_extract_offset(&(to[24]->lh), TO_OFFSET);
+	cr_assert(extracted->payload1 == 24, "payload1: %d, expected 24\n", extracted->payload1);
+	cr_assert(extracted->lh.prev == &extracted->lh);
+	cr_assert(extracted->lh.next == &extracted->lh);
+	cr_assert(to[25]->lh.next == &(to[23]->lh));
+	cr_assert(to[23]->lh.prev == &(to[25]->lh));
+
+	for (size_t i = 0; i < 42; ++i) {
+		free(to[i]);
+	}
+}
+
+Test(list_head, del_offset_free, .signal = SIGABRT) {
+	test_offset_t* to = malloc(sizeof(test_offset_t));
+	list_head_init(&to->lh);
+	list_del_offset(to, TO_OFFSET);
+
+	free(to);
+}
+//
+// Test(list_head, del_offset) {
+// 	list_head_t lh;
+//
+// 	list_head_init(&lh);
+// 	test_offset_t* to[42];
+// 	for (size_t i = 0; i < 42; ++i) {
+// 		to[i] = malloc(sizeof(test_offset_t));
+// 		to[i]->payload1 = i;
+// 		to[i]->payload2 = -i;
+// 		list_add(&(to[i]->lh), &lh);
+// 	}
+// 	size_t size = list_size(&lh);
+// 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+//
+// 	list_del_offset(&(to[24]->lh), TO_OFFSET);
+// 	cr_assert(to[25]->lh.next == &(to[23]->lh));
+// 	cr_assert(to[23]->lh.prev == &(to[25]->lh));
+//
+// 	for (size_t i = 0; i < 42; ++i) {
+// 		free(to[i]);
+// 	}
+// }

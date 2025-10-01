@@ -1,6 +1,8 @@
 #include "kfs_list_head.h"
 #include <stdlib.h>
 
+static inline void list_remove(list_head_t* list);
+
 void list_head_init(list_head_t* lh) {
 	lh->next = lh;
 	lh->prev = lh;
@@ -26,17 +28,20 @@ void list_add_tail(void* v_new_list, void* v_next_list) {
 	next_list->prev = new_list;
 }
 
-void list_del(void* v_list) {
-	list_head_t* list = v_list;
-	((list_head_t*)((list_head_t*)list)->prev)->next = list->next;
-	((list_head_t*)((list_head_t*)list)->next)->prev = list->prev;
+void list_del(void* list) {
+	list_remove(list);
 	free(list);
 }
 
-void* list_extract(void* v_list) {
-	list_head_t* list = v_list;
-	((list_head_t*)((list_head_t*)list)->prev)->next = list->next;
-	((list_head_t*)((list_head_t*)list)->next)->prev = list->prev;
+void list_del_offset(void* v_list, size_t offset) {
+	list_head_t* list = (list_head_t*)((char*)v_list + offset);
+
+	list_remove(list);
+	free(v_list);
+}
+
+void* list_extract(void* list) {
+	list_remove(list);
 	list_head_init(list);
 	return (list);
 }
@@ -58,4 +63,25 @@ size_t list_size(list_head_t* lh) {
 	}
 
 	return (counter);
+}
+
+void list_for_each(list_head_t* lh, void (*fn)(void*), size_t offset) {
+	list_head_t* current = lh->next;
+	while (current != lh) {
+		fn((char*)current - offset);
+		current = current->next;
+	}
+}
+
+void* list_extract_offset(void* v_list, size_t offset) {
+	list_head_t* list = v_list;
+	list_remove(list);
+	list_head_init(list);
+	v_list = (char*)v_list - offset;
+	return (v_list);
+}
+
+static inline void list_remove(list_head_t* list) {
+	((list_head_t*)((list_head_t*)list)->prev)->next = list->next;
+	((list_head_t*)((list_head_t*)list)->next)->prev = list->prev;
 }

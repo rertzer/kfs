@@ -4,29 +4,42 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "list_head.h"
 
 #include "tss.h"
 
 #define MAX_PROC_NB 1024
+#define MAX_PID 32767
+
+#define FROM_RUNLST_OFFSET (sizeof(list_head_t))
+#define FROM_CHILDRENS_OFFSET (2 * sizeof(list_head_t))
+#define FROM_SIBLINGS_OFFSET (3 * sizeof(list_head_t))
 
 typedef enum { PROC_READY, PROC_RUN, PROC_SLEEP, PROC_STOPPED, PROC_ZOMBIE, PROC_DEAD } proc_status_e;
 
 typedef struct signal_lst_s {
-	struct signal_lst_s* prev;
-	struct signal_lst_s* next;
-	uint32_t			 signal;
+	list_head_t lst;
+	uint32_t	signal;
 } signal_lst_t;
 
+typedef struct proc_lst_s {
+	list_head_t	   lst;
+	struct proc_s* proc;
+} proc_lst_t;
+
 typedef struct proc_s {
-	uint32_t		pid;
-	uint32_t		owner;
-	struct proc_s*	father;
-	struct procs_t* childrens;
-	tss_t*			tss;
-	signal_lst_t*	signals;
-	proc_status_e	status;
-	uint8_t*		stack;
-	uint8_t*		heap;
+	list_head_t	   lst;
+	list_head_t	   run_lst;
+	list_head_t	   childrens;
+	list_head_t	   siblings;
+	struct proc_s* father;
+	uint32_t	   pid;
+	uint32_t	   owner;
+	tss_t*		   tss;
+	signal_lst_t*  signals;
+	uint8_t*	   stack;
+	uint8_t*	   heap;
+	proc_status_e  status;
 
 } proc_t;
 

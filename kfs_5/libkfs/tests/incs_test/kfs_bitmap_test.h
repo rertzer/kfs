@@ -1,7 +1,9 @@
 #ifndef KFS_BITMAP_TEST_H
 #define KFS_BITMAP_TEST_H
 
+#include "kfs_bitmap.h"
+
 #define BITMAP_TEST_SIZE 2048
-#define BITMAP_TEST_SIZE_T_SIZE (BITMAP_TEST_SIZE / (sizeof(size_t)))
+#define BITMAP_TEST_SIZE_T_SIZE (BITMAP_TEST_SIZE / BITMAP_BITS_PER_ENTRY)
 
 #endif

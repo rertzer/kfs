@@ -99,6 +99,7 @@ SOURCES =	boot/boot.s \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \
+			tss/pid.c \
 			tss/processus.c \
 			tss/tss.c \
 			tss/tss_asm.s \

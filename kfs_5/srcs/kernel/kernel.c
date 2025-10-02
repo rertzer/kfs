@@ -3,9 +3,9 @@
 #include "gdt.h"
 #include "interrupts.h"
 #include "keycode.h"
-#include "kfs_list_head.h"
 #include "malloc.h"
 #include "memory.h"
+#include "processus.h"
 #include "terminal.h"
 #include "tss.h"
 
@@ -49,6 +49,7 @@ void kernel_zero() {
 	uint16_t tr = store_task_register();
 	printk("TR: %08x %d\n", tr);
 	list_head_test();
+	pid_bitmap_test();
 
 	while (true) {
 		sleep();

@@ -17,12 +17,15 @@ proc_t init_zero_proc() {
 	proc.pid = 0;
 	proc.owner = 0;
 	proc.father = NULL;
-	proc.childrens = NULL;
 	proc.tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
 	proc.signals = NULL;
 	proc.status = PROC_SLEEP;
 	proc.stack = (uint8_t*)proc.tss->esp;
 	proc.heap = NULL;
+	list_head_init(&proc.lst);
+	list_head_init(&proc.run_lst);
+	list_head_init(&proc.childrens);
+	list_head_init(&proc.siblings);
 
 	return (proc);
 }

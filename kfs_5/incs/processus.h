@@ -4,12 +4,14 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "kfs_bitmap.h"
 #include "list_head.h"
 
 #include "tss.h"
 
 #define MAX_PROC_NB 1024
 #define MAX_PID 32767
+#define PID_BITMAP_SIZE ((MAX_PID + 1) / BITMAP_BITS_PER_ENTRY)
 
 #define FROM_RUNLST_OFFSET (sizeof(list_head_t))
 #define FROM_CHILDRENS_OFFSET (2 * sizeof(list_head_t))
@@ -42,6 +44,11 @@ typedef struct proc_s {
 	proc_status_e  status;
 
 } proc_t;
+
+void	 pid_bitmap_init();
+uint32_t pid_bitmap_get_new();
+void	 pid_bitmap_remove(uint32_t pid);
+void	 pid_bitmap_test();
 
 proc_t init_zero_proc();
 #endif

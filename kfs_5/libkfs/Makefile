@@ -22,6 +22,7 @@ INCS_DIR = $(NAME_DIR)/incs
 DEPS_DIR = $(NAME_DIR)/deps
 
 SOURCES = kfs_atoi.c \
+		  kfs_bitmap.c \
 		  kfs_itoa.c \
 		  kfs_int_math.c \
 		  kfs_ctype.c \

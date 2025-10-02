@@ -1,6 +1,5 @@
 #include "kfs_bitmap.h"
 #include <stdint.h>
-#include <stdio.h>
 
 static bitmap_bit_t get_bitmap_bit(size_t* bitmap, size_t offset);
 static size_t		get_next_in_range(size_t* bitmap, size_t start_index, size_t end_index);
@@ -45,9 +44,10 @@ static size_t get_next_bit(size_t value, size_t offset) {
  */
 
 size_t get_next_bitmap(size_t* bitmap, size_t size, size_t const offset) {
+	size_t		 next_offset = offset;
 	bitmap_bit_t current = get_bitmap_bit(bitmap, offset);
 	current.bit_offset = get_next_bit(current.array_value, current.bit_offset + 1);
-	size_t next_offset = offset;
+
 	if (current.bit_offset != BITMAP_BITS_PER_ENTRY) {
 		next_offset = current.array_offset * BITMAP_BITS_PER_ENTRY + current.bit_offset;
 		return (next_offset);
@@ -69,14 +69,14 @@ static bitmap_bit_t get_bitmap_bit(size_t* bitmap, size_t offset) {
 	bb.array_offset = offset / BITMAP_BITS_PER_ENTRY;
 	bb.array_value = bitmap[bb.array_offset];
 	bb.bit_offset = offset % BITMAP_BITS_PER_ENTRY;
-	bb.bit_mask = 1 << bb.bit_offset;
+	bb.bit_mask = (size_t)1 << bb.bit_offset;
 	bb.bit_value = bb.array_value & bb.bit_mask;
 	return (bb);
 }
 
 static size_t get_next_in_range(size_t* bitmap, size_t start_index, size_t end_index) {
 	size_t not_found = start_index;
-	++start_index;
+	start_index += BITMAP_BITS_PER_ENTRY;
 	start_index /= BITMAP_BITS_PER_ENTRY;
 	end_index /= BITMAP_BITS_PER_ENTRY;
 	for (size_t index = start_index; index < end_index; ++index) {

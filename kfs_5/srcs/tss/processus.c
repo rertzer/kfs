@@ -4,14 +4,6 @@
 #include "panic.h"
 #include "string.h"
 
-uint16_t pid_tss_table[MAX_PROC_NB];
-proc_t*	 proc_table[MAX_PROC_NB];
-
-void init_porcessus() {
-	memset(&pid_tss_table, '\0', sizeof(pid_tss_table));
-	memset(&proc_table, '\0', sizeof(proc_table));
-}
-
 proc_t init_zero_proc() {
 	proc_t proc;
 	proc.pid = 0;
@@ -30,21 +22,30 @@ proc_t init_zero_proc() {
 	return (proc);
 }
 
-void append_proc_table(proc_t p) {
-	if (p.pid >= MAX_PROC_NB) {
-		panic("Invalid pid");
+uint8_t spawn(proc_t* src, proc_t* dest) {
+	dest->pid = pid_bitmap_get_new();
+	if (dest->pid == 0) {
+		return (1);
 	}
-	proc_t* proc = kpmalloc(sizeof(proc_t));
-	if (proc == NULL) {
-		panic("kernel memory allocation error");
-	}
-	proc_table[p.pid] = proc;
+	dest->owner = src->owner;
+	dest->father = src;
+	// create tss
+	dest->signals = NULL;
+	dest->status = PROC_SLEEP;
+	dest->stack = (uint8_t*)dest->tss->esp;
+	// create heap
+	// parenthood handled by the scheduler
+	list_head_init(&dest->lst);
+	list_head_init(&dest->run_lst);
+	list_head_init(&dest->childrens);
+	list_head_init(&dest->siblings);
+	return (0);
 }
 
-void delete_proc_table(uint32_t pid) {
-	if (pid >= MAX_PROC_NB || pid == 0) {
-		panic("Invalid pid");
-	}
-	kpfree(proc_table[pid]);
-	proc_table[pid] = 0;
+void free_process(proc_t* task) {
+	// free pid
+	// remove from family
+	// free tss
+	// free stack
+	// free memory
 }

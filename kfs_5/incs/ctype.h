@@ -1,7 +1,7 @@
 #ifndef CTYPE_H
 #define CTYPE_H
 
-#include "libkfs.h"
+#include "libkfs_jros.h"
 
 inline int isspace(int c);
 inline int isdigit(int c);

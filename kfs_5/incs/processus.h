@@ -13,11 +13,12 @@
 #define MAX_PID 32767
 #define PID_BITMAP_SIZE ((MAX_PID + 1) / BITMAP_BITS_PER_ENTRY)
 
-#define FROM_RUNLST_OFFSET (sizeof(list_head_t))
-#define FROM_CHILDRENS_OFFSET (2 * sizeof(list_head_t))
-#define FROM_SIBLINGS_OFFSET (3 * sizeof(list_head_t))
+#define PROC_LIST_LST (0)
+#define PROC_LIST_RUNQUEUE (LIST_HEAD_SIZE)
+#define PROC_LIST_CHILDRENS (2 * LIST_HEAD_SIZE)
+#define PROC_LIST_SIBLINGS (3 * LIST_HEAD_SIZE)
 
-typedef enum { PROC_READY, PROC_RUN, PROC_SLEEP, PROC_STOPPED, PROC_ZOMBIE, PROC_DEAD } proc_status_e;
+typedef enum { PROC_RUN, PROC_SLEEP, PROC_STOPPED, PROC_ZOMBIE, PROC_DEAD } proc_status_e;
 
 typedef struct signal_lst_s {
 	list_head_t lst;
@@ -50,5 +51,7 @@ uint32_t pid_bitmap_get_new();
 void	 pid_bitmap_remove(uint32_t pid);
 void	 pid_bitmap_test();
 
-proc_t init_zero_proc();
+proc_t	init_zero_proc();
+uint8_t spawn(proc_t* src, proc_t* dest);
+void	free_process(proc_t* task);
 #endif

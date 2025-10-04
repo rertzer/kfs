@@ -15,16 +15,13 @@ void pid_bitmap_init() {
 
 uint32_t pid_bitmap_get_new() {
 	if (active_pid_nb == MAX_PROC_NB) {
-		printf("to many active pids\n");
 		return (0);
 	}
 	printf("searching %d\t", last_pid);
 	uint32_t new_pid = get_next_bitmap(pid_bitmap, MAX_PID, last_pid);
 	if (new_pid == 0) {
-		printf("returned zero\n");
 	}
 	if (new_pid == last_pid) {
-		printf("oups last_pid %d\n", last_pid);
 		new_pid = 0;
 	} else {
 		set_bitmap_value(pid_bitmap, new_pid, 1);

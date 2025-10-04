@@ -96,6 +96,7 @@ SOURCES =	boot/boot.s \
 			$(SOURCES_MEMORY) \
 			panic/panic.c \
 			panic/dump_stack.c \
+			scheduler/scheduler.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \

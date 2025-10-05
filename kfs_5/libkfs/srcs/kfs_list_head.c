@@ -14,7 +14,7 @@ void list_add(void* v_new_list, void* v_prev_list) {
 
 	new_list->prev = prev_list;
 	new_list->next = prev_list->next;
-	((list_head_t*)((list_head_t*)prev_list)->next)->prev = new_list;
+	((list_head_t*)((list_head_t*)new_list)->next)->prev = new_list;
 	prev_list->next = new_list;
 }
 

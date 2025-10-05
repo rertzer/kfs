@@ -2,6 +2,7 @@ section .text
 
 extern stack_bottom
 global copy_registers_to_tss
+global fork_registers_to_tss
 global init_tss_registers
 global load_task_register
 global store_task_register
@@ -41,6 +42,43 @@ init_tss_registers:
 	mov [ecx + 92], gs		; gs 
 	mov dword [ecx + 96], 0		; ldt + I/O map base
 
+	mov esp, ebp
+	pop ebp
+	ret
+
+fork_registers_to_tss:
+	push ebp
+	mov ebp, esp
+
+	mov ecx, [ebp+8]			;retrieve first argument (tss address)
+	mov edx, [ebp+12]			;retrieve second argument (stack address)
+
+	mov [ecx + 4], edx		; esp0
+	mov [ecx + 8], ss		;ss0 
+	mov [ecx + 12], edx 	; esp1 
+	mov [ecx + 16], ss		; ss1 
+	mov [ecx + 20], edx		; esp2 
+	mov [ecx + 24], ss		; ss2 
+	mov eax, cr3
+	mov [ecx + 28], eax		; cr3
+	pushf
+	pop eax
+	mov [ecx + 36], eax	; eflags
+	mov dword [ecx + 40], 0		; eax child process return PID 0
+	mov [ecx + 44], ecx		; ecx
+	mov [ecx + 48], edx		; edx
+	mov [ecx + 52], ebx		; ebx
+	mov [ecx + 56], edx		; esp
+	mov [ecx + 60], edx		;ebp 
+	mov [ecx + 64], esi 	; esi
+	mov [ecx + 68], edi		; edi
+	mov [ecx + 72], es		; es 
+	mov [ecx + 76], cs		; cs 
+	mov [ecx + 80], ss		; ss 
+	mov [ecx + 84], ds		; ds 
+	mov [ecx + 88], fs		; fs 
+	mov [ecx + 92], gs		; gs 
+	
 	mov esp, ebp
 	pop ebp
 	ret

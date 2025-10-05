@@ -8,16 +8,16 @@
 
 #define REGS_NB 18
 
-#define BUILTINS                                                                                           \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",       \
-	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [READDUMP] = "readdump", [BOOT_INFOS] = "bootinfos", \
-	[MEMORY_INFOS] = "memoryinfos", [INTERRUPT] = "interrupt", [TEST_STACK_DUMP] = "testStackDump",        \
+#define BUILTINS                                                                                                 \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",             \
+	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [READDUMP] = "readdump", [BOOT_INFOS] = "bootinfos",       \
+	[MEMORY_INFOS] = "memoryinfos", [INTERRUPT] = "interrupt", [PS] = "ps", [TEST_STACK_DUMP] = "testStackDump", \
 	[UP_TIME] = "uptime",
 
 #define BUILTIN_FUNCTIONS                                                                                           \
 	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [REBOOT] = reboot, [HALT] = halt, [REGISTERS] = registers, \
 	[HEXDUMP] = hexdump, [READDUMP] = readdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos,           \
-	[INTERRUPT] = interrupt, [TEST_STACK_DUMP] = test_stack_dump, [UP_TIME] = uptime,
+	[INTERRUPT] = interrupt, [PS] = ps, [TEST_STACK_DUMP] = test_stack_dump, [UP_TIME] = uptime,
 
 typedef enum {
 	ECHO,
@@ -31,6 +31,7 @@ typedef enum {
 	BOOT_INFOS,
 	MEMORY_INFOS,
 	INTERRUPT,
+	PS,
 	TEST_STACK_DUMP,
 	UP_TIME,
 	BUILTINS_NB
@@ -73,6 +74,7 @@ uint8_t hexdump(size_t argc, char** argv);
 uint8_t readdump(size_t argc, char** argv);
 uint8_t memory_infos(size_t argc, char** argv);
 uint8_t interrupt(size_t argc, char** argv);
+uint8_t ps(size_t argc, char** argv);
 uint8_t test_stack_dump(size_t argc, char** argv);
 uint8_t uptime(size_t argc, char** argv);
 

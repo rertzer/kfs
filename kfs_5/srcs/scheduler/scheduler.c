@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "list_head.h"
+#include "printk.h"
 
 list_head_t tasklist;
 list_head_t runqueue;
@@ -16,10 +17,11 @@ void scheduler_init(proc_t* proc_zero) {
 
 uint8_t scheduler_add_task(proc_t* task) {
 	increase_family(task);
-	list_add(&tasklist, task);
+	list_add(task, &tasklist);
 	if (task->status == PROC_RUN) {
-		list_add(&runqueue, task);
+		list_add(&task->run_lst, &runqueue);
 	}
+	int len = list_size(&tasklist);
 	return (0);
 }
 
@@ -28,7 +30,7 @@ uint8_t scheduler_run(proc_t* task) {
 		return (1);
 	}
 	task->status = PROC_RUN;
-	list_add(task, &task->run_lst);
+	list_add(&task->run_lst, &runqueue);
 	return (0);
 }
 
@@ -40,6 +42,14 @@ uint8_t scheduler_remove_task(proc_t* task) {
 	list_extract(task);
 	free_process(task);
 	return (0);
+}
+
+proc_t* scheduler_get_current_proc() {
+	return (current);
+}
+
+list_head_t* scheduler_get_tasklist() {
+	return (&tasklist);
 }
 
 void increase_family(proc_t* task) {}

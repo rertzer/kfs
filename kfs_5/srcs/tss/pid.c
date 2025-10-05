@@ -13,7 +13,7 @@ void pid_bitmap_init() {
 	active_pid_nb = 1;
 }
 
-uint32_t pid_bitmap_get_new() {
+int16_t pid_bitmap_get_new() {
 	if (active_pid_nb == MAX_PROC_NB) {
 		return (0);
 	}
@@ -31,10 +31,12 @@ uint32_t pid_bitmap_get_new() {
 	return (new_pid);
 }
 
-void pid_bitmap_remove(uint32_t pid) {
+void pid_bitmap_remove(int16_t pid) {
 	set_bitmap_value(pid_bitmap, pid, 0);
 	--active_pid_nb;
 }
+
+/* ============================= TEST =================================*/
 
 void pid_bitmap_test() {
 	pid_bitmap_init();

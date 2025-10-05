@@ -35,23 +35,24 @@ typedef struct proc_s {
 	list_head_t	   run_lst;
 	list_head_t	   childrens;
 	list_head_t	   siblings;
-	struct proc_s* father;
-	uint32_t	   pid;
+	list_head_t	   heap;
+	void*		   kernel_stack;
+	struct proc_s* parent;
 	uint32_t	   owner;
 	tss_t*		   tss;
 	signal_lst_t*  signals;
-	uint8_t*	   stack;
-	uint8_t*	   heap;
+	int16_t		   pid;
 	proc_status_e  status;
 
 } proc_t;
 
-void	 pid_bitmap_init();
-uint32_t pid_bitmap_get_new();
-void	 pid_bitmap_remove(uint32_t pid);
-void	 pid_bitmap_test();
+void	pid_bitmap_init();
+int16_t pid_bitmap_get_new();
+void	pid_bitmap_remove(int16_t pid);
+void	pid_bitmap_test();
 
-proc_t	init_zero_proc();
-uint8_t spawn(proc_t* src, proc_t* dest);
+proc_t* init_zero_proc();
+proc_t* spawn(proc_t* src);
 void	free_process(proc_t* task);
+void	print_process(void* vtask);
 #endif

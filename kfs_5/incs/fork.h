@@ -7,6 +7,6 @@
 
 #include "tss.h"
 
-uint32_t fork();
+int16_t fork();
 
 #endif

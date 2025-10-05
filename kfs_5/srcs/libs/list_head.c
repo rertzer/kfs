@@ -1,4 +1,4 @@
-#include "kfs_list_head.h"
+#include "list_head.h"
 #include "malloc.h"
 
 static inline void list_remove(list_head_t* list);
@@ -12,9 +12,10 @@ void list_add(void* v_new_list, void* v_prev_list) {
 	list_head_t* new_list = v_new_list;
 	list_head_t* prev_list = v_prev_list;
 
+	int len = list_size(prev_list);
 	new_list->prev = prev_list;
 	new_list->next = prev_list->next;
-	((list_head_t*)((list_head_t*)prev_list)->next)->prev = new_list;
+	((list_head_t*)((list_head_t*)new_list)->next)->prev = new_list;
 	prev_list->next = new_list;
 }
 
@@ -84,4 +85,36 @@ void* list_extract_offset(void* v_list, size_t offset) {
 static inline void list_remove(list_head_t* list) {
 	((list_head_t*)((list_head_t*)list)->prev)->next = list->next;
 	((list_head_t*)((list_head_t*)list)->next)->prev = list->prev;
+}
+
+void list_head_test() {
+	list_head_t lh;
+	list_head_init(&lh);
+
+	test_t* tt[42];
+	for (size_t i = 0; i < 42; ++i) {
+		tt[i] = kmalloc(sizeof(test_t));
+		list_add_tail(tt[i], &lh);
+	}
+	test_t* current = lh.next;
+	while (current != (test_t*)&lh) {
+		current->payload2 = 42;
+		current = current->lh.next;
+	}
+
+	current = lh.next;
+	size_t len = list_size(&lh);
+	if (len != 42) {
+		printf("list head test fail. size %zu instead of 42\n", len);
+	} else {
+		printf("list head test, size OK\n");
+	}
+	for (size_t i = 0; i < 42; ++i) {
+		if (current->payload2 != 42) {
+			printf("list head test fail at index %zu\n", i);
+		}
+	}
+	for (size_t i = 0; i < 42; ++i) {
+		kfree(tt[i]);
+	}
 }

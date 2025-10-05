@@ -75,6 +75,7 @@ SOURCES =	boot/boot.s \
 			builtins/hexdump.c \
 			builtins/interrupt.c \
 			builtins/memory_infos.c \
+			builtins/ps.c \
 			builtins/qwerty.c \
 			builtins/readline.c \
 			builtins/registers.c \

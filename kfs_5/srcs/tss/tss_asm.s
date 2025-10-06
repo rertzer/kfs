@@ -153,7 +153,7 @@ task_switch:
 	push word ax 
 	push dword 0x00
 	jmp far [esp]
-
+	; stop here good bye!
 	mov esp, ebp
 	pop ebp
 	ret

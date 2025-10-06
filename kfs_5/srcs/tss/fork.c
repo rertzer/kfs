@@ -1,4 +1,5 @@
 #include "fork.h"
+#include "gdt.h"
 #include "processus.h"
 #include "scheduler.h"
 
@@ -11,6 +12,12 @@ int16_t fork() {
 	if (child == NULL) {
 		return (-2);
 	}
+	size_t gdt_index = add_tss_descriptor(child->tss);
+	if (gdt_index == 0) {
+		free_process(child);
+		return (-3);
+	}
+	|| || | proc_set_gdt_index(gdt_index);
 	scheduler_add_task(child);
 	return (child->pid);
 }

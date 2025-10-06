@@ -21,6 +21,7 @@ void init_gdt() {
 	init_gdt_descriptors();
 	set_gdt(get_gdt_limit(), GDT_BUFFER);
 	set_tss(&tss_zero, kernel_zero);
+	gdt_bitmap_init();
 	// tss_t* test = get_tss_addr_by_gdt_offset(0x48);
 	// print_tss(test);
 	// uint16_t tr_offset = store_task_register();
@@ -63,6 +64,24 @@ static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
 	entry->bytes[6] |= (uint8_t)(desc.flags << 4);
 }
 
+size_t add_tss_descriptor(tss_t* tss) {
+	size_t index = gdt_bitmap_get_new();
+	if (index != GDT_MAX_ENTRIES) {
+		add_gdt_descriptor(&gdt[index],
+						   (gdt_descriptor_t){(uint32_t)tss, get_tss_limit(), TSS_AVAIL_ACCESS, TSS_FLAGS});
+	} else {
+		index = 0;
+	}
+	return (index);
+}
+
+void remove_tss_descriptor(size_t index) {
+	if (index < GDT_MAX_ENTRIES) {
+		gdt_bitmap_remove(index);
+		add_gdt_descriptor(&gdt[index], (gdt_descriptor_t){0, 0, 0, 0});
+	}
+}
+
 uint16_t get_gdt_init_desc_offset(init_gdt_descriptor_e d) {
 	return (d * sizeof(gdt_entry_t));
 }
@@ -85,6 +104,12 @@ static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry) {
 	desc.flags = (entry->bytes[6] & 0xF0) >> 4;
 
 	return (desc);
+}
+
+void print_gdt() {
+	for (size_t index = 0; index < GDT_MAX_ENTRIES; ++index) {
+		gdt_entry_t* entry = &gdt[index];
+	}
 }
 
 void print_gdt_init_descriptor(init_gdt_descriptor_e d) {

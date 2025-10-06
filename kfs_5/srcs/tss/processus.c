@@ -12,6 +12,7 @@ proc_t* init_zero_proc() {
 	proc->pid = 0;
 	proc->owner = 0;
 	proc->parent = proc;
+	proc->gdt_index = 0;
 	proc->tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
 	proc->signals = NULL;
 	proc->status = PROC_SLEEP;
@@ -37,7 +38,7 @@ proc_t* spawn(proc_t* parent) {
 	}
 	child->owner = parent->owner;
 	child->parent = parent;
-	// create tss
+	child->gdt_index = 0;
 	child->tss = spawn_tss();
 	if (child->tss == NULL) {
 		pid_bitmap_remove(child->pid);

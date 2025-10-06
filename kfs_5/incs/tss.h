@@ -65,5 +65,7 @@ void	 task_switch(uint16_t gdt_offset);
 void	 print_tss(tss_t* tss);
 tss_t*	 spawn_tss();
 uint8_t	 fork_return();
+size_t	 add_tss_descriptor(tss_t* tss);
+void	 remove_tss_descriptor(size_t index);
 
 #endif

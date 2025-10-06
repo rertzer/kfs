@@ -39,6 +39,7 @@ typedef struct proc_s {
 	void*		   kernel_stack;
 	struct proc_s* parent;
 	uint32_t	   owner;
+	uint32_t	   gdt_index;
 	tss_t*		   tss;
 	signal_lst_t*  signals;
 	int16_t		   pid;
@@ -53,6 +54,7 @@ void	pid_bitmap_test();
 
 proc_t* init_zero_proc();
 proc_t* spawn(proc_t* src);
+void	proc_set_gdt_index(uint32_t gdt_index);
 void	free_process(proc_t* task);
 void	print_process(void* vtask);
 #endif

@@ -22,6 +22,7 @@ Test(bitmap, set_all) {
 		cr_assert(bitmap[i] == SIZE_MAX);
 	}
 }
+
 Test(bitmap, get_bitmap_value) {
 	size_t bitmap[BITMAP_TEST_SIZE_T_SIZE];
 	bitmap_erase(bitmap, BITMAP_TEST_SIZE);
@@ -103,4 +104,35 @@ Test(bitmap, get_right_before_bitmap) {
 
 	size_t get = get_next_bitmap(bitmap, BITMAP_TEST_SIZE, last_bitmap);
 	cr_assert(get == empty_offset, "%zu %zu\n", get, empty_offset);
+}
+
+Test(bitmap, get_first_easy_forward) {
+	size_t bitmap[BITMAP_TEST_SIZE_T_SIZE];
+	bitmap_erase(bitmap, BITMAP_TEST_SIZE);
+
+	for (size_t i = 0; i < BITMAP_TEST_SIZE; ++i) {
+		size_t result = get_first_bitmap(bitmap, BITMAP_TEST_SIZE);
+		cr_assert(result == i, "got %zu, expected %zu\n", result, i);
+		set_bitmap_value(bitmap, i, 1);
+	}
+	size_t result = get_first_bitmap(bitmap, BITMAP_TEST_SIZE);
+	cr_assert(result == BITMAP_TEST_SIZE, "got %zu, expected %zu\n", result, BITMAP_BITS_PER_ENTRY);
+}
+
+Test(bitmap, get_first_full) {
+	size_t bitmap[BITMAP_TEST_SIZE_T_SIZE];
+	bitmap_set_all(bitmap, BITMAP_TEST_SIZE);
+
+	size_t result = get_first_bitmap(bitmap, BITMAP_TEST_SIZE);
+	cr_assert(result == BITMAP_TEST_SIZE, "got %zu, expected %d\n", result, BITMAP_TEST_SIZE);
+}
+
+Test(bitmap, get_first_needle_in_hay_stack) {
+	size_t bitmap[BITMAP_TEST_SIZE_T_SIZE];
+	bitmap_set_all(bitmap, BITMAP_TEST_SIZE);
+	set_bitmap_value(bitmap, 666, 0);
+	set_bitmap_value(bitmap, 667, 0);
+
+	size_t result = get_first_bitmap(bitmap, BITMAP_TEST_SIZE);
+	cr_assert(result == 666, "got %zu, expected 666\n", result);
 }

@@ -1,10 +1,15 @@
 #ifndef GDT_H
-#define GDT_H #include<stdbool.h>
+#define GDT_H
+
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
+#include "kfs_bitmap.h"
+
 #define GDT_BUFFER 0xC0000800
-#define GDT_MAX_ENTRIES 1042
+#define GDT_MAX_ENTRIES 1024
+#define GDT_BITMAP_SIZE_T_SIZE (GDT_MAX_ENTRIES / BITMAP_BITS_PER_ENTRY)
 
 #define GDT_FLAG_32_BIT_PROTECTED 0x04
 #define GDT_FLAG_4KB_GRANULARITY 0x08
@@ -75,4 +80,8 @@ uint16_t		 get_gdt_init_desc_offset(init_gdt_descriptor_e);
 void			 print_gdt_init_descriptor(init_gdt_descriptor_e d);
 void			 print_gdt_descriptor_by_offset(uint32_t offset);
 void			 print_gdt_descriptor(gdt_descriptor_t desc);
+void			 gdt_bitmap_init();
+size_t			 gdt_bitmap_get_new();
+void			 gdt_bitmap_remove(size_t index);
+void			 gdt_bitmap_test();
 #endif

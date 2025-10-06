@@ -17,10 +17,7 @@ int16_t pid_bitmap_get_new() {
 	if (active_pid_nb == MAX_PROC_NB) {
 		return (0);
 	}
-	printf("searching %d\t", last_pid);
 	uint32_t new_pid = get_next_bitmap(pid_bitmap, MAX_PID, last_pid);
-	if (new_pid == 0) {
-	}
 	if (new_pid == last_pid) {
 		new_pid = 0;
 	} else {
@@ -36,7 +33,7 @@ void pid_bitmap_remove(int16_t pid) {
 	--active_pid_nb;
 }
 
-/* ============================= TEST =================================*/
+/* =========================== TEST =================================*/
 
 void pid_bitmap_test() {
 	pid_bitmap_init();

@@ -1,5 +1,6 @@
 #include "gdt.h"
 #include "kernel.h"
+#include "kfs_bitmap.h"
 #include "printk.h"
 #include "string.h"
 #include "tss.h"
@@ -7,6 +8,7 @@
 gdt_entry_t* gdt = (gdt_entry_t*)GDT_BUFFER;
 tss_t		 tss_placeholder;
 tss_t		 tss_zero;
+size_t		 gdt_bitmap[GDT_BITMAP_SIZE_T_SIZE];
 
 static void				gdt_set_to_zero();
 static void				init_gdt_descriptors();
@@ -97,4 +99,73 @@ void print_gdt_descriptor_by_offset(uint32_t offset) {
 
 void print_gdt_descriptor(gdt_descriptor_t desc) {
 	printk("base: %08x\tlimit:%08x\naccess:%08x\tflags:%08x\n", desc.base, desc.limit, desc.access, desc.flags);
+}
+
+void gdt_bitmap_init() {
+	bitmap_erase(gdt_bitmap, GDT_MAX_ENTRIES);
+	for (size_t i = 0; i < INIT_DESCRIPTOR_NB; ++i) {
+		set_bitmap_value(gdt_bitmap, i, 1);
+	}
+}
+
+size_t gdt_bitmap_get_new() {
+	size_t new_index = get_first_bitmap(gdt_bitmap, GDT_MAX_ENTRIES);
+	if (new_index != GDT_MAX_ENTRIES) {
+		set_bitmap_value(gdt_bitmap, new_index, 1);
+	}
+	return (new_index);
+}
+
+void gdt_bitmap_remove(size_t index) {
+	set_bitmap_value(gdt_bitmap, index, 0);
+}
+
+/* =============================== TEST =================================== */
+void gdt_bitmap_test() {
+	gdt_bitmap_init();
+
+	printf("gdt bitmap testing\n");
+	for (size_t i = 0; i < INIT_DESCRIPTOR_NB; ++i) {
+		if (get_bitmap_value(gdt_bitmap, i) != 1) {
+			printf("GDT_BITMAP_TEST ERROR 1\n");
+			break;
+		}
+	}
+	for (size_t i = INIT_DESCRIPTOR_NB; i < GDT_MAX_ENTRIES; ++i) {
+		if (get_bitmap_value(gdt_bitmap, i) != 0) {
+			printf("GDT_BITMAP_TEST ERROR 2\n");
+			break;
+		}
+	}
+
+	printf("testing get new \n");
+	for (size_t i = INIT_DESCRIPTOR_NB; i < GDT_MAX_ENTRIES; ++i) {
+		uint32_t index = gdt_bitmap_get_new();
+
+		if (index != i) {
+			printf("GDT_BITMAP_TEST ERROR new index: %d expected: %d\n", index, i);
+			break;
+		}
+	}
+
+	uint32_t index = gdt_bitmap_get_new();
+	if (index != GDT_MAX_ENTRIES) {
+		printf("GDT TEST ERROR: to many active entries %d \n", index);
+	}
+	printf("removing some...\n");
+	gdt_bitmap_remove(42);
+	index = gdt_bitmap_get_new();
+	if (index != 42) {
+		printf("pid bitmap error\n");
+	}
+
+	for (size_t i = 0; i < 3000; ++i) {
+		size_t expected = 42 + (i % 666);
+		gdt_bitmap_remove(expected);
+		index = gdt_bitmap_get_new();
+		if (index != expected) {
+			printf("ERROR  %d %d\n", index, expected);
+			break;
+		}
+	}
 }

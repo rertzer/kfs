@@ -49,8 +49,9 @@ void kernel_zero() {
 	printk("TR: %08x %d\n", tr);
 	// list_head_test();
 	// pid_bitmap_test();
-	int16_t pid = fork();
-	printf("fork returned %d\n", pid);
+	// int16_t pid = fork();
+	// printf("fork returned %d\n", pid);
+	// gdt_bitmap_test();
 
 	while (true) {
 		sleep();

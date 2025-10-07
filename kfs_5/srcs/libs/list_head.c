@@ -12,7 +12,6 @@ void list_add(void* v_new_list, void* v_prev_list) {
 	list_head_t* new_list = v_new_list;
 	list_head_t* prev_list = v_prev_list;
 
-	int len = list_size(prev_list);
 	new_list->prev = prev_list;
 	new_list->next = prev_list->next;
 	((list_head_t*)((list_head_t*)new_list)->next)->prev = new_list;

@@ -53,6 +53,12 @@ void kernel_zero() {
 	// printf("fork returned %d\n", pid);
 	// gdt_bitmap_test();
 
+	uint16_t pid = fork();
+	printf("child pid : %d\n", pid);
+	pid = fork();
+	printf("child pid : %d\n", pid);
+	print_gdt();
+
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

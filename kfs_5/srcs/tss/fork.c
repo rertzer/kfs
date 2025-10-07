@@ -17,7 +17,7 @@ int16_t fork() {
 		free_process(child);
 		return (-3);
 	}
-	|| || | proc_set_gdt_index(gdt_index);
+	proc_set_gdt_index(child, gdt_index);
 	scheduler_add_task(child);
 	return (child->pid);
 }

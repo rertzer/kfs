@@ -13,6 +13,8 @@
 #define MAX_PID 32767
 #define PID_BITMAP_SIZE ((MAX_PID + 1) / BITMAP_BITS_PER_ENTRY)
 
+#define KERNEL_STACK_SIZE (4 * PAGE_SIZE)
+
 #define PROC_LIST_LST (0)
 #define PROC_LIST_RUNQUEUE (LIST_HEAD_SIZE)
 #define PROC_LIST_CHILDRENS (2 * LIST_HEAD_SIZE)
@@ -54,7 +56,7 @@ void	pid_bitmap_test();
 
 proc_t* init_zero_proc();
 proc_t* spawn(proc_t* src);
-void	proc_set_gdt_index(uint32_t gdt_index);
+void	proc_set_gdt_index(proc_t* task, uint32_t gdt_index);
 void	free_process(proc_t* task);
 void	print_process(void* vtask);
 #endif

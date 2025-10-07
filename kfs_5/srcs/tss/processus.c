@@ -36,16 +36,23 @@ proc_t* spawn(proc_t* parent) {
 		kfree(child);
 		return (NULL);
 	}
-	child->owner = parent->owner;
-	child->parent = parent;
-	child->gdt_index = 0;
-	child->tss = spawn_tss();
-	if (child->tss == NULL) {
+	child->kernel_stack = mbook(KERNEL_STACK_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
+	if (child->kernel_stack == NULL) {
 		pid_bitmap_remove(child->pid);
 		kfree(child);
 		return (NULL);
 	}
-	child->kernel_stack = (void*)child->tss->esp;
+
+	child->owner = parent->owner;
+	child->parent = parent;
+	child->gdt_index = 0;
+	child->tss = spawn_tss(child->kernel_stack);
+	if (child->tss == NULL) {
+		pid_bitmap_remove(child->pid);
+		kfree(child);
+		kfree(child->kernel_stack);
+		return (NULL);
+	}
 	child->signals = NULL;
 	child->status = PROC_SLEEP;
 	// create heap
@@ -71,4 +78,8 @@ void free_process(proc_t* task) {
 void print_process(void* vtask) {
 	proc_t* task = (proc_t*)vtask;
 	printf("pid: %d\tppid: %d\towner: %d\tstatus: %d\n", task->pid, task->parent->pid, task->owner, task->status);
+}
+
+void proc_set_gdt_index(proc_t* task, uint32_t gdt_index) {
+	task->gdt_index = gdt_index;
 }

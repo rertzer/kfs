@@ -21,7 +21,6 @@ uint8_t scheduler_add_task(proc_t* task) {
 	if (task->status == PROC_RUN) {
 		list_add(&task->run_lst, &runqueue);
 	}
-	int len = list_size(&tasklist);
 	return (0);
 }
 

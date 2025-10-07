@@ -109,6 +109,11 @@ static gdt_descriptor_t get_gdt_desc_by_entry(gdt_entry_t* entry) {
 void print_gdt() {
 	for (size_t index = 0; index < GDT_MAX_ENTRIES; ++index) {
 		gdt_entry_t* entry = &gdt[index];
+		if (entry->desc != 0) {
+			gdt_descriptor_t desc = get_gdt_desc_by_entry(entry);
+			printf("%d:\t", index);
+			print_gdt_descriptor(desc);
+		}
 	}
 }
 

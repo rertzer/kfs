@@ -44,11 +44,14 @@ tss_t* spawn_tss(char* kernel_stack) {
 		return (NULL);
 	}
 
-	fork_registers_to_tss(tss, kernel_stack + KERNEL_STACK_SIZE - 1);
-	tss->eip = (uint32_t)fork_return;
+	fork_registers_to_tss(tss, kernel_stack + KERNEL_STACK_SIZE);
 	// the child user stack pointer should be pushed in the child kernel stack
 
 	return (tss);
+}
+
+void tss_set_return_address(tss_t* tss, void* ret) {
+	tss->eip = (uint32_t)ret;
 }
 
 void print_tss(tss_t* tss) {

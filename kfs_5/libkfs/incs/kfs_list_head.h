@@ -16,6 +16,8 @@ void   list_del(void* list);
 void   list_del_offset(void* list, size_t offset);
 void*  list_extract(void* list);
 void*  list_extract_offset(void* list, size_t offset);
+void*  list_get(void* list, size_t offset);
+void*  list_round(list_head_t* list, size_t offset);
 bool   list_empty(list_head_t* lh);
 size_t list_size(list_head_t* lh);
 void   list_for_each(list_head_t* lh, void (*f)(void*), size_t offset);

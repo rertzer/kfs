@@ -86,6 +86,19 @@ static inline void list_remove(list_head_t* list) {
 	((list_head_t*)((list_head_t*)list)->next)->prev = list->prev;
 }
 
+void* list_get(void* list, size_t offset) {
+	return ((char*)list - offset);
+}
+
+void* list_round(list_head_t* list, size_t offset) {
+	list_head_t* next = list->next;
+	list->next = next->next;
+	((list_head_t*)list->prev)->next = next;
+	next->prev = list->prev;
+	next->next = list;
+	list->prev = next;
+	return ((char*)next - offset);
+}
 void list_head_test() {
 	list_head_t lh;
 	list_head_init(&lh);

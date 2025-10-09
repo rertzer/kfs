@@ -6,6 +6,7 @@
 #include "keycode.h"
 #include "malloc.h"
 #include "memory.h"
+#include "scheduler.h"
 #include "terminal.h"
 #include "tss.h"
 
@@ -56,8 +57,9 @@ void kernel_zero() {
 	uint16_t pid = fork();
 	printf("child pid : %d\n", pid);
 	pid = fork();
-	printf("child pid : %d\n", pid);
-	print_gdt();
+	printf("returned pid : %d\n", pid);
+	// print_gdt();
+	scheduler();
 
 	while (true) {
 		sleep();

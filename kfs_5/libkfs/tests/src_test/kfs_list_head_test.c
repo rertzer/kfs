@@ -319,3 +319,50 @@ Test(list_head, del_offset) {
 		}
 	}
 }
+
+Test(list_head, list_get) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_add_tail(&(to[i]->lh), &lh);
+	}
+	size_t size = list_size(&lh);
+	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+
+	test_offset_t* test = list_get(lh.next, TO_OFFSET);
+	cr_assert(test == to[0]);
+	cr_assert(test->payload1 == 0);
+
+	test = list_get(test->lh.next, TO_OFFSET);
+	cr_assert(test == to[1]);
+	cr_assert(test->payload1 == 1);
+}
+
+Test(list_head, round) {
+	list_head_t lh;
+
+	list_head_init(&lh);
+	test_offset_t* to[42];
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_add_tail(&(to[i]->lh), &lh);
+	}
+	size_t size = list_size(&lh);
+	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
+
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 42; ++j) {
+			test_offset_t* test = list_round(&lh, TO_OFFSET);
+			cr_assert(test == to[j], "round %d, index %d expected %p found %p\n", i, j, test, to[j]);
+			cr_assert(test->payload1 == j);
+			cr_assert(test->payload2 == -j);
+		}
+	}
+}

@@ -6,6 +6,11 @@ list_head_t tasklist;
 list_head_t runqueue;
 proc_t*		current;
 
+void scheduler() {
+	printf("current pid %d\n", current->pid);
+	printf("next pid %d\n", ((proc_t*)runqueue.next)->pid);
+}
+
 void scheduler_init(proc_t* proc_zero) {
 	pid_bitmap_init();
 	list_head_init(&tasklist);

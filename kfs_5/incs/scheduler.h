@@ -4,6 +4,7 @@
 #include "processus.h"
 #include "tss.h"
 
+void		 scheduler();
 void		 scheduler_init(proc_t* proc_zero);
 uint8_t		 scheduler_add_task(proc_t* task);
 uint8_t		 scheduler_remove_task(proc_t* task);

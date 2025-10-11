@@ -23,6 +23,12 @@ void run_task_zero() {
 	panic("zero task switch failed");
 }
 
+void switch_task(uint32_t index) {
+	uint16_t offset = index * sizeof(gdt_entry_t);
+	printf("index %d, offset %p\n", index, offset);
+	task_switch(offset);
+}
+
 void set_tss(tss_t* tss, void* fun) {
 	memset(tss, '\0', sizeof(tss_t));
 	init_tss_registers(tss);
@@ -44,7 +50,7 @@ tss_t* spawn_tss(char* kernel_stack) {
 		return (NULL);
 	}
 
-	fork_registers_to_tss(tss, kernel_stack + KERNEL_STACK_SIZE);
+	fork_registers_to_tss(tss, kernel_stack + KERNEL_STACK_SIZE - 16);
 	// the child user stack pointer should be pushed in the child kernel stack
 
 	return (tss);

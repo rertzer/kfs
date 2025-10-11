@@ -61,6 +61,7 @@ tss_t*	 get_tss_addr_by_gdt_offset(uint32_t offset);
 void	 load_task_register(uint32_t offset);
 uint16_t store_task_register();
 void	 run_task_zero();
+void	 switch_task(uint32_t index);
 void	 task_switch(uint16_t gdt_offset);
 void	 print_tss(tss_t* tss);
 tss_t*	 spawn_tss(char* kernel_stack);

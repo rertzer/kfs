@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include "list_head.h"
 #include "printk.h"
+#include "processus.h"
 
 list_head_t tasklist;
 list_head_t runqueue;
@@ -8,7 +9,12 @@ proc_t*		current;
 
 void scheduler() {
 	printf("current pid %d\n", current->pid);
-	printf("next pid %d\n", ((proc_t*)runqueue.next)->pid);
+	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
+	printf("current pid %d\n", current->pid);
+	printf("current tss address %p\n", current);
+	printf("new stack %x %x %d\n", current->tss->esp, current->kernel_stack, ((uint32_t*)current->tss->esp)[0]);
+	printf("new stack %x\n", current->tss->esp);
+	switch_task(current->gdt_index);
 }
 
 void scheduler_init(proc_t* proc_zero) {
@@ -16,7 +22,7 @@ void scheduler_init(proc_t* proc_zero) {
 	list_head_init(&tasklist);
 	list_head_init(&runqueue);
 	scheduler_add_task(proc_zero);
-	scheduler_run(proc_zero);
+	// scheduler_run(proc_zero);
 	current = proc_zero;
 }
 

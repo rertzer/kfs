@@ -37,6 +37,9 @@ proc_t* spawn(proc_t* parent) {
 		return (NULL);
 	}
 	child->kernel_stack = mbook(KERNEL_STACK_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
+	printf("stack addr %x size %d\n", child->kernel_stack, v_size(child->kernel_stack));
+	printf("XX%dXX\n", ((char*)child->kernel_stack)[0]);
+
 	if (child->kernel_stack == NULL) {
 		pid_bitmap_remove(child->pid);
 		kfree(child);

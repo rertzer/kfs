@@ -44,14 +44,13 @@ tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {
 	return ((tss_t*)desc.base);
 }
 
-tss_t* spawn_tss(char* kernel_stack) {
+tss_t* spawn_tss(char* kernel_ebp, char* kernel_esp) {
 	tss_t* tss = kmalloc(sizeof(tss_t));
 	if (tss == NULL) {
 		return (NULL);
 	}
 
-	fork_registers_to_tss(tss, kernel_stack + KERNEL_STACK_SIZE - 16);
-	// the child user stack pointer should be pushed in the child kernel stack
+	fork_registers_to_tss(tss, kernel_ebp, kernel_esp);
 
 	return (tss);
 }

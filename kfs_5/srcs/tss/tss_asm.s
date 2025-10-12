@@ -51,7 +51,12 @@ fork_registers_to_tss:
 	mov ebp, esp
 
 	mov ecx, [ebp+8]			;retrieve first argument (tss address)
-	mov edx, [ebp+12]			;retrieve second argument (stack address)
+	mov edx, [ebp+12]			;retrieve second argument (ebp address)
+
+	mov [ecx + 60], edx		;ebp 
+
+
+	mov edx, [ebp+16]			;retrieve third argument (esp address)
 
 	mov [ecx + 4], edx		; esp0
 	mov [ecx + 8], ss		;ss0 
@@ -69,7 +74,6 @@ fork_registers_to_tss:
 	mov [ecx + 48], edx		; edx
 	mov [ecx + 52], ebx		; ebx
 	mov [ecx + 56], edx		; esp
-	mov [ecx + 60], edx		;ebp 
 	mov [ecx + 64], esi 	; esi
 	mov [ecx + 68], edi		; edi
 	mov [ecx + 72], es		; es 

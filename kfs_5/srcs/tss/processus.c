@@ -45,12 +45,13 @@ proc_t* spawn(proc_t* parent, fork_data_t fd) {
 		kfree(child);
 		return (NULL);
 	}
-	copy_stack(fd, child->kernel_stack);
+	copy_stack((uint8_t*)fd.old_esp, child->kernel_stack);
+	fd = switch_fd_baseline(fd, child->kernel_stack);
 
 	child->owner = parent->owner;
 	child->parent = parent;
 	child->gdt_index = 0;
-	child->tss = spawn_tss(child->kernel_stack);
+	child->tss = spawn_tss((char*)fd.old_ebp, (char*)fd.old_esp);
 	if (child->tss == NULL) {
 		pid_bitmap_remove(child->pid);
 		kfree(child);
@@ -70,9 +71,23 @@ proc_t* spawn(proc_t* parent, fork_data_t fd) {
 	return (child);
 }
 
-void copy_stack(fork_data_t fd, uint8_t* low_stack) {
-	uint8_t* high_src = get_kernel_stack_high((uint8_t*)(fd.old_esp));
+void copy_stack(uint8_t* old_esp, uint8_t* low_stack) {
+	uint8_t* high_src = get_kernel_stack_high(old_esp);
 	uint8_t* high_dest = get_kernel_stack_high(low_stack);
+	uint32_t stack_len = (uint32_t)high_src - (uint32_t)old_esp + 1;
+	printf("copy stack %p %p len %d\n", high_src, old_esp, stack_len);
+	for (size_t i = 0; i < stack_len; ++i) {
+		*(high_dest - i) = *(high_src - i);
+	}
+}
+
+fork_data_t switch_fd_baseline(fork_data_t fd, uint8_t* baseline) {
+	fd.old_esp &= KERNEL_STACK_HIGH_MASK;
+	fd.old_ebp &= KERNEL_STACK_HIGH_MASK;
+	fd.old_esp |= (uint32_t)baseline;
+	fd.old_ebp |= (uint32_t)baseline;
+
+	return (fd);
 }
 
 uint8_t* get_kernel_stack_high(uint8_t* sp) {

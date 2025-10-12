@@ -29,6 +29,7 @@ void kernel_main(void) {
 
 void kernel_zero() {
 	int_allowed();
+	char x = 'X';
 	// readdump(0, NULL);
 	// press_any();
 	// boot_infos(0, NULL);
@@ -63,12 +64,12 @@ void kernel_zero() {
 		scheduler();
 		printf("%d! I am your father\n", pid);
 		uint16_t tr = store_task_register();
-		printk(" father TR: %08x %d\n", tr);
+		printk(" father TR: %08x %c\n", tr, x);
 		// print_gdt();
 	} else {
 		printf("I am %d, your son\n", pid);
 		uint16_t tr = store_task_register();
-		printk("son TR: %08x %d\n", tr);
+		printk("son TR: %08x  %c\n", tr, x);
 		scheduler();
 	}
 	while (true) {

@@ -56,11 +56,12 @@ int16_t pid_bitmap_get_new();
 void	pid_bitmap_remove(int16_t pid);
 void	pid_bitmap_test();
 
-proc_t*	 init_zero_proc();
-proc_t*	 spawn(proc_t* src, fork_data_t fd);
-void	 proc_set_gdt_index(proc_t* task, uint32_t gdt_index);
-void	 free_process(proc_t* task);
-void	 print_process(void* vtask);
-void	 copy_stack(fork_data_t fd, uint8_t* low_stack);
-uint8_t* get_kernel_stack_high(uint8_t* sp);
+proc_t*		init_zero_proc();
+proc_t*		spawn(proc_t* src, fork_data_t fd);
+void		proc_set_gdt_index(proc_t* task, uint32_t gdt_index);
+void		free_process(proc_t* task);
+void		print_process(void* vtask);
+void		copy_stack(uint8_t* old_esp, uint8_t* low_stack);
+fork_data_t switch_fd_baseline(fork_data_t fd, uint8_t* baseline);
+uint8_t*	get_kernel_stack_high(uint8_t* sp);
 #endif

@@ -93,6 +93,7 @@ _start:
 
 	; switch to high kernel addresses
 	mov esp, stack_bottom	; load the stack pointer
+	mov ebp, stack_bottom
 	call kernel_main		; call the main kernel
 	cli
 .hang: hlt					; enter in an infinite loop
@@ -103,7 +104,7 @@ _start:
 ; ======================= high kernel sections ==================
 section .data
 section .bss
-	align 16
+	alignb 16384 
 	global stack_bottom
 	global stack_top
 	global p_mmap_start

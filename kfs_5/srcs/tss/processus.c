@@ -26,7 +26,7 @@ proc_t* init_zero_proc() {
 	return (proc);
 }
 
-proc_t* spawn(proc_t* parent) {
+proc_t* spawn(proc_t* parent, fork_data_t fd) {
 	proc_t* child = kmalloc(sizeof(proc_t));
 	if (child == NULL) {
 		return (NULL);
@@ -45,6 +45,7 @@ proc_t* spawn(proc_t* parent) {
 		kfree(child);
 		return (NULL);
 	}
+	copy_stack(fd, child->kernel_stack);
 
 	child->owner = parent->owner;
 	child->parent = parent;
@@ -67,6 +68,19 @@ proc_t* spawn(proc_t* parent) {
 	list_head_init(&child->heap);
 
 	return (child);
+}
+
+void copy_stack(fork_data_t fd, uint8_t* low_stack) {
+	uint8_t* high_src = get_kernel_stack_high((uint8_t*)(fd.old_esp));
+	uint8_t* high_dest = get_kernel_stack_high(low_stack);
+}
+
+uint8_t* get_kernel_stack_high(uint8_t* sp) {
+	uint32_t stack_high = (uint32_t)sp;
+	stack_high |= KERNEL_STACK_HIGH_MASK;
+
+	printf("stack high is %x\t", stack_high);
+	return ((uint8_t*)stack_high);
 }
 
 void free_process(proc_t* task) {

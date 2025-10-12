@@ -71,7 +71,6 @@ void kernel_zero() {
 		printk("son TR: %08x %d\n", tr);
 		scheduler();
 	}
-
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

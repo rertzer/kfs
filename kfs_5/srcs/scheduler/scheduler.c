@@ -64,3 +64,7 @@ list_head_t* scheduler_get_tasklist() {
 
 void increase_family(proc_t* task) {}
 void decrease_family(proc_t* task) {}
+
+uint16_t getpid() {
+	return (current->pid);
+}

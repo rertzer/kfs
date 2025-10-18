@@ -79,7 +79,6 @@ uint8_t test_stack_dump(size_t argc, char** argv);
 uint8_t uptime(size_t argc, char** argv);
 
 void	 freboot();
-uint32_t boom();
 uint32_t get_retaddr();
 void	 tabledump();
 void	 print_mem_infos(mem_info_t* mem_infos);

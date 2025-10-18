@@ -24,36 +24,17 @@ void kernel_main(void) {
 	init_memory();
 	init_v_memory();
 	run_task_zero();
-	// kernel_zero();
 }
 
 void kernel_zero() {
-	int_allowed();
+	interrupts_allowed();
 	char x = 'X';
-	// readdump(0, NULL);
-	// press_any();
-	// boot_infos(0, NULL);
-	// page_testing();
-	// panic("Kernel test");
-	// mbook_test();
-	// memory_test_vmbook();
-	// test_malloc(NULL, set_simple_test, set_complex_test, NULL); interrupts_test();
-
-	// dump_stack();
-	// press_any();
-	// reboot(0, NULL);
-	// arg_split_test();
 
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
 	keypress_t keypress = init_keypress();
 	term_prompt();
 	uint16_t tr = store_task_register();
 	printk("TR: %08x %d\n", tr);
-	// list_head_test();
-	// pid_bitmap_test();
-	// int16_t pid = fork();
-	// printf("fork returned %d\n", pid);
-	// gdt_bitmap_test();
 
 	uint16_t pid = fork();
 	printf("child pid : %d\n", pid);
@@ -65,7 +46,6 @@ void kernel_zero() {
 		printf("%d! I am your father\n", pid);
 		uint16_t tr = store_task_register();
 		printk(" father TR: %08x %c\n", tr, x);
-		// print_gdt();
 	} else {
 		printf("I am %d, your son\n", pid);
 		uint16_t tr = store_task_register();

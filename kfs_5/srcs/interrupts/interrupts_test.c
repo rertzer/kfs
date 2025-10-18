@@ -17,7 +17,7 @@ void interrupts_test() {
 	// invalid_tss_test();
 	// segment_not_present_test();
 	// stack_exception_test();
-	// general_protection_test();
+	general_protection_test();
 	//	coprocessor_error_test();
 }
 
@@ -110,7 +110,7 @@ void segment_not_present_test() {
 void general_protection_test() {
 	printf("general protection test\n");
 	press_any();
-	boom();
+	asm volatile("lcall (%esp);");
 }
 
 void stack_exception_test() {

@@ -23,7 +23,7 @@ void sleep() {
 	__asm__ volatile("hlt");
 }
 
-void int_allowed() {
+void interrupts_allowed() {
 	__asm__ volatile("sti");
 }
 

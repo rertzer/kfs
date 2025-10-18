@@ -1,18 +1,19 @@
 #include "fork.h"
-#include "gdt.h"
 #include "keycode.h"
-#include "printk.h"
 #include "processus.h"
 #include "scheduler.h"
 #include "tss.h"
 
 int16_t fork() {
 	fork_data_t fork_data;
-	__asm__ volatile("movl 4(%%ebp), %0" : "=r"(fork_data.ret_address));
-	__asm__ volatile("movl (%%ebp), %0" : "=r"(fork_data.old_ebp));
-	__asm__ volatile("movl %%ebp, %0" : "=r"(fork_data.old_esp));
+	__asm__ volatile(
+		" \
+	movl 4(%%ebp), %0; \
+	movl (%%ebp), %1; \
+	movl %%ebp, %2;"
+		: "=g"(fork_data.ret_address), "=g"(fork_data.old_ebp), "=g"(fork_data.old_esp)::"memory");
+
 	fork_data.old_esp -= 8;
-	press_any();
 	proc_t* parent = scheduler_get_current_proc();
 	if (parent == NULL) {
 		return (-1);

@@ -15,7 +15,7 @@ static void		   panic_init_values();
 void panic(char* msg) {
 	dump_stack();
 	print_panic(msg);
-	int_allowed();
+	interrupts_allowed();
 	char* reboot_args[] = {"reboot", "20"};
 	reboot(2, reboot_args);
 }

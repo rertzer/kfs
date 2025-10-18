@@ -133,10 +133,6 @@ section .bss
 section .text
 
 ; ====================== kernel utils ==============================
-;global far_test
-far_test:
-	mov eax, 0x1234
-	retf
 
 global freboot
 freboot:
@@ -198,35 +194,4 @@ get_registers:
 	mov esp, ebp
 	pop ebp
 	ret
-
-
-;section .multiboot.text
-global boom
-
-boom:
-	pusha
-	;push 0x08
-	;lea eax, [theend]
-	;push eax 
-	;call [boom_boom] 
-	;call long 0x08:flush_tlb
-	push word 0x08
-	lea eax, [far_test]
-	push dword eax
-	;push flush_tlb
-	;push 0x12345678
-	;call [esp]
-	call far [esp] 
-	
-	add esp, 4
-	;call boom_boom
-	;jmp theend
-	;jmp 0x08:theend ; general protection fault
-	;jmp 0xFFFFFFFF ; invalid address
-	popa
-	ret
-
-theend:
-	popa
-	retf
 

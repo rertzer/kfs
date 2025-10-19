@@ -98,6 +98,7 @@ SOURCES =	boot/boot.s \
 			panic/panic.c \
 			panic/dump_stack.c \
 			scheduler/scheduler.c \
+			signal/signal.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \

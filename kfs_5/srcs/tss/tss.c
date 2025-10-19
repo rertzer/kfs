@@ -7,8 +7,6 @@
 #include "scheduler.h"
 #include "string.h"
 
-inline void set_tss_exec(tss_t* tss, void* fun);
-
 uint32_t get_tss_limit() {
 	return (sizeof(tss_t) - 1);
 }
@@ -25,18 +23,12 @@ void run_task_zero() {
 
 void switch_task(uint32_t index) {
 	uint16_t offset = index * sizeof(gdt_entry_t);
-	printf("index %d, offset %p\n", index, offset);
 	task_switch(offset);
 }
 
 void set_tss(tss_t* tss, void* fun) {
 	memset(tss, '\0', sizeof(tss_t));
-	init_tss_registers(tss);
-	set_tss_exec(tss, fun);
-}
-
-inline void set_tss_exec(tss_t* tss, void* fun) {
-	tss->eip = (uint32_t)fun;
+	init_tss_registers(tss, fun);
 }
 
 tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {
@@ -44,19 +36,22 @@ tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {
 	return ((tss_t*)desc.base);
 }
 
-tss_t* spawn_tss(char* kernel_ebp, char* kernel_esp) {
+tss_t* spawn_tss(caller_data_t caller_data) {
 	tss_t* tss = kmalloc(sizeof(tss_t));
 	if (tss == NULL) {
 		return (NULL);
 	}
 
-	fork_registers_to_tss(tss, kernel_ebp, kernel_esp);
+	fork_registers_to_tss(tss);
+
+	tss->ebp = caller_data.old_ebp;
+	tss->esp0 = caller_data.old_esp;
+	tss->esp1 = caller_data.old_esp;
+	tss->esp2 = caller_data.old_esp;
+	tss->esp = caller_data.old_esp;
+	tss->eip = caller_data.ret_address;
 
 	return (tss);
-}
-
-void tss_set_return_address(tss_t* tss, void* ret) {
-	tss->eip = (uint32_t)ret;
 }
 
 void print_tss(tss_t* tss) {

@@ -12,8 +12,8 @@ init_tss_registers:
 	push ebp
 	mov ebp, esp
 
-
 	mov ecx, [ebp+8]				;retrieve first argument (tss address)
+	mov edx, [ebp+12]						; retrieve second argument (eip value)
 	mov dword [ecx + 4], stack_bottom		; esp0
 	mov [ecx + 8], ss						;ss0 
 	mov dword [ecx + 12], stack_bottom 		; esp1 
@@ -22,25 +22,18 @@ init_tss_registers:
 	mov [ecx + 24], ss						; ss2 
 	mov eax, cr3
 	mov [ecx + 28], eax						; cr3
-	mov  dword [ecx + 32], 0				; eip
+	mov  dword [ecx + 32], edx				; eip
 	pushf
 	pop eax
 	mov [ecx + 36], eax	; eflags
-	mov dword [ecx + 40], 0		; eax
-	mov dword [ecx + 44], 0		; ecx
-	mov dword [ecx + 48], 0		; edx
-	mov dword [ecx + 52], 0		; ebx
 	mov dword [ecx + 56], stack_bottom		; esp
 	mov dword [ecx + 60], stack_bottom		;ebp 
-	mov dword [ecx + 64], 0 	; esi
-	mov dword [ecx + 68], 0		; edi
 	mov [ecx + 72], es		; es 
 	mov [ecx + 76], cs		; cs 
 	mov [ecx + 80], ss		; ss 
 	mov [ecx + 84], ds		; ds 
 	mov [ecx + 88], fs		; fs 
 	mov [ecx + 92], gs		; gs 
-	mov dword [ecx + 96], 0		; ldt + I/O map base
 
 	mov esp, ebp
 	pop ebp
@@ -51,18 +44,9 @@ fork_registers_to_tss:
 	mov ebp, esp
 
 	mov ecx, [ebp+8]			;retrieve first argument (tss address)
-	mov edx, [ebp+12]			;retrieve second argument (ebp address)
 
-	mov [ecx + 60], edx		;ebp 
-
-
-	mov edx, [ebp+16]			;retrieve third argument (esp address)
-
-	mov [ecx + 4], edx		; esp0
 	mov [ecx + 8], ss		;ss0 
-	mov [ecx + 12], edx 	; esp1 
 	mov [ecx + 16], ss		; ss1 
-	mov [ecx + 20], edx		; esp2 
 	mov [ecx + 24], ss		; ss2 
 	mov eax, cr3
 	mov [ecx + 28], eax		; cr3
@@ -73,7 +57,6 @@ fork_registers_to_tss:
 	mov [ecx + 44], ecx		; ecx
 	mov [ecx + 48], edx		; edx
 	mov [ecx + 52], ebx		; ebx
-	mov [ecx + 56], edx		; esp
 	mov [ecx + 64], esi 	; esi
 	mov [ecx + 68], edi		; edi
 	mov [ecx + 72], es		; es 

@@ -64,7 +64,7 @@ static void add_gdt_descriptor(gdt_entry_t* entry, gdt_descriptor_t desc) {
 	entry->bytes[6] |= (uint8_t)(desc.flags << 4);
 }
 
-size_t add_tss_descriptor(tss_t* tss) {
+size_t gdt_add_tss_descriptor(tss_t* tss) {
 	size_t index = gdt_bitmap_get_new();
 	if (index != GDT_MAX_ENTRIES) {
 		add_gdt_descriptor(&gdt[index],

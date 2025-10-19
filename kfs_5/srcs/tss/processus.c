@@ -26,7 +26,7 @@ proc_t* init_zero_proc() {
 	return (proc);
 }
 
-proc_t* spawn(proc_t* parent, fork_data_t fd) {
+proc_t* spawn(proc_t* parent, caller_data_t fc) {
 	proc_t* child = kmalloc(sizeof(proc_t));
 	if (child == NULL) {
 		return (NULL);
@@ -37,21 +37,19 @@ proc_t* spawn(proc_t* parent, fork_data_t fd) {
 		return (NULL);
 	}
 	child->kernel_stack = mbook(KERNEL_STACK_SIZE, SUPERVISOR_LEVEL, READ_WRITE);
-	printf("stack addr %x size %d\n", child->kernel_stack, v_size(child->kernel_stack));
-	printf("XX%dXX\n", ((char*)child->kernel_stack)[0]);
 
 	if (child->kernel_stack == NULL) {
 		pid_bitmap_remove(child->pid);
 		kfree(child);
 		return (NULL);
 	}
-	copy_stack((uint8_t*)fd.old_esp, child->kernel_stack);
-	fd = switch_fd_baseline(fd, child->kernel_stack);
+	copy_stack((uint8_t*)fc.old_esp, child->kernel_stack);
+	fc = switch_fc_baseline(fc, child->kernel_stack);
 
 	child->owner = parent->owner;
 	child->parent = parent;
 	child->gdt_index = 0;
-	child->tss = spawn_tss((char*)fd.old_ebp, (char*)fd.old_esp);
+	child->tss = spawn_tss(fc);
 	if (child->tss == NULL) {
 		pid_bitmap_remove(child->pid);
 		kfree(child);
@@ -81,13 +79,13 @@ void copy_stack(uint8_t* old_esp, uint8_t* low_stack) {
 	}
 }
 
-fork_data_t switch_fd_baseline(fork_data_t fd, uint8_t* baseline) {
-	fd.old_esp &= KERNEL_STACK_HIGH_MASK;
-	fd.old_ebp &= KERNEL_STACK_HIGH_MASK;
-	fd.old_esp |= (uint32_t)baseline;
-	fd.old_ebp |= (uint32_t)baseline;
+caller_data_t switch_fc_baseline(caller_data_t cd, uint8_t* baseline) {
+	cd.old_esp &= KERNEL_STACK_HIGH_MASK;
+	cd.old_ebp &= KERNEL_STACK_HIGH_MASK;
+	cd.old_esp |= (uint32_t)baseline;
+	cd.old_ebp |= (uint32_t)baseline;
 
-	return (fd);
+	return (cd);
 }
 
 uint8_t* get_kernel_stack_high(uint8_t* sp) {

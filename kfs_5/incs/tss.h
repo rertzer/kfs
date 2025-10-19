@@ -51,12 +51,18 @@ typedef struct {
 
 } tss_t;
 
+typedef struct {
+	uint32_t old_ebp;
+	uint32_t old_esp;
+	uint32_t ret_address;
+} caller_data_t;
+
 /* ==================== functions ======================= */
 uint32_t get_tss_limit();
 void	 set_tss(tss_t* tss, void* fun);
 void	 copy_registers_to_tss(tss_t* tss);
-void	 fork_registers_to_tss(tss_t* tss, void* kernel_ebp, void* kernel_esp);
-void	 init_tss_registers(tss_t* tss);
+void	 fork_registers_to_tss(tss_t* tss);
+void	 init_tss_registers(tss_t* tss, void* fun);
 tss_t*	 get_tss_addr_by_gdt_offset(uint32_t offset);
 void	 load_task_register(uint32_t offset);
 uint16_t store_task_register();
@@ -64,9 +70,8 @@ void	 run_task_zero();
 void	 switch_task(uint32_t index);
 void	 task_switch(uint16_t gdt_offset);
 void	 print_tss(tss_t* tss);
-tss_t*	 spawn_tss(char* kernel_ebp, char* kernel_esp);
-size_t	 add_tss_descriptor(tss_t* tss);
+tss_t*	 spawn_tss(caller_data_t caller_data);
+size_t	 gdt_add_tss_descriptor(tss_t* tss);
 void	 remove_tss_descriptor(size_t index);
-void	 tss_set_return_address(tss_t* tss, void* ret);
 
 #endif

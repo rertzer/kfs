@@ -2,19 +2,22 @@
 #include "list_head.h"
 #include "printk.h"
 #include "processus.h"
+#include "signal.h"
 
 list_head_t tasklist;
 list_head_t runqueue;
 proc_t*		current;
 
 void scheduler() {
-	printf("current pid %d\n", current->pid);
+	printf("scheduler old current pid %d\n", current->pid);
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
-	printf("current pid %d\n", current->pid);
-	printf("current tss address %p\n", current);
-	printf("new stack %x %x %d\n", current->tss->esp, current->kernel_stack, ((uint32_t*)current->tss->esp)[0]);
-	printf("new stack %x\n", current->tss->esp);
+	printf("scheduler new current pid %d\n", current->pid);
+	// printf("current tss address %p\n", current);
+	// printf("new stack %x %x %d\n", current->tss->esp, current->kernel_stack, ((uint32_t*)current->tss->esp)[0]);
+	// printf("new stack %x\n", current->tss->esp);
 	switch_task(current->gdt_index);
+	printf("scheduler after task switch, pid %d\n", current->pid);
+	pending_signals(current);
 }
 
 void scheduler_init(proc_t* proc_zero) {
@@ -56,6 +59,19 @@ uint8_t scheduler_remove_task(proc_t* task) {
 
 proc_t* scheduler_get_current_proc() {
 	return (current);
+}
+
+proc_t* scheduler_get_proc_by_pid(uint16_t pid) {
+	list_head_t* tmp = tasklist.next;
+	proc_t*		 proc = NULL;
+	while (tmp != &tasklist) {
+		if (((proc_t*)tmp)->pid == pid) {
+			proc = (proc_t*)tmp;
+			break;
+		}
+		tmp = tmp->next;
+	}
+	return (proc);
 }
 
 list_head_t* scheduler_get_tasklist() {

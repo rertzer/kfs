@@ -91,7 +91,7 @@ SOURCES =	boot/boot.s \
 			kernel/kernel.c \
 			kernel/kernel_asm_utils.c \
 			kernel/kernel_utils.c \
-			kernel/utils_inline.c \ 
+			kernel/utils_inline.c \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \

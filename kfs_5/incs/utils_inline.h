@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+inline int get_bit(uint32_t field, uint32_t index) {
+	return ((field & ((uint32_t)1 << index)) >> index);
+}
+
 inline uint32_t set_bit(uint32_t field, uint32_t index) {
 	return (field | (uint32_t)1 << index);
 }

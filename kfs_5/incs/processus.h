@@ -24,10 +24,10 @@
 
 typedef enum { PROC_RUN, PROC_SLEEP, PROC_STOPPED, PROC_ZOMBIE, PROC_DEAD } proc_status_e;
 
-typedef struct signal_lst_s {
-	list_head_t lst;
-	uint32_t	signal;
-} signal_lst_t;
+// typedef struct signal_lst_s {
+// 	list_head_t lst;
+// 	uint32_t	signal;
+// } signal_lst_t;
 
 typedef struct proc_lst_s {
 	list_head_t	   lst;
@@ -45,9 +45,11 @@ typedef struct proc_s {
 	uint32_t	   owner;
 	uint32_t	   gdt_index;
 	tss_t*		   tss;
-	signal_lst_t*  signals;
-	int16_t		   pid;
-	proc_status_e  status;
+	// signal_lst_t*  signals;
+	uint32_t	  sig_pending;
+	uint32_t	  sig_processing;
+	int16_t		  pid;
+	proc_status_e status;
 
 } proc_t;
 

@@ -1,7 +1,6 @@
 #include "processus.h"
 #include "gdt.h"
 #include "malloc.h"
-#include "panic.h"
 #include "string.h"
 
 proc_t* init_zero_proc() {
@@ -14,7 +13,9 @@ proc_t* init_zero_proc() {
 	proc->parent = proc;
 	proc->gdt_index = 0;
 	proc->tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
-	proc->signals = NULL;
+	// proc->signals = NULL;
+	proc->sig_pending = 0;
+	proc->sig_processing = 0;
 	proc->status = PROC_SLEEP;
 	proc->kernel_stack = NULL;
 	list_head_init(&proc->lst);
@@ -56,7 +57,9 @@ proc_t* spawn(proc_t* parent, caller_data_t fc) {
 		kfree(child->kernel_stack);
 		return (NULL);
 	}
-	child->signals = NULL;
+	// child->signals = NULL;
+	child->sig_pending = 0;
+	child->sig_processing = 0;
 	child->status = PROC_SLEEP;
 	// create heap
 	// parenthood handled by the scheduler

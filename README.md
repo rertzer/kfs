@@ -4,7 +4,7 @@ JyrOS is al kernel developped to learn the basics about kernel programming. It i
 
 It follows the 42 school Kernel From Scratch series.
 
-> Notice that the work is still in progress.
+> Sneak Preview: Discover the next features on the branch `signal`: process and signal handling, as well as a fully reorganized library.
 
 # Features
 

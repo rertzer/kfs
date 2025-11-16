@@ -8,16 +8,16 @@
 
 #define REGS_NB 18
 
-#define BUILTINS                                                                                                      \
-	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",                  \
-	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [READDUMP] = "readdump", [BOOT_INFOS] = "bootinfos",            \
-	[MEMORY_INFOS] = "memoryinfos", [INTERRUPT] = "interrupt", [KILL] = "kill", [PS] = "ps", [SCHEDULE] = "schedule", \
-	[TEST_STACK_DUMP] = "testStackDump", [UP_TIME] = "uptime",
+#define BUILTINS                                                                                                  \
+	[ECHO] = "echo", [QWERTY] = "qwerty", [AZERTY] = "azerty", [REBOOT] = "reboot", [HALT] = "halt",              \
+	[REGISTERS] = "registers", [HEXDUMP] = "hexdump", [READDUMP] = "readdump", [BOOT_INFOS] = "bootinfos",        \
+	[MEMORY_INFOS] = "memoryinfos", [INTERRUPT] = "interrupt", [KILL] = "kill", [PS] = "ps", [PSINFO] = "psinfo", \
+	[SCHEDULE] = "schedule", [TEST_STACK_DUMP] = "testStackDump", [UP_TIME] = "uptime",
 
 #define BUILTIN_FUNCTIONS                                                                                           \
 	[ECHO] = echo, [QWERTY] = qwerty, [AZERTY] = azerty, [REBOOT] = reboot, [HALT] = halt, [REGISTERS] = registers, \
 	[HEXDUMP] = hexdump, [READDUMP] = readdump, [BOOT_INFOS] = boot_infos, [MEMORY_INFOS] = memory_infos,           \
-	[INTERRUPT] = interrupt, [KILL] = kill_builtin, [PS] = ps, [SCHEDULE] = schedule_builtin,                       \
+	[INTERRUPT] = interrupt, [KILL] = kill_builtin, [PS] = ps, [PSINFO] = ps_info, [SCHEDULE] = schedule_builtin,   \
 	[TEST_STACK_DUMP] = test_stack_dump, [UP_TIME] = uptime,
 
 typedef enum {
@@ -34,6 +34,7 @@ typedef enum {
 	INTERRUPT,
 	KILL,
 	PS,
+	PSINFO,
 	SCHEDULE,
 	TEST_STACK_DUMP,
 	UP_TIME,
@@ -79,6 +80,7 @@ uint8_t memory_infos(size_t argc, char** argv);
 uint8_t interrupt(size_t argc, char** argv);
 uint8_t kill_builtin(size_t argc, char** argv);
 uint8_t ps(size_t argc, char** argv);
+uint8_t ps_info(size_t argc, char** argv);
 uint8_t schedule_builtin(size_t argc, char** argv);
 uint8_t test_stack_dump(size_t argc, char** argv);
 uint8_t uptime(size_t argc, char** argv);

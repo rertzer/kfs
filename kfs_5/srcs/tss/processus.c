@@ -109,6 +109,10 @@ void free_process(proc_t* task) {
 	kfree(task);
 }
 
+void proc_set_gdt_index(proc_t* task, uint32_t gdt_index) {
+	task->gdt_index = gdt_index;
+}
+
 void print_process(void* vtask) {
 	static char* status_str[] = {PROC_STATUS_STRING};
 	proc_t*		 task = (proc_t*)vtask;
@@ -123,6 +127,20 @@ void print_process(void* vtask) {
 	}
 }
 
-void proc_set_gdt_index(proc_t* task, uint32_t gdt_index) {
-	task->gdt_index = gdt_index;
+uint8_t proc_print_info(uint16_t pid) {
+	proc_t* proc = scheduler_get_proc_by_pid(pid);
+	if (proc == NULL) {
+		return (1);
+	}
+	print_process(proc);
+	printk("childrens:\n");
+	list_for_each(&proc->childrens, print_kid, PROC_LIST_SIBLINGS);
+	return (0);
+}
+
+void print_kid(void* kid) {
+	static char* status_str[] = {PROC_STATUS_STRING};
+	proc_t*		 kidp = (proc_t*)kid;
+
+	printk("\tPID: %d\towner: %d\tstatus: %s\n", kidp->pid, kidp->owner, status_str[kidp->status]);
 }

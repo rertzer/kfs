@@ -62,7 +62,9 @@ proc_t*		  spawn(proc_t* src, caller_data_t fd);
 void		  proc_set_gdt_index(proc_t* task, uint32_t gdt_index);
 void		  free_process(proc_t* task);
 void		  print_process(void* vtask);
+uint8_t		  proc_print_info(uint16_t pid);
 void		  copy_stack(uint8_t* old_esp, uint8_t* low_stack);
 caller_data_t switch_fc_baseline(caller_data_t fc, uint8_t* baseline);
 uint8_t*	  get_kernel_stack_high(uint8_t* sp);
+void		  print_kid(void* kid);
 #endif

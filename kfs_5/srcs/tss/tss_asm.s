@@ -129,17 +129,16 @@ store_task_register:
 	pop ebp
 	ret
 
-
 task_switch:
 	push ebp
 	mov ebp, esp
 	
 	xor eax, eax
 	mov word ax, [ebp+8] ; retrieve gdt offset
-
 	push word ax 
 	push dword 0x00
 	jmp far [esp]
+
 	; stop here good bye!
 	mov esp, ebp
 	pop ebp

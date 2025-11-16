@@ -30,7 +30,7 @@ void scheduler_init(proc_t* proc_zero) {
 }
 
 uint8_t scheduler_add_task(proc_t* task) {
-	increase_family(task);
+	family_growing(task);
 	list_add(task, &tasklist);
 	if (task->status == PROC_RUN) {
 		list_add(&task->run_lst, &runqueue);
@@ -51,7 +51,7 @@ uint8_t scheduler_remove_task(proc_t* task) {
 	if (task->status != PROC_DEAD) {
 		return (1);
 	}
-	decrease_family(task);
+	family_shrinking(task);
 	list_extract(task);
 	free_process(task);
 	return (0);
@@ -78,8 +78,12 @@ list_head_t* scheduler_get_tasklist() {
 	return (&tasklist);
 }
 
-void increase_family(proc_t* task) {}
-void decrease_family(proc_t* task) {}
+void family_growing(proc_t* task) {
+	list_add(&task->parent->childrens, &task->siblings);
+}
+void family_shrinking(proc_t* task) {
+	list_del(&task->siblings);
+}
 
 uint16_t getpid() {
 	return (current->pid);

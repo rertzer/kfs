@@ -12,7 +12,7 @@ uint8_t		 scheduler_run(proc_t* task);
 proc_t*		 scheduler_get_current_proc();
 proc_t*		 scheduler_get_proc_by_pid(uint16_t pid);
 list_head_t* scheduler_get_tasklist();
-void		 increase_family(proc_t* task);
-void		 decrease_family(proc_t* task);
+void		 family_growing(proc_t* task);
+void		 family_shrinking(proc_t* task);
 uint16_t	 getpid();
 #endif

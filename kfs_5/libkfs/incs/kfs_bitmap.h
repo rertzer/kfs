@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #define BITMAP_BITS_PER_ENTRY (sizeof(size_t) * 8)
+#define BITMAP_MAX_ENTRY_VALUE (size_t)-1
 
 typedef struct {
 	size_t array_offset;

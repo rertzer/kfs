@@ -7,6 +7,7 @@
 #include "malloc.h"
 #include "memory.h"
 #include "scheduler.h"
+#include "signal.h"
 #include "terminal.h"
 #include "tss.h"
 
@@ -52,6 +53,10 @@ void kernel_zero() {
 		printk("son TR: %08x  %c\n", tr, x);
 		scheduler();
 	}
+
+	kill(2, 9);
+	scheduler();
+
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

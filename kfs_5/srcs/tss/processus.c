@@ -1,6 +1,7 @@
 #include "processus.h"
 #include "gdt.h"
 #include "malloc.h"
+#include "scheduler.h"
 #include "string.h"
 
 proc_t* init_zero_proc() {
@@ -109,8 +110,17 @@ void free_process(proc_t* task) {
 }
 
 void print_process(void* vtask) {
-	proc_t* task = (proc_t*)vtask;
-	printf("pid: %d\tppid: %d\towner: %d\tstatus: %d\n", task->pid, task->parent->pid, task->owner, task->status);
+	static char* status_str[] = {PROC_STATUS_STRING};
+	proc_t*		 task = (proc_t*)vtask;
+
+	printf("pid: %d\tppid: %d\towner: %d\tstatus: %s", task->pid, task->parent->pid, task->owner,
+		   status_str[task->status]);
+
+	if (task == scheduler_get_current_proc()) {
+		printf(" *\n");
+	} else {
+		printf("\n");
+	}
 }
 
 void proc_set_gdt_index(proc_t* task, uint32_t gdt_index) {

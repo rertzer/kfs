@@ -28,11 +28,6 @@ typedef enum { PROC_RUN, PROC_SLEEP, PROC_STOPPED, PROC_ZOMBIE, PROC_DEAD } proc
 	[PROC_RUN] = "RUN", [PROC_SLEEP] = "SLEEP", [PROC_STOPPED] = "STOPPED", [PROC_ZOMBIE] = "ZOMBIE", \
 	[PROC_DEAD] = "DEAD"
 
-// typedef struct signal_lst_s {
-// 	list_head_t lst;
-// 	uint32_t	signal;
-// } signal_lst_t;
-
 typedef struct proc_lst_s {
 	list_head_t	   lst;
 	struct proc_s* proc;

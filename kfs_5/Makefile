@@ -74,11 +74,13 @@ SOURCES =	boot/boot.s \
 			builtins/echo.c \
 			builtins/hexdump.c \
 			builtins/interrupt.c \
+			builtins/kill_builtin.c \
 			builtins/memory_infos.c \
 			builtins/ps.c \
 			builtins/qwerty.c \
 			builtins/readline.c \
 			builtins/registers.c \
+			builtins/schedule_builtin.c \
 			builtins/test_stack_dump.c \
 			builtins/uptime.c \
 		  	gdt/gdt.c \

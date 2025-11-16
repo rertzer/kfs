@@ -63,8 +63,12 @@ void kill(uint16_t pid, signal_t sig) {
 	proc_t* current = scheduler_get_current_proc();
 	proc_t* target = scheduler_get_proc_by_pid(pid);
 	printk("killing %d with %d\n", pid, sig);
-	if (current->owner == 0 || current->owner == target->owner) {
-		printk("its bloody\n");
-		target->sig_pending = set_bit(target->sig_pending, sig);
+	if (target != 0) {
+		if (current->owner == 0 || current->owner == target->owner) {
+			printk("its bloody\n");
+			target->sig_pending = set_bit(target->sig_pending, sig);
+		}
+	} else {
+		printk("invalid pid\n");
 	}
 }

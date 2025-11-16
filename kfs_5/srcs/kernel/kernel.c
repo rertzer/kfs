@@ -42,20 +42,20 @@ void kernel_zero() {
 	pid = fork();
 	printf("returned pid : %d\n", pid);
 	// print_gdt();
-	if (pid == 2) {
+	if (pid != 0) {
 		scheduler();
 		printf("%d! I am your father\n", pid);
 		uint16_t tr = store_task_register();
 		printk(" father TR: %08x %c\n", tr, x);
 	} else {
-		printf("I am %d, your son\n", pid);
+		printf("I am not %d, I am your son\n", pid);
 		uint16_t tr = store_task_register();
 		printk("son TR: %08x  %c\n", tr, x);
 		scheduler();
 	}
 
 	kill(2, 9);
-	scheduler();
+	// scheduler();
 
 	while (true) {
 		sleep();

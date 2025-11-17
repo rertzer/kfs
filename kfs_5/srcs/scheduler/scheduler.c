@@ -10,12 +10,18 @@ proc_t*		current;
 
 void scheduler() {
 	printf("scheduler old current pid %d\n", current->pid);
+	proc_t* previous = current;
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
 	printf("scheduler new current pid %d\n", current->pid);
 	// printf("current tss address %p\n", current);
 	// printf("new stack %x %x %d\n", current->tss->esp, current->kernel_stack, ((uint32_t*)current->tss->esp)[0]);
 	// printf("new stack %x\n", current->tss->esp);
-	switch_task(current->gdt_index);
+
+	if (current != previous) {
+		switch_task(current->gdt_index);
+	} else {
+		printf("scheduler: no one to switch to\n");
+	}
 	printf("scheduler after task switch, pid %d\n", current->pid);
 	pending_signals(current);
 }

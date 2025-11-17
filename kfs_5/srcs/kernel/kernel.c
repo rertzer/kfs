@@ -43,7 +43,7 @@ void kernel_zero() {
 	// printf("returned pid : %d\n", pid);
 	// // print_gdt();
 	// if (pid != 0) {
-	scheduler();
+	// scheduler();
 	// 	printf("%d! I am your father\n", pid);
 	// 	uint16_t tr = store_task_register();
 	// 	printk(" father TR: %08x %c\n", tr, x);
@@ -55,7 +55,7 @@ void kernel_zero() {
 	// }
 	//
 	// kill(2, 9);
-	// scheduler();
+	scheduler();
 
 	while (true) {
 		sleep();

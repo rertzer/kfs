@@ -1,8 +1,10 @@
 #include "builtin.h"
 #include "interrupts.h"
 #include "kernel.h"
+#include "keycode.h"
 #include "paging.h"
 #include "panic.h"
+#include "printk.h"
 
 static void page_missing(uint32_t const l_address, uint32_t const error_code);
 static void add_page_table_entry(uint32_t const l_address, uint32_t const flags);

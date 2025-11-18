@@ -6,13 +6,14 @@
 
 proc_t* init_zero_proc() {
 	proc_t* proc = kmalloc(sizeof(proc_t));
+	printf("init zero proc addr: %p\n", proc);
 	if (proc == NULL) {
 		return (NULL);
 	}
 	proc->pid = 0;
 	proc->owner = 0;
 	proc->parent = proc;
-	proc->gdt_index = 0;
+	proc->gdt_index = TSS_ZERO;
 	proc->tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
 	// proc->signals = NULL;
 	proc->sig_pending = 0;

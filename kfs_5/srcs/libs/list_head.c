@@ -89,16 +89,38 @@ static inline void list_remove(list_head_t* list) {
 void* list_get(void* list, size_t offset) {
 	return ((char*)list - offset);
 }
+//
+// void* list_round(list_head_t* list, size_t offset) {
+// 	list_head_t* next = list->next;
+// 	list->next = next->next;
+// 	((list_head_t*)list->prev)->next = next;
+// 	next->prev = list->prev;
+// 	next->next = list;
+// 	list->prev = next;
+// 	return ((char*)next - offset);
+// }
 
+#include "stdio.h"
 void* list_round(list_head_t* list, size_t offset) {
-	list_head_t* next = list->next;
-	list->next = next->next;
-	((list_head_t*)list->prev)->next = next;
-	next->prev = list->prev;
-	next->next = list;
-	list->prev = next;
-	return ((char*)next - offset);
+	list_head_t* old_next = list->next;
+	if (old_next->next != list) {
+		list->next = old_next->next;
+		((list_head_t*)list->next)->prev = list;
+		((list_head_t*)list->prev)->next = old_next;
+		old_next->prev = list->prev;
+		old_next->next = list;
+		list->prev = old_next;
+		printf("round a list\n");
+	}
+	printf("round list called\n");
+
+	// ((list_head_t*)list->prev)->next = list;
+	// old_next->prev = list->prev;
+	// next->next = list;
+	// list->prev = old_next;
+	return ((char*)old_next - offset);
 }
+
 void list_head_test() {
 	list_head_t lh;
 	list_head_init(&lh);

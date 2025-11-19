@@ -1,5 +1,4 @@
 #include "kfs_list_head.h"
-
 #ifndef JROS
 #include <stdlib.h>
 #endif

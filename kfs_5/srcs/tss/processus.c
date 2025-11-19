@@ -78,7 +78,6 @@ void copy_stack(uint8_t* old_esp, uint8_t* low_stack) {
 	uint8_t* high_src = get_kernel_stack_high(old_esp);
 	uint8_t* high_dest = get_kernel_stack_high(low_stack);
 	uint32_t stack_len = (uint32_t)high_src - (uint32_t)old_esp + 1;
-	printf("copy stack %p %p len %d\n", high_src, old_esp, stack_len);
 	for (size_t i = 0; i < stack_len; ++i) {
 		*(high_dest - i) = *(high_src - i);
 	}
@@ -97,7 +96,6 @@ uint8_t* get_kernel_stack_high(uint8_t* sp) {
 	uint32_t stack_high = (uint32_t)sp;
 	stack_high |= KERNEL_STACK_HIGH_MASK;
 
-	printf("stack high is %x\t", stack_high);
 	return ((uint8_t*)stack_high);
 }
 

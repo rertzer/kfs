@@ -137,8 +137,7 @@ task_switch:
 	mov word ax, [ebp+8] ; retrieve gdt offset
 	push word ax 
 	push dword 0x00
-	call far[esp]
-	;jmp far [esp]
+	jmp far [esp]
 
 	; stop here good bye!
 	mov esp, ebp

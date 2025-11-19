@@ -25,9 +25,6 @@ void run_task_zero() {
 
 void switch_task(uint32_t index) {
 	uint16_t offset = index * sizeof(gdt_entry_t);
-	registers(0, NULL);
-	printk("index %d offset %d\n", index, offset);
-	press_any();
 	task_switch(offset);
 }
 
@@ -43,10 +40,10 @@ tss_t* get_tss_addr_by_gdt_offset(uint32_t offset) {
 
 tss_t* spawn_tss(caller_data_t caller_data) {
 	tss_t* tss = kmalloc(sizeof(tss_t));
-	memset(tss, '\0', sizeof(tss_t));
 	if (tss == NULL) {
 		return (NULL);
 	}
+	memset(tss, '\0', sizeof(tss_t));
 
 	fork_registers_to_tss(tss);
 

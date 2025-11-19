@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include "fork.h"
 #include "kfs_bitmap.h"
-#include "list_head.h"
+#include "kfs_list_head.h"
 
 #include "tss.h"
 

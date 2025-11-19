@@ -4,6 +4,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifdef JROS
+#define kfs_free kfree
+void kfree(void*);
+#else
+#define kfs_free free
+
+#endif
+
+#define LIST_HEAD_SIZE sizeof(list_head_t)
+
 typedef struct {
 	void* next;
 	void* prev;

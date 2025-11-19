@@ -50,8 +50,7 @@ SOURCES_LIBS = $(addprefix libs/, 		\
 				$(SOURCE_STDIO)			\
 				$(SOURCE_UNISTD)		\
 				arg_split.c				\
-				substr.c				\
-				list_head.c)
+				substr.c)
 
 SOURCES_MEMORY	= $(addprefix memory/, 		\
 					mbook.c					\

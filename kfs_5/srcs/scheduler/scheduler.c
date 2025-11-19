@@ -1,5 +1,4 @@
 #include "scheduler.h"
-#include "keycode.h"
 #include "printk.h"
 #include "processus.h"
 #include "signal.h"
@@ -31,7 +30,7 @@ void scheduler_init(proc_t* proc_zero) {
 }
 
 uint8_t scheduler_add_task(proc_t* task) {
-	// family_growing(task);
+	family_growing(task);
 	list_add(task, &tasklist);
 	if (task->status == PROC_RUN) {
 		list_add(&task->run_lst, &runqueue);
@@ -80,8 +79,9 @@ list_head_t* scheduler_get_tasklist() {
 }
 
 void family_growing(proc_t* task) {
-	list_add(&task->parent->childrens, &task->siblings);
+	list_add(&task->siblings, &task->parent->childrens);
 }
+
 void family_shrinking(proc_t* task) {
 	list_del(&task->siblings);
 }

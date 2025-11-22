@@ -30,6 +30,8 @@ void kernel_main(void) {
 
 void kernel_zero() {
 	interrupts_allowed();
+
+// tests
 	char x = 'X';
 
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
@@ -54,6 +56,7 @@ void kernel_zero() {
 
 	kill(2, 9);
 	scheduler();
+// end tests
 
 	while (true) {
 		sleep();

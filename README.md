@@ -46,7 +46,7 @@ It follows the 42 school Kernel From Scratch series.
 
 - For debugging, you can start a gdb session.
 - GDB will run in a separate window.
-- A default breakpoint is put on kernel_main.
+- A default breakpoint is set on kernel_main.
 - `make debug`
 
 # terminal

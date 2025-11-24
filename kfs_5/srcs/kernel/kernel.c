@@ -52,7 +52,7 @@ void kernel_zero() {
 		scheduler();
 	}
 
-	kill(2, 9);
+	kill(2, SIGSTOP);
 	scheduler();
 
 	while (true) {

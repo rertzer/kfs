@@ -112,6 +112,7 @@ void proc_set_gdt_index(proc_t* task, uint32_t gdt_index) {
 	task->gdt_index = gdt_index;
 }
 
+/* ----------------------------------- PRINT FUNCTIONS ----------------------*/
 void print_process(void* vtask) {
 	static char* status_str[] = {PROC_STATUS_STRING};
 	proc_t*		 task = (proc_t*)vtask;

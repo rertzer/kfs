@@ -1,6 +1,7 @@
 #include "signal.h"
 #include <stddef.h>
 #include "printk.h"
+#include "processus.h"
 #include "scheduler.h"
 #include "stdio.h"
 #include "utils_inline.h"
@@ -18,6 +19,9 @@ void pending_signals(proc_t* current) {
 			current->sig_processing = unset_bit(current->sig_processing, sig);
 		}
 		current->sig_pending = unset_bit(current->sig_processing, sig);
+		if (current->status != PROC_RUN) {
+			break;
+		}
 		sig = get_pending_signal(current);
 	}
 }
@@ -44,15 +48,21 @@ sig_handler_t get_signal_default_handler(signal_t sig) {
 
 void sig_exit() {
 	printf("sig exit\n");
+	scheduler_set_current_status(PROC_ZOMBIE);
 }
+
+// We will wait to have a file system before to dump proc memory
 void sig_core() {
 	printf("sig core\n");
+	scheduler_set_current_status(PROC_ZOMBIE);
 }
 void sig_continue() {
 	printf("sig continue\n");
 }
+
 void sig_stop() {
 	printf("sig stop\n");
+	scheduler_set_current_status(PROC_STOPPED);
 };
 
 void sig_ignore() {
@@ -67,6 +77,10 @@ void kill(uint16_t pid, signal_t sig) {
 		if (current->owner == 0 || current->owner == target->owner) {
 			printk("its bloody\n");
 			target->sig_pending = set_bit(target->sig_pending, sig);
+			sig_handler_t handler = get_signal_default_handler(sig);
+			if (handler == sig_continue) {
+				scheduler_run(target);
+			}
 		}
 	} else {
 		printk("invalid pid\n");

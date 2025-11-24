@@ -14,9 +14,18 @@ void scheduler() {
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
 
 	if (current != previous) {
-		switch_task(current->gdt_index);
+		scheduler_switch_task();
 	}
+}
+
+void scheduler_switch_task() {
+	switch_task(current->gdt_index);
 	pending_signals(current);
+
+	if (current->status != PROC_RUN) {
+		scheduler_switch_status();
+		scheduler_switch_task();
+	}
 }
 
 void scheduler_init(proc_t* proc_zero) {
@@ -38,6 +47,38 @@ uint8_t scheduler_add_task(proc_t* task) {
 	return (0);
 }
 
+uint8_t scheduler_set_current_status(proc_status_e status) {
+	current->status = status;
+	return (0);
+}
+
+void scheduler_switch_status() {
+	proc_t* previous = scheduler_unrun(current);
+	switch (previous->status) {
+		case PROC_RUN:
+			scheduler_run(previous);
+			break;
+		case PROC_SLEEP:
+			scheduler_sleep(previous);
+			break;
+		case PROC_STOPPED:
+			scheduler_stopped(previous);
+			break;
+		case PROC_ZOMBIE:
+			scheduler_zombie(previous);
+			break;
+		case PROC_DEAD:
+			scheduler_dead(previous);
+			break;
+	}
+}
+
+proc_t* scheduler_unrun(proc_t* task) {
+	proc_t* previous = list_extract_offset(&task->run_lst, PROC_LIST_RUNQUEUE);
+	current = runqueue.next;
+	return (previous);
+}
+
 uint8_t scheduler_run(proc_t* task) {
 	if (task->status >= PROC_ZOMBIE) {
 		return (1);
@@ -47,6 +88,20 @@ uint8_t scheduler_run(proc_t* task) {
 	return (0);
 }
 
+uint8_t scheduler_sleep(proc_t* task) {
+	return (0);
+}
+uint8_t scheduler_stopped(proc_t* task) {
+	return (0);
+}
+uint8_t scheduler_zombie(proc_t* task) {
+	// free memory
+	// send signal to parent
+	return (0);
+}
+uint8_t scheduler_dead(proc_t* task) {
+	return (0);
+}
 uint8_t scheduler_remove_task(proc_t* task) {
 	if (task->status != PROC_DEAD) {
 		return (1);

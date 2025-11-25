@@ -5,7 +5,7 @@
 #include "tss.h"
 
 void		 scheduler();
-void		 scheduler_switch_task();
+void		 scheduler_switch_task(bool switching);
 void		 scheduler_switch_status();
 void		 scheduler_init(proc_t* proc_zero);
 uint8_t		 scheduler_add_task(proc_t* task);

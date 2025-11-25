@@ -1,4 +1,5 @@
 #include "scheduler.h"
+#include "keycode.h"
 #include "printk.h"
 #include "processus.h"
 #include "signal.h"
@@ -12,30 +13,29 @@ proc_t*		current;
 void scheduler() {
 	proc_t* previous = current;
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
+	proc_t* next = list_get(runqueue.next, PROC_LIST_RUNQUEUE);
 
-	if (current != previous) {
-		scheduler_switch_task();
-	}
+	scheduler_switch_task(current != previous);
 }
 
-void scheduler_switch_task() {
-	switch_task(current->gdt_index);
+void scheduler_switch_task(bool switching) {
+	if (switching == true) {
+		switch_task(current->gdt_index);
+	}
 	pending_signals(current);
 
 	if (current->status != PROC_RUN) {
 		scheduler_switch_status();
-		scheduler_switch_task();
+		scheduler_switch_task(true);
 	}
 }
 
 void scheduler_init(proc_t* proc_zero) {
-	printk("scheduler init: %p\n", proc_zero);
 	pid_bitmap_init();
 	list_head_init(&tasklist);
 	list_head_init(&runqueue);
 	scheduler_add_task(proc_zero);
 	current = proc_zero;
-	printk("scheduler init current is : %p\n", current);
 }
 
 uint8_t scheduler_add_task(proc_t* task) {
@@ -75,7 +75,7 @@ void scheduler_switch_status() {
 
 proc_t* scheduler_unrun(proc_t* task) {
 	proc_t* previous = list_extract_offset(&task->run_lst, PROC_LIST_RUNQUEUE);
-	current = runqueue.next;
+	current = list_get(runqueue.prev, PROC_LIST_RUNQUEUE);
 	return (previous);
 }
 
@@ -89,9 +89,11 @@ uint8_t scheduler_run(proc_t* task) {
 }
 
 uint8_t scheduler_sleep(proc_t* task) {
+	printk("sleeping\n");
 	return (0);
 }
 uint8_t scheduler_stopped(proc_t* task) {
+	printk("stopped\n");
 	return (0);
 }
 uint8_t scheduler_zombie(proc_t* task) {

@@ -51,7 +51,8 @@ void kernel_zero() {
 		printk("son TR: %08x  %c\n", tr, x);
 		scheduler();
 	}
-
+	printk("killing now\n");
+	press_any();
 	kill(2, SIGSTOP);
 	scheduler();
 

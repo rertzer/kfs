@@ -98,7 +98,7 @@ uint8_t scheduler_stopped(proc_t* task) {
 }
 uint8_t scheduler_zombie(proc_t* task) {
 	// free memory
-	// send signal to parent
+	signal_sending(task->parent, SIGCHLD);
 	return (0);
 }
 uint8_t scheduler_dead(proc_t* task) {

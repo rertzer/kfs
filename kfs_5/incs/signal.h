@@ -62,5 +62,6 @@ void		  sig_stop();
 sig_handler_t get_signal_default_handler(signal_t sig);
 void		  pending_signals(proc_t* current);
 void		  kill(uint16_t pid, signal_t sig);
+void		  signal_sending(proc_t* target, signal_t sig);
 
 #endif

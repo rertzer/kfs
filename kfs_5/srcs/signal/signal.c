@@ -75,18 +75,22 @@ void kill(uint16_t pid, signal_t sig) {
 	printk("killing %d with %d\n", pid, sig);
 	if (target != 0) {
 		if (current->owner == 0 || current->owner == target->owner) {
-			sig_handler_t handler = get_signal_default_handler(sig);
-			if (handler == NULL) {
-				printk("sig ignore\n");
-				return;
-			}
-			target->sig_pending = set_bit(target->sig_pending, sig);
-			if (!(handler == sig_stop) && target->status != PROC_RUN) {
-				printk("wake up\n");
-				scheduler_run(target);
-			}
+			signal_sending(target, sig);
 		}
 	} else {
 		printk("invalid pid\n");
+	}
+}
+
+void signal_sending(proc_t* target, signal_t sig) {
+	sig_handler_t handler = get_signal_default_handler(sig);
+	if (handler == NULL) {
+		printk("sig ignore\n");
+		return;
+	}
+	target->sig_pending = set_bit(target->sig_pending, sig);
+	if (!(handler == sig_stop) && target->status != PROC_RUN) {
+		printk("wake up\n");
+		scheduler_run(target);
 	}
 }

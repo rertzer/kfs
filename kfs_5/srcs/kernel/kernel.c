@@ -53,7 +53,7 @@ void kernel_zero() {
 	}
 	printk("killing now\n");
 	press_any();
-	kill(2, SIGSTOP);
+	kill(2, SIGKILL);
 	scheduler();
 
 	while (true) {

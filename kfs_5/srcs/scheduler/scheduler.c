@@ -1,5 +1,4 @@
 #include "scheduler.h"
-#include "keycode.h"
 #include "printk.h"
 #include "processus.h"
 #include "signal.h"
@@ -13,13 +12,13 @@ proc_t*		current;
 void scheduler() {
 	proc_t* previous = current;
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
-	proc_t* next = list_get(runqueue.next, PROC_LIST_RUNQUEUE);
 
 	scheduler_switch_task(current != previous);
 }
 
 void scheduler_switch_task(bool switching) {
 	if (switching == true) {
+		printk("switching task to %d\n", current->pid);
 		switch_task(current->gdt_index);
 	}
 	pending_signals(current);
@@ -49,6 +48,15 @@ uint8_t scheduler_add_task(proc_t* task) {
 
 uint8_t scheduler_set_current_status(proc_status_e status) {
 	current->status = status;
+	return (0);
+}
+
+int scheduler_get_current_exit_status() {
+	return (current->exit_status);
+}
+
+uint8_t scheduler_set_current_exit_status(int sig) {
+	current->exit_status = sig;
 	return (0);
 }
 
@@ -89,19 +97,21 @@ uint8_t scheduler_run(proc_t* task) {
 }
 
 uint8_t scheduler_sleep(proc_t* task) {
+	(void)task;
 	printk("sleeping\n");
 	return (0);
 }
 uint8_t scheduler_stopped(proc_t* task) {
+	(void)task;
 	printk("stopped\n");
 	return (0);
 }
 uint8_t scheduler_zombie(proc_t* task) {
-	// free memory
-	signal_sending(task->parent, SIGCHLD);
+	(void)task;
 	return (0);
 }
 uint8_t scheduler_dead(proc_t* task) {
+	(void)task;
 	return (0);
 }
 uint8_t scheduler_remove_task(proc_t* task) {
@@ -145,4 +155,8 @@ void family_shrinking(proc_t* task) {
 
 uint16_t getpid() {
 	return (current->pid);
+}
+
+uint16_t getppid() {
+	return (current->parent->pid);
 }

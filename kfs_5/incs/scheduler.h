@@ -11,6 +11,8 @@ void		 scheduler_init(proc_t* proc_zero);
 uint8_t		 scheduler_add_task(proc_t* task);
 uint8_t		 scheduler_remove_task(proc_t* task);
 uint8_t		 scheduler_set_current_status(proc_status_e status);
+int			 scheduler_get_current_exit_status();
+uint8_t		 scheduler_set_current_exit_status(int sig);
 uint8_t		 scheduler_change_status(proc_t* task);
 proc_t*		 scheduler_unrun(proc_t* task);
 uint8_t		 scheduler_run(proc_t* task);
@@ -24,4 +26,5 @@ list_head_t* scheduler_get_tasklist();
 void		 family_growing(proc_t* task);
 void		 family_shrinking(proc_t* task);
 uint16_t	 getpid();
+uint16_t	 getppid();
 #endif

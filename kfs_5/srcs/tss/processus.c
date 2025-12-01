@@ -18,6 +18,7 @@ proc_t* init_zero_proc() {
 	// proc->signals = NULL;
 	proc->sig_pending = 0;
 	proc->sig_processing = 0;
+	proc->exit_status = 0;
 	proc->status = PROC_SLEEP;
 	proc->kernel_stack = NULL;
 	list_head_init(&proc->lst);
@@ -55,13 +56,14 @@ proc_t* spawn(proc_t* parent, caller_data_t fc) {
 	child->tss = spawn_tss(fc);
 	if (child->tss == NULL) {
 		pid_bitmap_remove(child->pid);
+		munbook(child->kernel_stack);
 		kfree(child);
-		kfree(child->kernel_stack);
 		return (NULL);
 	}
 	// child->signals = NULL;
 	child->sig_pending = 0;
 	child->sig_processing = 0;
+	child->exit_status = 0;
 	child->status = PROC_SLEEP;
 	// create heap
 	// parenthood handled by the scheduler

@@ -43,6 +43,7 @@ SOURCE_STDIO = $(addprefix stdio/,		\
 				printk.c)
 
 SOURCE_UNISTD = $(addprefix unistd/,	\
+				pause.c					\
 				write.c)
 
 SOURCES_LIBS = $(addprefix libs/, 		\
@@ -104,11 +105,13 @@ SOURCES =	boot/boot.s \
 			terminal/terminal.c \
 			terminal/putchar.c \
 			terminal/vga.c \
+			tss/exit.c \
 			tss/pid.c \
 			tss/processus.c \
 			tss/tss.c \
 			tss/tss_asm.s \
 			tss/fork.c \
+			tss/wait.c \
 			$(SOURCES_LIBS)
 
 HEADER_FILES = builtin.h \

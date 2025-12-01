@@ -1,28 +1,31 @@
-#include "signal.h"
 #include <stddef.h>
+
+#include "exit.h"
 #include "printk.h"
 #include "processus.h"
 #include "scheduler.h"
+#include "signal.h"
 #include "stdio.h"
 #include "utils_inline.h"
 
 static int get_pending_signal(proc_t* current);
 
 void pending_signals(proc_t* current) {
-	int sig = get_pending_signal(current);
+	int sig;
 
-	while (sig) {
+	while ((sig = get_pending_signal(current)) != 0) {
 		sig_handler_t handler = get_signal_default_handler(sig);
 		if (handler != NULL) {
 			current->sig_processing = set_bit(current->sig_processing, sig);
-			handler();
+			handler(sig);
+			scheduler_set_current_exit_status(sig);
 			current->sig_processing = unset_bit(current->sig_processing, sig);
 		}
 		current->sig_pending = unset_bit(current->sig_processing, sig);
 		if (current->status != PROC_RUN) {
+			current->exit_status = sig;
 			break;
 		}
-		sig = get_pending_signal(current);
 	}
 }
 
@@ -41,31 +44,35 @@ static int get_pending_signal(proc_t* current) {
 
 sig_handler_t get_signal_default_handler(signal_t sig) {
 	static const sig_default_t default_value[SIG_LIMIT] = {SIG_DEFAULT_VALUES};
-	static const sig_handler_t sig_default_handler[5] = {NULL, sig_exit, sig_core, sig_stop, sig_continue};
+	static const sig_handler_t sig_default_handler[] = {NULL, sig_default, sig_exit, sig_core, sig_stop, sig_continue};
 
 	return (sig_default_handler[default_value[sig]]);
 }
 
-void sig_exit() {
+void sig_default(int sig) {
+	printk("sig_default\n");
+}
+
+void sig_exit(int sig) {
 	printf("sig exit\n");
-	scheduler_set_current_status(PROC_ZOMBIE);
+	_exit(sig);
 }
 
 // We will wait to have a file system before to dump proc memory
-void sig_core() {
+void sig_core(int sig) {
 	printf("sig core\n");
 	scheduler_set_current_status(PROC_ZOMBIE);
 }
-void sig_continue() {
+void sig_continue(int sig) {
 	printf("sig continue\n");
 }
 
-void sig_stop() {
+void sig_stop(int sig) {
 	printf("sig stop\n");
 	scheduler_set_current_status(PROC_STOPPED);
 };
 
-void sig_ignore() {
+void sig_ignore(int sig) {
 	printf("sig igonre\n");
 }
 
@@ -90,7 +97,7 @@ void signal_sending(proc_t* target, signal_t sig) {
 	}
 	target->sig_pending = set_bit(target->sig_pending, sig);
 	if (!(handler == sig_stop) && target->status != PROC_RUN) {
-		printk("wake up\n");
+		printk("wake up %d\n", target->pid);
 		scheduler_run(target);
 	}
 }

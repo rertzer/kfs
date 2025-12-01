@@ -47,6 +47,7 @@ typedef struct proc_s {
 	// signal_lst_t*  signals;
 	uint32_t	  sig_pending;
 	uint32_t	  sig_processing;
+	int32_t		  exit_status;
 	int16_t		  pid;
 	proc_status_e status;
 

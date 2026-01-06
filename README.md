@@ -62,34 +62,46 @@ Up to 8 terminals are available.
 
 ## terminal builtins
 
+- azerty
+  - Switches to an AZERTY keyboard.
+- bootinfos
+  - Prints information about the boot process.
 - echo
   - `echo <oneword>`
-  - print the word given as argument
-- azerty
-  - switch to an AZERTY keyboard
-- qwerty
-  - switch to a QWERTY keyboard
+  - Prints the word given as an argument.
+- halt
+  - Turns off the kernel.
+- hexdump
+  - Prints the stack.
 - interrupt
   - `interrupt <number>`
-  - call the interrupt given as argument
-  - see the interrupts section
-- bootinfos
-  - print infos about boot process
-- registers
-  - print registers state
+  - Calls the interrupt given as an argument.
+  - See the interrupts section.
+- kill
+  - `kill <pid> <sig_nr>`
+  - Sends the signal <sig_nr> to the process whose PID is <pid>.
+  - The process must belong to the current user, unless the current user is root.
+- qwerty
+  - Switches to a QWERTY keyboard.
+- memoryinfos
+  - Prints memory usage, both physical and virtual memory.
+- ps
+  - Prints the list of processes and their current state.
+- psinfo
+  - Prints information of the process whose PID is provided as an argument.
 - readdump
-  - print the stack memory dumped after a Kernel Panic Reboot
-- hexdump
-  - print the stack
-- uptime
-  - print time since last boot
-- testStackDump
-  - test the stack dump mechanism
-  - will reboot the computer
-- halt
-  - turn off the kernel
+  - Prints the stack memory dumped after a kernel panic reboot.
 - reboot
-  - reboot the kernel
+  - Reboots the kernel.
+- registers
+  - Prints the state of the registers.
+- schedule
+  - switches execution to the next running process.
+- testStackDump
+  - Tests the stack dump mechanism.
+  - Will reboot the computer.
+- uptime
+  - Prints the time since the last boot.
 
 # Interrupts
 

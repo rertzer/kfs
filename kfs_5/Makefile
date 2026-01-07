@@ -106,6 +106,8 @@ SOURCES =	boot/boot.s \
 			terminal/putchar.c \
 			terminal/vga.c \
 			tss/exit.c \
+			tss/exec.c \
+			tss/exec_asm.s \
 			tss/pid.c \
 			tss/processus.c \
 			tss/tss.c \

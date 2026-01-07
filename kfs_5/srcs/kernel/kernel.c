@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "boot_infos.h"
 #include "builtin.h"
+#include "exec.h"
 #include "fork.h"
 #include "gdt.h"
 #include "interrupts.h"
@@ -39,25 +40,29 @@ void kernel_zero() {
 	uint16_t tr = store_task_register();
 	printk("TR: %08x %d\n", tr);
 
-	uint16_t pid = fork();
-	if (pid != 0) {
-		printf("%d! I am your father\n", pid);
-		uint16_t tr = store_task_register();
-		printk(" father TR: %08x %c\n", tr, x);
-		scheduler();
-	} else {
-		printf("I am not %d, I am your son\n", pid);
-		uint16_t tr = store_task_register();
-		printk("son TR: %08x  %c\n", tr, x);
-		// scheduler();
+	// uint16_t pid = fork();
+	// if (pid != 0) {
+	// 	printf("%d! I am your father\n", pid);
+	// 	uint16_t tr = store_task_register();
+	// 	printk(" father TR: %08x %c\n", tr, x);
+	// 	scheduler();
+	// } else {
+	// 	printf("I am not %d, I am your son\n", pid);
+	// 	uint16_t tr = store_task_register();
+	// 	printk("son TR: %08x  %c\n", tr, x);
+	// 	// scheduler();
+	// }
+	// pid = fork();
+	// printk("1 killing now 2\n");
+	// press_any();
+	// kill(2, SIGKILL);
+	// scheduler();
+	// wait(NULL);
+	int pid = fork();
+	if (pid == 0) {
+		exec_fn(test_exec, 42, NULL);
 	}
-	pid = fork();
-	printk("1 killing now 2\n");
-	press_any();
-	kill(2, SIGKILL);
 	scheduler();
-	wait(NULL);
-
 	while (true) {
 		sleep();
 		process_keyboard(&keypress);

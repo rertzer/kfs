@@ -11,6 +11,7 @@
 #include "signal.h"
 #include "terminal.h"
 #include "tss.h"
+#include "wait.h"
 
 extern volatile uint8_t current_code;
 
@@ -39,22 +40,23 @@ void kernel_zero() {
 	printk("TR: %08x %d\n", tr);
 
 	uint16_t pid = fork();
-	pid = fork();
 	if (pid != 0) {
-		scheduler();
 		printf("%d! I am your father\n", pid);
 		uint16_t tr = store_task_register();
 		printk(" father TR: %08x %c\n", tr, x);
+		scheduler();
 	} else {
 		printf("I am not %d, I am your son\n", pid);
 		uint16_t tr = store_task_register();
 		printk("son TR: %08x  %c\n", tr, x);
-		scheduler();
+		// scheduler();
 	}
-	printk("killing now\n");
+	pid = fork();
+	printk("1 killing now 2\n");
 	press_any();
 	kill(2, SIGKILL);
 	scheduler();
+	wait(NULL);
 
 	while (true) {
 		sleep();

@@ -5,6 +5,9 @@
 #include "tss.h"
 
 void		 scheduler();
+void		 scheduler_enter();
+void		 scheduler_leave();
+bool		 scheduler_get_atomic();
 void		 scheduler_switch_task(bool switching);
 void		 scheduler_switch_status();
 void		 scheduler_init(proc_t* proc_zero);
@@ -25,6 +28,7 @@ proc_t*		 scheduler_get_proc_by_pid(uint16_t pid);
 list_head_t* scheduler_get_tasklist();
 void		 family_growing(proc_t* task);
 void		 family_shrinking(proc_t* task);
+void		 family_adopt_orphans(proc_t* task);
 uint16_t	 getpid();
 uint16_t	 getppid();
 #endif

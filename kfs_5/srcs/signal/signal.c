@@ -12,8 +12,8 @@ static int get_pending_signal(proc_t* current);
 
 void pending_signals(proc_t* current) {
 	int sig;
-
 	while ((sig = get_pending_signal(current)) != 0) {
+		printk("got signal %d\n", sig);
 		sig_handler_t handler = get_signal_default_handler(sig);
 		if (handler != NULL) {
 			current->sig_processing = set_bit(current->sig_processing, sig);
@@ -31,7 +31,6 @@ void pending_signals(proc_t* current) {
 
 static int get_pending_signal(proc_t* current) {
 	int sig = 0;
-
 	for (size_t i = 0; i < SIG_LIMIT; ++i) {
 		if (get_bit(current->sig_pending, i) && !get_bit(current->sig_processing, i)) {
 			sig = i;
@@ -73,7 +72,7 @@ void sig_stop(int sig) {
 };
 
 void sig_ignore(int sig) {
-	printf("sig igonre\n");
+	printf("sig ignore\n");
 }
 
 void kill(uint16_t pid, signal_t sig) {
@@ -95,6 +94,7 @@ void signal_sending(proc_t* target, signal_t sig) {
 		printk("sig ignore\n");
 		return;
 	}
+	printk("signal sending %d to %d\n", sig, target->pid);
 	target->sig_pending = set_bit(target->sig_pending, sig);
 	if (!(handler == sig_stop) && target->status != PROC_RUN) {
 		printk("wake up %d\n", target->pid);

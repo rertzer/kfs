@@ -1,3 +1,4 @@
+#include "keycode.h"
 #include "scheduler.h"
 #include "unistd.h"
 

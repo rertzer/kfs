@@ -89,7 +89,7 @@ static inline void list_remove(list_head_t* list) {
 }
 
 void* list_get(void* list, size_t offset) {
-	return ((char*)list - offset);
+	return ((uint8_t*)list - offset);
 }
 
 void* list_round(list_head_t* list, size_t offset) {

@@ -12,7 +12,6 @@ uint16_t wait(int* wstatus) {
 	uint16_t zombie_pid = 0;
 
 	while (true) {
-		pause();
 		if ((zombie = find_zombie(&current_proc->childrens)) != NULL) {
 			if (wstatus != NULL) {
 				*wstatus = zombie->exit_status;
@@ -20,22 +19,23 @@ uint16_t wait(int* wstatus) {
 			zombie_pid = zombie->pid;
 			break;
 		}
+		pause();
 	}
-	scheduler_set_current_status(PROC_DEAD);
+	zombie->status = PROC_DEAD;
 	return (zombie_pid);
 }
 
 static proc_t* find_zombie(list_head_t* kids) {
 	proc_t*		 zombie = NULL;
-	list_head_t* current = kids->next;
+	list_head_t* kid = kids->next;
 
-	while (current != kids) {
-		proc_t* kid = list_get(current, PROC_LIST_CHILDRENS);
-		if (kid->status == PROC_ZOMBIE) {
-			zombie = kid;
+	while (kid != kids) {
+		proc_t* child = list_get(kid, PROC_LIST_SIBLINGS);
+		if (child->status == PROC_ZOMBIE) {
+			zombie = child;
 			break;
 		}
-		current = current->next;
+		kid = kid->next;
 	}
 	return (zombie);
 }

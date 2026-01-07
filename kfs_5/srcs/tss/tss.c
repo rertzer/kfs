@@ -25,6 +25,7 @@ void run_task_zero() {
 
 void switch_task(uint32_t index) {
 	uint16_t offset = index * sizeof(gdt_entry_t);
+	scheduler_leave();
 	task_switch(offset);
 }
 

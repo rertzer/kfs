@@ -1,4 +1,6 @@
 #include "scheduler.h"
+#include "kernel.h"
+#include "keycode.h"
 #include "printk.h"
 #include "processus.h"
 #include "signal.h"
@@ -8,8 +10,26 @@
 list_head_t tasklist;
 list_head_t runqueue;
 proc_t*		current;
+bool		scheduler_atomic;
+
+void scheduler_enter() {
+	// TODO a real atomic instruction
+	while (scheduler_atomic == true) {
+		sleep();
+	}
+	scheduler_atomic = true;
+}
+
+void scheduler_leave() {
+	scheduler_atomic = false;
+}
+
+bool scheduler_get_atomic() {
+	return (scheduler_atomic);
+}
 
 void scheduler() {
+	scheduler_enter();
 	proc_t* previous = current;
 	current = list_round(&runqueue, PROC_LIST_RUNQUEUE);
 
@@ -21,15 +41,18 @@ void scheduler_switch_task(bool switching) {
 		printk("switching task to %d\n", current->pid);
 		switch_task(current->gdt_index);
 	}
+	printk("%d pending...%d\n", current->pid, current->sig_pending);
 	pending_signals(current);
 
 	if (current->status != PROC_RUN) {
+		scheduler_enter();
 		scheduler_switch_status();
 		scheduler_switch_task(true);
 	}
 }
 
 void scheduler_init(proc_t* proc_zero) {
+	scheduler_atomic = false;
 	pid_bitmap_init();
 	list_head_init(&tasklist);
 	list_head_init(&runqueue);
@@ -101,6 +124,7 @@ uint8_t scheduler_sleep(proc_t* task) {
 	printk("sleeping\n");
 	return (0);
 }
+
 uint8_t scheduler_stopped(proc_t* task) {
 	(void)task;
 	printk("stopped\n");
@@ -151,6 +175,16 @@ void family_growing(proc_t* task) {
 
 void family_shrinking(proc_t* task) {
 	list_del(&task->siblings);
+}
+
+void family_adopt_orphans(proc_t* task) {
+	proc_t*		 proc = scheduler_get_proc_by_pid(0);
+	list_head_t* current = task->childrens.next;
+
+	while (current != &task->childrens) {
+		list_add(&current, &proc->childrens);
+		current = current->next;
+	}
 }
 
 uint16_t getpid() {

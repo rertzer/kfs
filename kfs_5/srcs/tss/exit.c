@@ -1,12 +1,17 @@
 #include "exit.h"
+#include "printk.h"
 #include "scheduler.h"
 #include "signal.h"
 
 void _exit(int status) {
-	scheduler_set_current_status(PROC_ZOMBIE);
 	proc_t* current_proc = scheduler_get_current_proc();
-	// remove user stack
 	current_proc->exit_status = status;
-	// transfer kids !!!
+	scheduler_enter();
+	// remove user stack
+	family_adopt_orphans(current_proc);
+	scheduler_set_current_status(PROC_ZOMBIE);
 	signal_sending(current_proc->parent, SIGCHLD);
+	scheduler_switch_status();
+	scheduler_switch_task(true);
+	scheduler_leave();
 }

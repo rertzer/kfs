@@ -5,8 +5,29 @@
 #include <string.h>
 #include "criterion.h"
 
-bool sameSign(int k, int m) {
+static bool sameSign(int k, int m);
+static void kfs_memcmp_assert(char** s1, char** s2, size_t len, size_t nb);
+static void kfs_memcmp_lst_assert(char** s1, char** s2, size_t* len, size_t nb);
+
+static bool sameSign(int k, int m) {
 	return ((k == 0 && m == 0) || (k < 0 && m < 0) || (k > 0 && m > 0));
+}
+
+static void kfs_memcmp_assert(char** s1, char** s2, size_t len, size_t nb) {
+	for (size_t i = 0; i < nb; ++i) {
+		int k = kfs_memcmp(s1[i], s2[i], len);
+		int m = memcmp(s1[i], s2[i], len);
+
+		cr_assert(sameSign(k, m));
+	}
+}
+static void kfs_memcmp_lst_assert(char** s1, char** s2, size_t* len, size_t nb) {
+	for (size_t i = 0; i < nb; ++i) {
+		int k = kfs_memcmp(s1[i], s2[i], len[i]);
+		int m = memcmp(s1[i], s2[i], len[i]);
+
+		cr_assert(sameSign(k, m));
+	}
 }
 
 Test(kfs_memcmp, null_null_zero) {
@@ -81,66 +102,37 @@ Test(kfs_memcmp, identical_strings_n_uintmax, .signal = SIGSEGV) {
 }
 
 Test(kfs_memcmp, different_strings_n) {
-	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef"};
-	char*  s2[] = {"fedcba", "afghij", "abged", "abcdeg"};
-	size_t n = 7;
-
-	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
-		int k = kfs_memcmp(s1[i], s2[i], n);
-		int m = memcmp(s1[i], s2[i], n);
-
-		cr_assert(sameSign(k, m));
-	}
+	char* s1[] = {"abcdef", "abcdef", "abcdef", "abcdef"};
+	char* s2[] = {"fedcba", "afghij", "abged", "abcdeg"};
+	kfs_memcmp_assert(s1, s2, 7, 4);
 }
 
 Test(kfs_memcmp, different_strings_UINTMAX) {
-	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
-	char*  s2[] = {"fedcba", "afghij", "abged", "abcdeg", "abcdefgh", "abcdef", "abcd"};
-	size_t n = UINT_MAX;
+	char* s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
+	char* s2[] = {"fedcba", "afghij", "abged", "abcdeg", "abcdefgh", "abcdef", "abcd"};
 
-	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
-		int k = kfs_memcmp(s1[i], s2[i], n);
-		int m = memcmp(s1[i], s2[i], n);
-
-		cr_assert(sameSign(k, m));
-	}
+	kfs_memcmp_assert(s1, s2, UINT_MAX, 7);
 }
 
 Test(kfs_memcmp, string_empty_UINTMAX) {
-	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
-	char*  s2 = "";
-	size_t n = UINT_MAX;
+	char* s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
+	char* s2[] = {"", "", "", "", "", "", ""};
 
-	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
-		int k = kfs_memcmp(s1[i], s2, n);
-		int m = memcmp(s1[i], s2, n);
-
-		cr_assert(sameSign(k, m));
-	}
+	kfs_memcmp_assert(s1, s2, UINT_MAX, 7);
 }
 
 Test(kfs_memcmp, different_strings_beforediff) {
 	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
 	char*  s2[] = {"fedcba", "afghij", "abged", "abcdeg", "abcdefgh", "abcdef", "abcd"};
-	size_t n[] = {0, 1, 2, 5, 6, 3};
+	size_t n[] = {0, 1, 2, 5, 4, 6, 3};
 
-	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
-		int k = kfs_memcmp(s1[i], s2[i], n[i]);
-		int m = memcmp(s1[i], s2[i], n[i]);
-
-		cr_assert(sameSign(k, m));
-	}
+	kfs_memcmp_lst_assert(s1, s2, n, 7);
 }
 
 Test(kfs_memcmp, different_strings_afterediff) {
 	char*  s1[] = {"abcdef", "abcdef", "abcdef", "abcdef", "abcdéfgh", "abcdefghij", "abc"};
 	char*  s2[] = {"fedcba", "afghij", "abged", "abcdeg", "abcdefgh", "abcdef", "abcd"};
-	size_t n[] = {2, 3, 4, 6, 7, 4};
+	size_t n[] = {2, 3, 4, 6, 4, 7, 4};
 
-	for (size_t i = 0; i < sizeof(s1) / sizeof(s1[0]); ++i) {
-		int k = kfs_memcmp(s1[i], s2[i], n[i]);
-		int m = memcmp(s1[i], s2[i], n[i]);
-
-		cr_assert(sameSign(k, m));
-	}
+	kfs_memcmp_lst_assert(s1, s2, n, 7);
 }

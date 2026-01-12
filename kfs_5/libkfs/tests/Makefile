@@ -59,7 +59,7 @@ $(LIB_NAME): $(OBJ_DIR) $(OBJS)
 	@ar cr $@  $(OBJS)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@$(CC) $(FLAGS) -ffreestanding -nostdlib  -c -MMD $< -o $@ -I $(INC_DIR)
+	@$(CC) $(FLAGS)  -c -MMD $< -o $@ -I $(INC_DIR)
 
 test: fclean $(NAME_TEST)
 	@./$(NAME_TEST)

@@ -1,6 +1,6 @@
 # About
 
-JyrOS is al kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
+JyrOS is a kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
 
 It follows the 42 school Kernel From Scratch series.
 

@@ -4,8 +4,6 @@ JyrOS is a kernel developped to learn the basics about kernel programming. It is
 
 It follows the 42 school Kernel From Scratch series.
 
-> Notice that the work is still in progress.
-
 # Features
 
 - boot via Grub

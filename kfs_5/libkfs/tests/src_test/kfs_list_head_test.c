@@ -1,18 +1,42 @@
-#include "kfs_list_head.h"
 #include <limits.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "criterion.h"
+
+#include "kfs_list_head.h"
 #include "kfs_list_head_test.h"
+
+static void head_expect_a_before_b(list_head_t* a, list_head_t* b);
+static void print_from_offset(void* vlh);
+static void load_test_offset(test_offset_t** to, list_head_t* lh);
+
+static void head_expect_a_before_b(list_head_t* a, list_head_t* b) {
+	cr_expect(a->next == b);
+	cr_expect(b->prev == a);
+}
+
+static void print_from_offset(void* vlh) {
+	test_offset_t* lh = (test_offset_t*)vlh;
+	cr_assert(lh->payload1 == 42, "list for each: py1: %d expected 42\n", lh->payload1);
+	cr_assert(lh->payload2 == 21, "list for each: py2: %d expected 21\n", lh->payload2);
+}
+
+static void load_test_offset(test_offset_t** to, list_head_t* lh) {
+	for (size_t i = 0; i < 42; ++i) {
+		to[i] = malloc(sizeof(test_offset_t));
+		to[i]->payload1 = i;
+		to[i]->payload2 = -i;
+		list_add_tail(&(to[i]->lh), lh);
+	}
+}
 
 Test(list_head, init_head) {
 	list_head_t lh;
 
 	list_head_init(&lh);
-	cr_expect(lh.prev == &lh);
-	cr_expect(lh.next == &lh);
+	head_expect_a_before_b(&lh, &lh);
 }
 
 Test(list_head, add) {
@@ -22,20 +46,15 @@ Test(list_head, add) {
 
 	list_add(nlh, &lh);
 
-	cr_expect(lh.prev == nlh);
-	cr_expect(lh.next == nlh);
-	cr_expect(nlh->prev == &lh);
-	cr_expect(nlh->next == &lh);
+	head_expect_a_before_b(&lh, nlh);
+	head_expect_a_before_b(nlh, &lh);
 
 	list_head_t* nlh2 = malloc(sizeof(list_head_t));
 	list_add(nlh2, nlh);
 
-	cr_expect(lh.prev == nlh2);
-	cr_expect(lh.next == nlh);
-	cr_expect(nlh->prev == &lh);
-	cr_expect(nlh->next == nlh2);
-	cr_expect(nlh2->prev == nlh);
-	cr_expect(nlh2->next == &lh);
+	head_expect_a_before_b(nlh2, &lh);
+	head_expect_a_before_b(&lh, nlh);
+	head_expect_a_before_b(nlh, nlh2);
 
 	free(nlh);
 	free(nlh2);
@@ -48,32 +67,26 @@ Test(list_head, add_tail) {
 
 	list_add_tail(nlh, &lh);
 
-	cr_expect(lh.prev == nlh);
-	cr_expect(lh.next == nlh);
-	cr_expect(nlh->prev == &lh);
-	cr_expect(nlh->next == &lh);
+	// lh->nlh
+	head_expect_a_before_b(&lh, nlh);
+	head_expect_a_before_b(nlh, &lh);
 
 	list_head_t* nlh2 = malloc(sizeof(list_head_t));
 	list_add_tail(nlh2, nlh);
 
-	cr_expect(lh.prev == nlh);
-	cr_expect(lh.next == nlh2);
-	cr_expect(nlh->prev == nlh2);
-	cr_expect(nlh->next == &lh);
-	cr_expect(nlh2->prev == &lh);
-	cr_expect(nlh2->next == nlh);
+	// lh->nlh2->nlh
+	head_expect_a_before_b(&lh, nlh2);
+	head_expect_a_before_b(nlh2, nlh);
+	head_expect_a_before_b(nlh, &lh);
 
 	list_head_t* nlh3 = malloc(sizeof(list_head_t));
 	list_add_tail(nlh3, &lh);
 
-	cr_expect(lh.prev == nlh3);
-	cr_expect(lh.next == nlh2);
-	cr_expect(nlh->prev == nlh2);
-	cr_expect(nlh->next == nlh3);
-	cr_expect(nlh2->prev == &lh);
-	cr_expect(nlh2->next == nlh);
-	cr_expect(nlh3->prev == nlh);
-	cr_expect(nlh3->next == &lh);
+	// lh->nh2->nlh->nlh->nlh3
+	head_expect_a_before_b(&lh, nlh2);
+	head_expect_a_before_b(nlh2, nlh);
+	head_expect_a_before_b(nlh, nlh3);
+	head_expect_a_before_b(nlh3, &lh);
 
 	free(nlh);
 	free(nlh2);
@@ -96,8 +109,7 @@ Test(list_head, list_del_ptr) {
 
 	list_del(nlh);
 
-	cr_expect(lh.prev == &lh);
-	cr_expect(lh.next == &lh);
+	head_expect_a_before_b(&lh, &lh);
 }
 
 Test(list_head, small_list_extract) {
@@ -111,10 +123,8 @@ Test(list_head, small_list_extract) {
 	list_head_t* extract = list_extract(nlh);
 
 	cr_expect(extract == nlh);
-	cr_expect(extract->prev == extract);
-	cr_expect(extract->next == extract);
-	cr_expect(lh.next == &lh);
-	cr_expect(lh.prev == &lh);
+	head_expect_a_before_b(extract, extract);
+	head_expect_a_before_b(&lh, &lh);
 
 	free(nlh);
 }
@@ -132,10 +142,8 @@ Test(list_head, list_extract) {
 	list_head_t* extract = list_extract(nlh[3]);
 
 	cr_expect(extract == nlh[3]);
-	cr_expect(extract->prev == extract);
-	cr_expect(extract->next == extract);
-	cr_expect(nlh[2]->next == nlh[4]);
-	cr_expect(nlh[4]->prev == nlh[2]);
+	head_expect_a_before_b(extract, extract);
+	head_expect_a_before_b(nlh[2], nlh[4]);
 
 	for (size_t i = 0; i < 5; ++i) {
 		free(nlh[i]);
@@ -229,12 +237,6 @@ Test(list_head, run_on_offseted_struct) {
 	}
 }
 
-void print_from_offset(void* vlh) {
-	test_offset_t* lh = (test_offset_t*)vlh;
-	cr_assert(lh->payload1 == 42, "list for each: py1: %d expected 42\n", lh->payload1);
-	cr_assert(lh->payload2 == 21, "list for each: py2: %d expected 21\n", lh->payload2);
-}
-
 Test(list_head, list_for_each) {
 	list_head_t lh;
 
@@ -300,12 +302,13 @@ Test(list_head, del_offset) {
 
 	list_head_init(&lh);
 	test_offset_t* to[42];
-	for (size_t i = 0; i < 42; ++i) {
-		to[i] = malloc(sizeof(test_offset_t));
-		to[i]->payload1 = i;
-		to[i]->payload2 = -i;
-		list_add(&(to[i]->lh), &lh);
-	}
+	load_test_offset(to, &lh);
+	// for (size_t i = 0; i < 42; ++i) {
+	// 	to[i] = malloc(sizeof(test_offset_t));
+	// 	to[i]->payload1 = i;
+	// 	to[i]->payload2 = -i;
+	// 	list_add(&(to[i]->lh), &lh);
+	// }
 	size_t size = list_size(&lh);
 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
 
@@ -325,12 +328,8 @@ Test(list_head, list_get) {
 
 	list_head_init(&lh);
 	test_offset_t* to[42];
-	for (size_t i = 0; i < 42; ++i) {
-		to[i] = malloc(sizeof(test_offset_t));
-		to[i]->payload1 = i;
-		to[i]->payload2 = -i;
-		list_add_tail(&(to[i]->lh), &lh);
-	}
+
+	load_test_offset(to, &lh);
 	size_t size = list_size(&lh);
 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
 
@@ -348,12 +347,8 @@ Test(list_head, round) {
 
 	list_head_init(&lh);
 	test_offset_t* to[42];
-	for (size_t i = 0; i < 42; ++i) {
-		to[i] = malloc(sizeof(test_offset_t));
-		to[i]->payload1 = i;
-		to[i]->payload2 = -i;
-		list_add_tail(&(to[i]->lh), &lh);
-	}
+	load_test_offset(to, &lh);
+
 	size_t size = list_size(&lh);
 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
 

@@ -5,6 +5,16 @@
 #include <string.h>
 #include "criterion.h"
 
+static void kfs_memcpy_assert(char* dest, char* expected, char* src, size_t len);
+
+static void kfs_memcpy_assert(char* dest, char* expected, char* src, size_t len) {
+	void* ptr = kfs_memcpy(dest, src, len);
+
+	cr_assert(ptr == dest);
+	int diff = strncmp(dest, expected, strlen(expected));
+	cr_assert(diff == 0);
+}
+
 Test(kfs_memcpy, null_null_zero) {
 	char*  dest = NULL;
 	char*  src = NULL;
@@ -23,28 +33,15 @@ Test(kfs_memcpy, null_null_42, .signal = SIGSEGV) {
 }
 
 Test(kfs_memcpy, partial_copy) {
-	char* dest = malloc(13);
-	strncpy(dest, "............", 12);
-	char*  expected_dest = "abcd........";
-	char*  src = "abcdefghijklmnopqrstuvwxyz";
-	size_t n = 4;
-	void*  ptr = kfs_memcpy(dest, src, n);
-
-	cr_assert(ptr == dest);
-	int diff = strncmp(dest, expected_dest, strlen(expected_dest));
-	cr_assert(diff == 0);
-	free(dest);
+	char  dest[] = "............";
+	char* expected_dest = "abcd........";
+	char* src = "abcdefghijklmnopqrstuvwxyz";
+	kfs_memcpy_assert(dest, expected_dest, src, 4);
 }
 
 Test(kfs_memcpy, full_copy) {
-	char* dest = malloc(13);
-	strncpy(dest, "............", 12);
-	char*  expected_dest = "abcdefghijkl";
-	char*  src = "abcdefghijklmnopqrstuvwxyz";
-	size_t n = 12;
-	void*  ptr = kfs_memcpy(dest, src, n);
-
-	cr_assert(ptr == dest);
-	int diff = strncmp(dest, expected_dest, strlen(expected_dest));
-	cr_assert(diff == 0);
+	char  dest[] = "............";
+	char* expected_dest = "abcdefghijkl";
+	char* src = "abcdefghijklmnopqrstuvwxyz";
+	kfs_memcpy_assert(dest, expected_dest, src, 12);
 }

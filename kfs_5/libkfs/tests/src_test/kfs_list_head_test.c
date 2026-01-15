@@ -11,6 +11,8 @@
 static void head_expect_a_before_b(list_head_t* a, list_head_t* b);
 static void print_from_offset(void* vlh);
 static void load_test_offset(test_offset_t** to, list_head_t* lh);
+static void load_test(void** tt, size_t size, list_head_t* lh);
+static void free_list(void** to);
 
 static void head_expect_a_before_b(list_head_t* a, list_head_t* b) {
 	cr_expect(a->next == b);
@@ -29,6 +31,19 @@ static void load_test_offset(test_offset_t** to, list_head_t* lh) {
 		to[i]->payload1 = i;
 		to[i]->payload2 = -i;
 		list_add_tail(&(to[i]->lh), lh);
+	}
+}
+
+static void load_test(void** tt, size_t size, list_head_t* lh) {
+	for (size_t i = 0; i < 42; ++i) {
+		tt[i] = malloc(size);
+		list_add_tail(tt[i], lh);
+	}
+}
+
+static void free_list(void** to) {
+	for (size_t i = 0; i < 42; ++i) {
+		free(to[i]);
 	}
 }
 
@@ -178,16 +193,11 @@ Test(list_head, non_null_size) {
 	list_head_init(&lh);
 
 	list_head_t* nlh[42];
-	for (size_t i = 0; i < 42; ++i) {
-		nlh[i] = malloc(sizeof(list_head_t));
-		list_add_tail(nlh[i], &lh);
-	}
+	load_test((void**)nlh, sizeof(list_head_t), &lh);
 
 	cr_expect(list_size(&lh) == 42);
 
-	for (size_t i = 0; i < 42; ++i) {
-		free(nlh[i]);
-	}
+	free_list((void**)nlh);
 }
 
 Test(list_head, run_on_struct) {
@@ -195,10 +205,8 @@ Test(list_head, run_on_struct) {
 	list_head_init(&lh);
 
 	test_t* tt[42];
-	for (size_t i = 0; i < 42; ++i) {
-		tt[i] = malloc(sizeof(test_t));
-		list_add_tail(tt[i], &lh);
-	}
+	load_test((void**)tt, sizeof(test_t), &lh);
+
 	test_t* current = lh.next;
 	while (current != (test_t*)&lh) {
 		current->payload2 = 42;
@@ -210,12 +218,10 @@ Test(list_head, run_on_struct) {
 	for (size_t i = 0; i < 42; ++i) {
 		cr_assert(current->payload2 == 42, "index %zu\n", i);
 	}
-	for (size_t i = 0; i < 42; ++i) {
-		free(tt[i]);
-	}
+	free_list((void**)tt);
 }
 
-Test(list_head, run_on_offseted_struct) {
+Test(list_head, list_head_init_on_offseted_struct) {
 	list_head_t lh;
 
 	list_head_init(&lh);
@@ -228,13 +234,9 @@ Test(list_head, run_on_offseted_struct) {
 	}
 
 	for (size_t i = 0; i < 42; ++i) {
-		cr_expect(to[i]->lh.prev == &(to[i]->lh));
-		cr_expect(to[i]->lh.next == &(to[i]->lh));
+		head_expect_a_before_b(&to[i]->lh, &to[i]->lh);
 	}
-
-	for (size_t i = 0; i < 42; ++i) {
-		free(to[i]);
-	}
+	free_list((void**)to);
 }
 
 Test(list_head, list_for_each) {
@@ -258,9 +260,7 @@ Test(list_head, list_for_each) {
 	}
 	list_for_each(&lh, print_from_offset, TO_OFFSET);
 
-	for (size_t i = 0; i < 42; ++i) {
-		free(to[i]);
-	}
+	free_list((void**)to);
 }
 
 Test(list_head, extract_offset) {
@@ -268,25 +268,17 @@ Test(list_head, extract_offset) {
 
 	list_head_init(&lh);
 	test_offset_t* to[42];
-	for (size_t i = 0; i < 42; ++i) {
-		to[i] = malloc(sizeof(test_offset_t));
-		to[i]->payload1 = i;
-		to[i]->payload2 = -i;
-		list_add(&(to[i]->lh), &lh);
-	}
+
+	load_test_offset(to, &lh);
 	size_t size = list_size(&lh);
 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
 
 	test_offset_t* extracted = list_extract_offset(&(to[24]->lh), TO_OFFSET);
 	cr_assert(extracted->payload1 == 24, "payload1: %d, expected 24\n", extracted->payload1);
-	cr_assert(extracted->lh.prev == &extracted->lh);
-	cr_assert(extracted->lh.next == &extracted->lh);
-	cr_assert(to[25]->lh.next == &(to[23]->lh));
-	cr_assert(to[23]->lh.prev == &(to[25]->lh));
+	head_expect_a_before_b(&extracted->lh, &extracted->lh);
+	head_expect_a_before_b(&to[23]->lh, &to[25]->lh);
 
-	for (size_t i = 0; i < 42; ++i) {
-		free(to[i]);
-	}
+	free_list((void**)to);
 }
 
 Test(list_head, del_offset_free, .signal = SIGABRT) {
@@ -303,24 +295,15 @@ Test(list_head, del_offset) {
 	list_head_init(&lh);
 	test_offset_t* to[42];
 	load_test_offset(to, &lh);
-	// for (size_t i = 0; i < 42; ++i) {
-	// 	to[i] = malloc(sizeof(test_offset_t));
-	// 	to[i]->payload1 = i;
-	// 	to[i]->payload2 = -i;
-	// 	list_add(&(to[i]->lh), &lh);
-	// }
+
 	size_t size = list_size(&lh);
 	cr_assert(size == 42, "size is %zu, expected: 42\n", size);
 
 	list_del_offset(to[24], TO_OFFSET);
-	cr_assert(to[25]->lh.next == &(to[23]->lh));
-	cr_assert(to[23]->lh.prev == &(to[25]->lh));
+	head_expect_a_before_b(&to[23]->lh, &to[25]->lh);
 
-	for (size_t i = 0; i < 42; ++i) {
-		if (i != 24) {
-			free(to[i]);
-		}
-	}
+	to[24] = NULL;
+	free_list((void**)to);
 }
 
 Test(list_head, list_get) {

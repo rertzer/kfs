@@ -1,5 +1,5 @@
 CC := cc
-FLAGS := -Wall -Wextra
+FLAGS := -Wall -Wextra -Winline -Werror
 CRITERION_FLAGS = -Wl,-rpath=$(SRC_DIR_CRITERION) -L$(SRC_DIR_CRITERION)
 
 NAME := libkfs

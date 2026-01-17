@@ -23,6 +23,7 @@ typedef struct {
 
 void	   pq_init(priority_queue_t* pq);
 void	   pq_add(priority_queue_t* pq, priority_t* p);
+uint32_t   pq_get_size(priority_queue_t* pq);
 uint32_t   pq_get_min(priority_queue_t* pq);
 priority_t pq_extract_min(priority_queue_t* pq);
 

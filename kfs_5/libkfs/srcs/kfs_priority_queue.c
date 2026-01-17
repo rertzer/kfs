@@ -1,13 +1,15 @@
 #include "kfs_priority_queue.h"
+#include <stdio.h>
 #include "kfs_memset.h"
 #include "stdbool.h"
 
-static void	  bubble_up(priority_queue_t* pq, size_t index);
-static void	  bubble_down(priority_queue_t* pq, size_t index);
-static size_t get_parent_index(size_t index);
-static size_t get_left_child_index(size_t index);
-static size_t get_right_child_index(size_t index);
-static bool	  is_leaf(priority_queue_t* pq, size_t index);
+static void			 bubble_up(priority_queue_t* pq, size_t index);
+static void			 bubble_down(priority_queue_t* pq, size_t index);
+static inline size_t get_parent_index(size_t index);
+static inline size_t get_left_child_index(size_t index);
+static inline size_t get_right_child_index(size_t index);
+static inline bool	 is_leaf(priority_queue_t* pq, size_t index);
+static inline void	 pq_swap(priority_queue_t* pq, size_t i, size_t j);
 
 void pq_init(priority_queue_t* pq) {
 	kfs_memset(pq, 0, sizeof(priority_queue_t));
@@ -39,6 +41,10 @@ priority_t pq_extract_min(priority_queue_t* pq) {
 	return p;
 }
 
+uint32_t pq_get_size(priority_queue_t* pq) {
+	return (pq->size);
+}
+
 static void bubble_up(priority_queue_t* pq, size_t index) {
 	if (index < 2) {
 		return;
@@ -59,23 +65,30 @@ static void bubble_down(priority_queue_t* pq, size_t index) {
 		if (right_index <= pq->size && pq->queue[right_index].time < pq->queue[child_index].time) {
 			child_index = right_index;
 		}
-		if (pq->queue[child_index] < pq->queue[index])
-			pq_swap(index, child_index);
+		if (pq->queue[child_index].time < pq->queue[index].time) {
+			pq_swap(pq, index, child_index);
+			bubble_down(pq, child_index);
+		}
 	}
 }
 
-static size_t get_parent_index(size_t index) {
+static inline size_t get_parent_index(size_t index) {
 	return (index >> 1);
 }
 
-static size_t get_left_child_index(size_t index) {
+static inline size_t get_left_child_index(size_t index) {
 	return (index << 1);
 }
 
-static size_t get_right_child_index(size_t index) {
+static inline size_t get_right_child_index(size_t index) {
 	return ((index << 1) + 1);
 }
 
-static bool is_leaf(priority_queue_t* pq, size_t index) {
+static inline bool is_leaf(priority_queue_t* pq, size_t index) {
 	return (index > (pq->size >> 1));
+}
+static inline void pq_swap(priority_queue_t* pq, size_t i, size_t j) {
+	priority_t tmp = pq->queue[i];
+	pq->queue[i] = pq->queue[j];
+	pq->queue[j] = tmp;
 }

@@ -10,6 +10,7 @@ static inline size_t get_left_child_index(size_t index);
 static inline size_t get_right_child_index(size_t index);
 static inline bool	 is_leaf(priority_queue_t* pq, size_t index);
 static inline void	 pq_swap(priority_queue_t* pq, size_t i, size_t j);
+static inline bool	 right_smaller(priority_queue_t* pq, size_t left_index, size_t right_index);
 
 void pq_init(priority_queue_t* pq) {
 	kfs_memset(pq, 0, sizeof(priority_queue_t));
@@ -62,7 +63,7 @@ static void bubble_down(priority_queue_t* pq, size_t index) {
 	if (!is_leaf(pq, index)) {
 		size_t child_index = get_left_child_index(index);
 		size_t right_index = get_right_child_index(index);
-		if (right_index <= pq->size && pq->queue[right_index].time < pq->queue[child_index].time) {
+		if (right_smaller(pq, child_index, right_index)) {
 			child_index = right_index;
 		}
 		if (pq->queue[child_index].time < pq->queue[index].time) {
@@ -87,8 +88,13 @@ static inline size_t get_right_child_index(size_t index) {
 static inline bool is_leaf(priority_queue_t* pq, size_t index) {
 	return (index > (pq->size >> 1));
 }
+
 static inline void pq_swap(priority_queue_t* pq, size_t i, size_t j) {
 	priority_t tmp = pq->queue[i];
 	pq->queue[i] = pq->queue[j];
 	pq->queue[j] = tmp;
+}
+
+static inline bool right_smaller(priority_queue_t* pq, size_t left_index, size_t right_index) {
+	return (right_index <= pq->size && pq->queue[right_index].time < pq->queue[left_index].time);
 }

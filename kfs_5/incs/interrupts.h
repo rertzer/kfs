@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "kfs_priority_queue.h"
 
 #define IDT_MAX_DESCRIPTORS 48
 #define IDT_FLAG_PRESENT 0x80
@@ -29,6 +30,8 @@ void default_exception_handler(uint32_t int_nb);
 void error_exception_handler(uint32_t int_nb, uint32_t error_code);
 void page_fault_handler(uint32_t l_address, uint32_t error_code);
 void keyboard_handler(uint8_t scan);
+void sleep_handler(uint32_t current_time);
+void add_sleep(priority_t priority);
 void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 void init_idt(void);
 

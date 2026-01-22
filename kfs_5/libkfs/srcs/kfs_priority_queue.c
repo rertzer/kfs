@@ -25,15 +25,17 @@ void pq_add(priority_queue_t* pq, priority_t* p) {
 }
 
 uint32_t pq_get_min(priority_queue_t* pq) {
+	if (pq->size == 0) {
+		return (0);
+	}
 	return (pq->queue[1].time);
 }
 
 priority_t pq_extract_min(priority_queue_t* pq) {
-	priority_t p = pq->queue[1];
-
 	if (pq->size == 0) {
 		return pq->queue[0];
 	}
+	priority_t p = pq->queue[1];
 	pq->queue[1] = pq->queue[pq->size];
 	bubble_down(pq, 1);
 	pq->size -= 1;

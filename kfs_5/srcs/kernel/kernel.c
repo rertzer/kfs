@@ -12,6 +12,7 @@
 #include "signal.h"
 #include "terminal.h"
 #include "tss.h"
+#include "unistd.h"
 #include "wait.h"
 
 extern volatile uint8_t current_code;
@@ -60,7 +61,8 @@ void kernel_zero() {
 	// wait(NULL);
 	int pid = fork();
 	if (pid == 0) {
-		exec_fn(test_exec, 42, NULL);
+		// exec_fn(test_exec, 42, NULL);
+		exec_fn(test_sleep, 42, NULL);
 	}
 	scheduler();
 	while (true) {

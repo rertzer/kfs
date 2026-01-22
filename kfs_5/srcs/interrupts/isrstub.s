@@ -10,6 +10,7 @@ extern pit_total_ms
 extern timer_counter
 extern hello
 extern flush_tlb
+extern sleep_handler
 
 
 section .data
@@ -102,6 +103,17 @@ isr_stub_32:
 
 	inc dword [pit_total_ms]
 	inc dword [timer_counter]
+	xor edx, edx
+	mov eax, [timer_counter]
+	mov ecx, 1000
+	div ecx; time in seconds in eax, remainer in edx
+	test edx, edx ; every second
+	jnz .not_a_second
+	push eax
+	call sleep_handler
+	pop eax
+.not_a_second:
+	xor eax, eax; reset eax
 	
 
 	mov	al, 0x20	; set bit 4 of OCW 2

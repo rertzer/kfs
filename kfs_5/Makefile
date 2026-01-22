@@ -44,6 +44,7 @@ SOURCE_STDIO = $(addprefix stdio/,		\
 
 SOURCE_UNISTD = $(addprefix unistd/,	\
 				pause.c					\
+				sleep.c					\
 				write.c)
 
 SOURCES_LIBS = $(addprefix libs/, 		\

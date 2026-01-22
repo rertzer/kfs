@@ -3,11 +3,11 @@
 
 #include "stdint.h"
 
-#ifndef JROS
-#define proc_t uint32_t*
-#else
+// #ifndef JROS
+// #define proc_t uint32_t*
+// #else
 typedef struct proc_s proc_t;
-#endif
+// #endif
 
 #define PQ_MAX_SIZE 1024
 

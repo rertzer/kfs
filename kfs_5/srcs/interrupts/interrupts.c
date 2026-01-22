@@ -1,13 +1,16 @@
 #include "interrupts.h"
-#include "builtin.h"
+#include "kfs_priority_queue.h"
 #include "panic.h"
+#include "scheduler.h"
+#include "stdio.h"
 #include "stdlib.h"
 
 extern volatile uint32_t						  hereafter;
 extern uint32_t									  isr_stub_table[];
 __attribute__((aligned(0x10))) static idt_entry_t idt[256];
 
-static idtr_t idtr;
+static priority_queue_t pq;
+static idtr_t			idtr;
 
 // static void empty_descriptor(uint8_t vector, uint32_t isr, uint8_t flags);
 static void error_panic(char* msg, uint32_t error_code);
@@ -30,6 +33,7 @@ void init_idt() {
 		idt_set_descriptor(vector, isr_stub_table[vector], IDT_FLAG_PRESENT | IDT_FLAG_32BIT_INTERRUPT);
 #endif
 	}
+	pq_init(&pq);
 	__asm__ volatile("lidt %0" : : "m"(idtr));
 	__asm__ volatile("sti");
 }
@@ -55,7 +59,7 @@ void idt_set_descriptor(uint8_t vector, uint32_t isr, uint8_t flags) {
 }
 
 void interrupt_handler(uint32_t int_nb) {
-	printk("interrupt request %d !\n", int_nb);
+	printf("interrupt request %d !\n", int_nb);
 	__asm__ volatile("cli; hlt");
 }
 
@@ -122,4 +126,16 @@ void error_exception_handler(uint32_t int_nb, uint32_t error_code) {
 static void error_panic(char* msg, uint32_t error_code) {
 	itoa(error_code, msg + 38, 16);
 	panic(msg);
+}
+
+void add_sleep(priority_t priority) {
+	pq_add(&pq, &priority);
+}
+
+void sleep_handler(uint32_t current_time) {
+	// printf("sleep handler %u\n", current_time);
+	while (pq_get_min(&pq) >= current_time) {
+		priority_t priority = pq_extract_min(&pq);
+		scheduler_run(priority.proc);
+	}
 }

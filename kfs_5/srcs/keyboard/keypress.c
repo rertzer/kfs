@@ -115,6 +115,6 @@ void press_any() {
 				break;
 			}
 		}
-		sleep();
+		halting();
 	}
 }

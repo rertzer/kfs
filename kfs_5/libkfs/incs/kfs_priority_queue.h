@@ -5,8 +5,8 @@
 
 #ifndef JROS
 #define proc_t uint32_t*
-#elif
-#include "processus.h"
+#else
+typedef struct proc_s proc_t;
 #endif
 
 #define PQ_MAX_SIZE 1024

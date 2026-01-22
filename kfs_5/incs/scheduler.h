@@ -4,6 +4,7 @@
 #include "processus.h"
 #include "tss.h"
 
+int			 sched_yield(void);
 void		 scheduler();
 void		 scheduler_enter();
 void		 scheduler_leave();

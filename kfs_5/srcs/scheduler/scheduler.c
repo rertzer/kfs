@@ -15,7 +15,7 @@ bool		scheduler_atomic;
 void scheduler_enter() {
 	// TODO a real atomic instruction
 	while (scheduler_atomic == true) {
-		sleep();
+		halting();
 	}
 	scheduler_atomic = true;
 }
@@ -26,6 +26,11 @@ void scheduler_leave() {
 
 bool scheduler_get_atomic() {
 	return (scheduler_atomic);
+}
+
+int sched_yield(void) {
+	scheduler();
+	return (0);
 }
 
 void scheduler() {

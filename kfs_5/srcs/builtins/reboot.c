@@ -12,7 +12,7 @@ uint8_t reboot(size_t argc, char** argv) {
 
 	printk("rebooting ");
 	while (counter_clock() <= time) {
-		sleep();
+		halting();
 	}
 
 	kbrd_reboot();

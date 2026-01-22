@@ -42,7 +42,7 @@ unsigned char inb(unsigned short port);
 void		  outb(unsigned char value, unsigned short port);
 void		  outw(uint16_t value, uint16_t port);
 void		  io_wait(void);
-void		  sleep();
+void		  halting();
 uint32_t*	  to_upper_kernel(uint32_t* low_address);
 void		  interrupts_allowed();
 

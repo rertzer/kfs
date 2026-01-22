@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "keycode.h"
 #include "paging.h"
+#include "scheduler.h"
 
 extern uint32_t			stack_top;
 extern uint32_t			stack_bottom;
@@ -75,7 +76,7 @@ static bool sleeping() {
 			} else if ((keypress.ascii == 'n') || (keypress.ascii == 'N')) {
 				break;
 			}
-			sleep();
+			halting();
 		}
 	}
 	return (end);

@@ -19,7 +19,7 @@ void io_wait(void) {
 	outb(0, 0x80);
 }
 
-void sleep() {
+void halting() {
 	__asm__ volatile("hlt");
 }
 

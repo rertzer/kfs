@@ -64,7 +64,7 @@ void kernel_zero() {
 	}
 	scheduler();
 	while (true) {
-		sleep();
+		halting();
 		process_keyboard(&keypress);
 	}
 }

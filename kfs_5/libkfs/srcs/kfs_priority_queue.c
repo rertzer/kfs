@@ -1,5 +1,4 @@
 #include "kfs_priority_queue.h"
-#include <stdio.h>
 #include "kfs_memset.h"
 #include "stdbool.h"
 

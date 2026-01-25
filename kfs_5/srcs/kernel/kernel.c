@@ -62,7 +62,7 @@ void kernel_zero() {
 	int pid = fork();
 	if (pid == 0) {
 		// exec_fn(test_exec, 42, NULL);
-		exec_fn(test_sleep, 42, NULL);
+		exec_fn(test_exec_2, 42, NULL);
 	}
 	scheduler();
 	while (true) {

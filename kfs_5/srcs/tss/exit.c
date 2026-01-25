@@ -6,6 +6,7 @@
 void _exit(int status) {
 	proc_t* current_proc = scheduler_get_current_proc();
 	current_proc->exit_status = status;
+	printk("exit %d with status %d\n", current_proc->pid, status);
 	scheduler_enter();
 	// remove user stack
 	family_adopt_orphans(current_proc);

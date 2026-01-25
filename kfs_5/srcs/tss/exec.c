@@ -26,3 +26,12 @@ uint8_t test_exec(size_t argc, char** argv) {
 		scheduler();
 	}
 }
+
+uint8_t test_exec_2(size_t argc, char** argv) {
+	(void)argv;
+	printk("hello from test exec 2, argc is %d\n", argc);
+	press_any();
+	printk("Good bye!\n");
+	_exit(0);
+	return (0);
+}

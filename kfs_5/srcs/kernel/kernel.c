@@ -33,7 +33,7 @@ void kernel_main(void) {
 
 void kernel_zero() {
 	interrupts_allowed();
-	char x = 'X';
+	// char x = 'X';
 
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
 	keypress_t keypress = init_keypress();
@@ -60,11 +60,14 @@ void kernel_zero() {
 	// scheduler();
 	// wait(NULL);
 	int pid = fork();
-	if (pid == 0) {
-		// exec_fn(test_exec, 42, NULL);
+	if (pid == 0) {	 // son
 		exec_fn(test_exec_2, 42, NULL);
 	}
-	scheduler();
+	// parent 1
+	// scheduler();
+	int s = 666;
+	int w = wait(&s);
+	printf("after wait %d %d\n", w, s);
 	while (true) {
 		halting();
 		process_keyboard(&keypress);

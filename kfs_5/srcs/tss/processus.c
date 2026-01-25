@@ -103,7 +103,6 @@ uint8_t* get_kernel_stack_high(uint8_t* sp) {
 
 void free_process(proc_t* task) {
 	pid_bitmap_remove(task->pid);
-	// remove from family
 	kfree(task->tss);
 	munbook(task->kernel_stack);
 	// free memory

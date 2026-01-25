@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include "kernel.h"
 #include "keycode.h"
+#include "malloc.h"
 #include "printk.h"
 #include "processus.h"
 #include "signal.h"
@@ -139,10 +140,17 @@ uint8_t scheduler_zombie(proc_t* task) {
 	(void)task;
 	return (0);
 }
+
 uint8_t scheduler_dead(proc_t* task) {
-	(void)task;
+	if (task->status != PROC_DEAD) {
+		return (1);
+	}
+	list_extract(task);
+	remove_tss_descriptor(task->gdt_index);
+	free_process(task);
 	return (0);
 }
+
 uint8_t scheduler_remove_task(proc_t* task) {
 	if (task->status != PROC_DEAD) {
 		return (1);

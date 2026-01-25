@@ -1,5 +1,6 @@
 #include "wait.h"
 #include "kfs_list_head.h"
+#include "panic.h"
 #include "processus.h"
 #include "scheduler.h"
 #include "unistd.h"
@@ -22,6 +23,9 @@ uint16_t wait(int* wstatus) {
 		pause();
 	}
 	zombie->status = PROC_DEAD;
+	if (scheduler_dead(zombie) != 0) {
+		panic("Cannot delete a non-Zombie process");
+	}
 	return (zombie_pid);
 }
 

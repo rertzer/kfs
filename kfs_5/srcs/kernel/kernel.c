@@ -2,6 +2,7 @@
 #include "boot_infos.h"
 #include "builtin.h"
 #include "exec.h"
+#include "exit.h"
 #include "fork.h"
 #include "gdt.h"
 #include "interrupts.h"
@@ -14,10 +15,6 @@
 #include "tss.h"
 #include "unistd.h"
 #include "wait.h"
-
-extern volatile uint8_t current_code;
-
-static void process_keyboard(keypress_t* keypress);
 
 void kernel_main(void) {
 	all_terms_init();
@@ -33,66 +30,11 @@ void kernel_main(void) {
 
 void kernel_zero() {
 	interrupts_allowed();
-	// char x = 'X';
-
-	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
-	keypress_t keypress = init_keypress();
-	term_prompt();
-	uint16_t tr = store_task_register();
-	printk("TR: %08x %d\n", tr);
-
-	// uint16_t pid = fork();
-	// if (pid != 0) {
-	// 	printf("%d! I am your father\n", pid);
-	// 	uint16_t tr = store_task_register();
-	// 	printk(" father TR: %08x %c\n", tr, x);
-	// 	scheduler();
-	// } else {
-	// 	printf("I am not %d, I am your son\n", pid);
-	// 	uint16_t tr = store_task_register();
-	// 	printk("son TR: %08x  %c\n", tr, x);
-	// 	// scheduler();
-	// }
-	// pid = fork();
-	// printk("1 killing now 2\n");
-	// press_any();
-	// kill(2, SIGKILL);
-	// scheduler();
-	// wait(NULL);
+	int error = 0;
 	int pid = fork();
-	if (pid == 0) {	 // son process 1
-		// exec_fn(test_exec_2, 42, NULL);
-		printk("kernel main %d\n", getpid());
-		ps(42, NULL);
-		exec_fn(test_sleep, 42, NULL);
-
-		// parent 1
-		// scheduler();
-		printk("father...\n");
-		int s = 666;
-		int w = wait(&s);
-		printf("after wait %d %d\n", w, s);
+	if (pid == 0) {
+		exec(shell, 0, NULL);
 	} else {
-		scheduler();
-	}
-	while (true) {
-		halting();
-		process_keyboard(&keypress);
-	}
-}
-
-static void process_keyboard(keypress_t* keypress) {
-	bool getline = false;
-	keypress->keycode = current_code;
-	current_code = 0;
-	if (keypress->keycode != 0) {
-		update_keypress(keypress);
-		if (keypress->pressed == PRESSED) {
-			getline = handle_keypress(*keypress);
-		}
-	}
-	if (getline == true) {
-		process_line();
-		term_prompt();
+		exec(watchdog, 0, NULL);  // process 0 watchdog
 	}
 }

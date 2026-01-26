@@ -15,7 +15,8 @@
 #define KBRD_UDATA 0x02
 
 /* ================================================================================ */
-void kernel_zero();
+void	kernel_zero();
+uint8_t watchdog(size_t argc, char** argv);
 
 /* ======================== assembly functions ==================================== */
 void	 init_pit();

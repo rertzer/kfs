@@ -106,4 +106,5 @@ size_t		term_line_len();
 void		write_tab();
 void		update_cursor(size_t x, size_t y);
 void		term_next_line();
+uint8_t		shell(size_t argc, char** argv);
 #endif

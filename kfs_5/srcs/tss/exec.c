@@ -9,16 +9,23 @@
 
 void exec_fn(exec_fun_t fun, size_t argc, char** argv) {
 	uint16_t pid = fork();
-	int		 error = 0;
 	if (pid == 0) {
 		printk("ready to exec\n");
 		press_any();
-		if ((error = exec_asm(fun, argc, argv)) != 0) {
-			printk("exec failed\n");
-			_exit(error);
-		}
+		exec(fun, argc, argv);
+	}
+}
+
+int exec(exec_fun_t fun, size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
+	int error = 0;
+	if ((error = exec_asm(fun, argc, argv)) != 0) {
+		printk("exec failed\n");
+	} else {
 		_exit(0);
 	}
+	return (error);
 }
 
 uint8_t test_exec(size_t argc, char** argv) {

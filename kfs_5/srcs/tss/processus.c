@@ -15,11 +15,10 @@ proc_t* init_zero_proc() {
 	proc->parent = proc;
 	proc->gdt_index = TSS_ZERO;
 	proc->tss = get_tss_addr_by_gdt_offset(TSS_ZERO * sizeof(gdt_entry_t));
-	// proc->signals = NULL;
 	proc->sig_pending = 0;
 	proc->sig_processing = 0;
 	proc->exit_status = 0;
-	proc->status = PROC_SLEEP;
+	proc->status = PROC_RUN;
 	proc->kernel_stack = NULL;
 	list_head_init(&proc->lst);
 	list_head_init(&proc->run_lst);

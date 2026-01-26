@@ -95,6 +95,7 @@ SOURCES =	boot/boot.s \
 			kernel/kernel_asm_utils.c \
 			kernel/kernel_utils.c \
 			kernel/utils_inline.c \
+			kernel/watchdog.c \
 			keyboard/keycode.c \
 			keyboard/keypress.c \
 			keyboard/scancode.c \
@@ -105,6 +106,7 @@ SOURCES =	boot/boot.s \
 			signal/signal.c \
 			terminal/terminal.c \
 			terminal/putchar.c \
+			terminal/shell.c \
 			terminal/vga.c \
 			tss/exit.c \
 			tss/exec.c \

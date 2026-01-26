@@ -60,14 +60,21 @@ void kernel_zero() {
 	// scheduler();
 	// wait(NULL);
 	int pid = fork();
-	if (pid == 0) {	 // son
-		exec_fn(test_exec_2, 42, NULL);
+	if (pid == 0) {	 // son process 1
+		// exec_fn(test_exec_2, 42, NULL);
+		printk("kernel main %d\n", getpid());
+		ps(42, NULL);
+		exec_fn(test_sleep, 42, NULL);
+
+		// parent 1
+		// scheduler();
+		printk("father...\n");
+		int s = 666;
+		int w = wait(&s);
+		printf("after wait %d %d\n", w, s);
+	} else {
+		scheduler();
 	}
-	// parent 1
-	// scheduler();
-	int s = 666;
-	int w = wait(&s);
-	printf("after wait %d %d\n", w, s);
 	while (true) {
 		halting();
 		process_keyboard(&keypress);

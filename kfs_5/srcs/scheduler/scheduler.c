@@ -1,4 +1,5 @@
 #include "scheduler.h"
+#include "builtin.h"
 #include "kernel.h"
 #include "keycode.h"
 #include "malloc.h"
@@ -30,6 +31,7 @@ bool scheduler_get_atomic() {
 }
 
 int sched_yield(void) {
+	ps(0, NULL);
 	scheduler();
 	return (0);
 }

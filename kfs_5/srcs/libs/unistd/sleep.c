@@ -1,3 +1,4 @@
+#include "builtin.h"
 #include "kernel.h"
 #include "scheduler.h"
 #include "unistd.h"
@@ -20,7 +21,7 @@ uint32_t sleep(uint32_t time) {
 }
 
 uint8_t test_sleep(size_t argc, char** argv) {
-	static uint32_t count = 10;
+	static uint32_t count = 20;
 	(void)argc;
 	(void)argv;
 	while (true) {

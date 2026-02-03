@@ -11,6 +11,7 @@ extern timer_counter
 extern hello
 extern flush_tlb
 extern sleep_handler
+extern sched_yield
 
 
 section .data
@@ -101,18 +102,33 @@ isr_stub_32:
 	cli
 	pusha
 
+	; update timers
 	inc dword [pit_total_ms]
 	inc dword [timer_counter]
+	; call sleep_handler each second
+	
+
+	; call scheduler every 20 ms
+	xor edx, edx
+	mov eax, [timer_counter]
+	mov ecx, 20
+	div ecx; time in seconds in eax, remainer in edx
+	test edx, edx ; every second
+	jnz .not_this_time
+	call sched_yield
+
 	xor edx, edx
 	mov eax, [timer_counter]
 	mov ecx, 1000
 	div ecx; time in seconds in eax, remainer in edx
 	test edx, edx ; every second
-	jnz .not_a_second
-	push eax
+	jnz .not_this_time
+	mov eax, [timer_counter]
+	push eax 
 	call sleep_handler
 	pop eax
-.not_a_second:
+
+.not_this_time:
 	xor eax, eax; reset eax
 	
 

@@ -133,9 +133,12 @@ void add_sleep(priority_t priority) {
 }
 
 void sleep_handler(uint32_t current_time) {
-	// printf("sleep handler %u\n", current_time);
-	while (pq_get_min(&pq) >= current_time) {
+	static int count;
+	++count;
+	uint32_t min = pq_get_min(&pq);
+	while (min != 0 && min <= current_time) {
 		priority_t priority = pq_extract_min(&pq);
 		scheduler_run(priority.proc);
+		min = pq_get_min(&pq);
 	}
 }

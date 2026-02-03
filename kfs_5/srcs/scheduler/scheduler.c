@@ -16,6 +16,7 @@ bool		scheduler_atomic;
 
 void scheduler_enter() {
 	// TODO a real atomic instruction
+
 	while (scheduler_atomic == true) {
 		halting();
 	}
@@ -31,9 +32,11 @@ bool scheduler_get_atomic() {
 }
 
 int sched_yield(void) {
-	ps(0, NULL);
-	scheduler();
-	return (0);
+	if (scheduler_atomic == false) {
+		scheduler();
+		return (0);
+	}
+	return (1);
 }
 
 void scheduler() {
@@ -46,10 +49,12 @@ void scheduler() {
 
 void scheduler_switch_task(bool switching) {
 	if (switching == true) {
-		printk("switching task to %d\n", current->pid);
+		// printk("switching task to %d\n", current->pid);
 		switch_task(current->gdt_index);
+	} else {
+		scheduler_leave();
 	}
-	printk("%d pending...%d\n", current->pid, current->sig_pending);
+	// printk("%d pending...%d\n", current->pid, current->sig_pending);
 	pending_signals(current);
 
 	if (current->status != PROC_RUN) {
@@ -115,6 +120,7 @@ void scheduler_switch_status() {
 proc_t* scheduler_unrun(proc_t* task) {
 	proc_t* previous = list_extract_offset(&task->run_lst, PROC_LIST_RUNQUEUE);
 	current = list_get(runqueue.prev, PROC_LIST_RUNQUEUE);
+	// printk("unrun previous %d, new current %d\n", previous->pid, current->pid);
 	return (previous);
 }
 
@@ -129,13 +135,13 @@ uint8_t scheduler_run(proc_t* task) {
 
 uint8_t scheduler_sleep(proc_t* task) {
 	(void)task;
-	printk("sleeping\n");
+	// printk("sleeping\n");
 	return (0);
 }
 
 uint8_t scheduler_stopped(proc_t* task) {
 	(void)task;
-	printk("stopped\n");
+	// printk("stopped\n");
 	return (0);
 }
 uint8_t scheduler_zombie(proc_t* task) {

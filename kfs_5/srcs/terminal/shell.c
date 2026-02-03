@@ -1,15 +1,20 @@
 #include "builtin.h"
 #include "keycode.h"
 #include "terminal.h"
+#include "unistd.h"
 
 extern volatile uint8_t current_code;
 
 static void process_keyboard(keypress_t* keypress);
 
 uint8_t shell(size_t argc, char** argv) {
+	(void)argc;
+	(void)argv;
 	printk("jrOS ready. Welcome to kernel zero. Enjoy!\n");
 	keypress_t keypress = init_keypress();
 	term_prompt();
+	// test_sleep(42, NULL);
+	// printk("test done\n");
 	while (true) {
 		halting();
 		process_keyboard(&keypress);

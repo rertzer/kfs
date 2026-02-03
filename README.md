@@ -1,10 +1,8 @@
 # About
 
-JyrOS is al kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
+JyrOS is a kernel developped to learn the basics about kernel programming. It is written in C and nasm and developped for an i386 architecture.
 
 It follows the 42 school Kernel From Scratch series.
-
-> Notice that the work is still in progress.
 
 # Features
 
@@ -46,7 +44,7 @@ It follows the 42 school Kernel From Scratch series.
 
 - For debugging, you can start a gdb session.
 - GDB will run in a separate window.
-- A default breakpoint is put on kernel_main.
+- A default breakpoint is set on kernel_main.
 - `make debug`
 
 # terminal

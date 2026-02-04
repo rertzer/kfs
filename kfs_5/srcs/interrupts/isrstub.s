@@ -105,38 +105,36 @@ isr_stub_32:
 	; update timers
 	inc dword [pit_total_ms]
 	inc dword [timer_counter]
-	; call sleep_handler each second
-	
 
-	; call scheduler every 20 ms
+	; call sleep_handler each 100 ms 
 	xor edx, edx
 	mov eax, [timer_counter]
-	mov ecx, 20
+	mov ecx, 100
 	div ecx; time in seconds in eax, remainer in edx
 	test edx, edx ; every second
-	jnz .not_this_time
-	call sched_yield
-
-	xor edx, edx
-	mov eax, [timer_counter]
-	mov ecx, 1000
-	div ecx; time in seconds in eax, remainer in edx
-	test edx, edx ; every second
-	jnz .not_this_time
+	jnz .sched_call
 	mov eax, [timer_counter]
 	push eax 
 	call sleep_handler
 	pop eax
 
-.not_this_time:
-	xor eax, eax; reset eax
-	
+.sched_call: ; call scheduler every 20 ms
+	xor edx, edx
+	mov eax, [timer_counter]
+	mov ecx, 20
+	div ecx; time in seconds in eax, remainer in edx
 
+	xor eax, eax; reset eax
 	mov	al, 0x20	; set bit 4 of OCW 2
 	out	0x20, al	; write to primary PIC command register 
+
+	test edx, edx ; every second
+	jnz .the_end
+	call sched_yield
+
+.the_end:
 	popa
 	sti
-
 	iret
 
 ; keyboard interrupt
